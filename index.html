@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Academia - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f4f8; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background: #1a237e; height: 70px; display: flex; align-items: center; color: white; padding: 0 5%; justify-content: space-between; position: fixed; width: 100%; top: 0; z-index: 100; }
+        .hero { flex: 1; display: flex; justify-content: center; align-items: center; padding-top: 70px; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 90%; }
+        h1 { color: #1a237e; margin-bottom: 20px; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        button { padding: 12px 25px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-login { background: #ffd600; color: #1a237e; }
+        .btn-daftar { background: transparent; color: #1a237e; border: 2px solid #1a237e; }
+        
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 30px; border-radius: 12px; width: 400px; position: relative; }
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn-submit { width: 100%; background: #1a237e; color: white; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div style="font-size: 20px; font-weight: 800;">ACADEMIA</div>
+        <div id="nav-info">Silakan Login</div>
+    </nav>
+
+    <main class="hero">
+        <div class="card">
+            <h1>Portal Akademik Terpadu</h1>
+            <p>Sistem integrasi data guru dan siswa berbasis Cloud Firebase.</p>
+            <div class="btn-group">
+                <button class="btn-daftar" onclick="openModal('daftarOverlay')">DAFTAR</button>
+                <button class="btn-login" onclick="openModal('loginOverlay')">LOGIN</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="loginOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="input-group"><label>Email</label><input type="email" id="logEmail" required></div>
+                <div class="input-group"><label>Password</label><input type="password" id="logPass" required></div>
+                <div style="margin-bottom: 15px;"><input type="checkbox" id="rememberMe"> <label style="display:inline;" for="rememberMe">Ingat Saya</label></div>
+                <button type="submit" class="btn-submit" id="btnLoginBtn">MASUK</button>
+                <button type="button" style="background:none; color:red; width:100%;" onclick="closeModal()">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="daftarOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Daftar Akun</h2>
+            <form id="daftarForm">
+                <div class="input-group"><label>Sebagai</label>
+                    <select id="regRole"><option value="guru">Guru</option><option value="siswa">Siswa</option></select>
+                </div>
+                <div class="input-group"><label>Nama Lengkap</label><input type="text" id="regNama" required></div>
+                <div class="input-group"><label>Email</label><input type="email" id="regEmail" required></div>
+                <div class="input-group"><label>Password</label><input type="password" id="regPass" required></div>
+                <button type="submit" class="btn-submit" id="btnRegBtn" style="background:#2e7d32;">PROSES DAFTAR</button>
+                <button type="button" style="background:none; color:red; width:100%;" onclick="closeModal()">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c",
+            measurementId: "G-GS1B5E3YFQ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+
+        // --- LOGIN LOGIC ---
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('logEmail').value;
+            const pass = document.getElementById('logPass').value;
+            const remember = document.getElementById('rememberMe').checked;
+            const btn = document.getElementById('btnLoginBtn');
+
+            btn.innerText = "Memverifikasi...";
+            btn.disabled = true;
+
+            try {
+                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+                const userCred = await signInWithEmailAndPassword(auth, email, pass);
+                
+                // Ambil Role dari Firestore
+                const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+                if (userDoc.exists()) {
+                    const role = userDoc.data().role;
+                    // REDIRECT BERDASARKAN ROLE
+                    window.location.href = role === "guru" ? "guru_dashboard.html" : "siswa_dashboard.html";
+                }
+            } catch (err) { alert("Error: " + err.message); }
+            finally { btn.innerText = "MASUK"; btn.disabled = false; }
+        };
+
+        // --- DAFTAR LOGIC ---
+        document.getElementById('daftarForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const role = document.getElementById('regRole').value;
+            const nama = document.getElementById('regNama').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const btn = document.getElementById('btnRegBtn');
+
+            btn.innerText = "Mendaftarkan...";
+            btn.disabled = true;
+
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", cred.user.uid), { nama, role, email, createdAt: new Date() });
+                alert("Berhasil! Silakan Login.");
+                closeModal();
+            } catch (err) { alert(err.message); }
+            finally { btn.innerText = "PROSES DAFTAR"; btn.disabled = false; }
+        };
+    </script>
+</body>
+</html>
