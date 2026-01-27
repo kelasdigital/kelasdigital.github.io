@@ -2,100 +2,136 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Guru Panel - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Dashboard - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-green: #2d5a27; --white: #ffffff; --bg-light: #f0f4f0; }
+        :root {
+            --primary-green: #2d5a27;
+            --emerald-dark: #1b3022;
+            --white: #ffffff;
+            --bg-light: #f4f7f4;
+            --text-main: #2c3e50;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        
-        body { background: var(--bg-light); padding: 40px; color: #333; }
-        
-        /* HEADER */
-        .header { background: var(--primary-green); color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .btn-logout { background: #ff5252; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-logout:hover { background: #d32f2f; }
+
+        body { background-color: var(--bg-light); color: var(--text-main); min-height: 100vh; padding-top: 100px; }
+
+        /* NAVBAR */
+        .navbar { height: 80px; display: flex; align-items: center; padding: 0 5%; justify-content: space-between; position: fixed; width: 100%; top: 0; z-index: 1000; background: var(--emerald-dark); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .logo { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+        .btn-logout { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-logout:hover { background: #ff5252; border-color: #ff5252; }
+
+        /* MAIN LAYOUT */
+        .container { width: 95%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+        @media (max-width: 1000px) { .container { grid-template-columns: 1fr; } }
 
         /* CARDS */
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 25px; }
-        h3 { color: var(--primary-green); margin-bottom: 20px; border-left: 4px solid var(--primary-green); padding-left: 10px; }
+        .card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eee; margin-bottom: 20px; }
+        h3 { font-size: 16px; font-weight: 800; color: var(--primary-green); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+        h3::before { content: ''; width: 4px; height: 16px; background: var(--primary-green); border-radius: 10px; }
 
         /* FORM STYLES */
-        input, select, button { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1.5px solid #eee; outline: none; transition: 0.3s; }
-        input:focus, select:focus { border-color: var(--primary-green); }
-        .btn-upload { background: var(--primary-green); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 15px; }
-        .btn-upload:hover { opacity: 0.9; transform: translateY(-1px); }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 10px 15px; border: 1.5px solid #f0f0f0; border-radius: 10px; outline: none; transition: 0.3s; background: #fafafa; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-green); background: #fff; }
+        .btn-primary { width: 100%; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 5px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(45,90,39,0.2); }
 
-        /* TABLE / LIST MATERI */
-        .materi-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; transition: 0.3s; }
-        .materi-item:hover { background: #f9f9f9; }
-        .materi-info h4 { font-size: 16px; margin-bottom: 4px; }
-        .materi-info span { font-size: 12px; background: #e8f5e9; color: var(--primary-green); padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-        
-        .action-btns { display: flex; gap: 8px; }
-        .btn-edit { background: #ff9800; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
-        .btn-hapus { background: #f44336; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+        /* ABSENSI TABLE */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #888; font-size: 11px; }
+        td { padding: 12px; border-bottom: 1px solid #f9f9f9; }
+        .status-btn { padding: 5px 10px; border-radius: 6px; font-size: 11px; border: 1px solid #ddd; cursor: pointer; background: white; margin-right: 2px; }
+        .status-btn.active-h { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+        .status-btn.active-i { background: #fff3e0; color: #ef6c00; border-color: #ef6c00; }
+        .status-btn.active-s { background: #e3f2fd; color: #1976d2; border-color: #1976d2; }
+        .status-btn.active-a { background: #ffebee; color: #c62828; border-color: #c62828; }
 
-        /* MODAL EDIT */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; }
+        /* JURNAL LIST */
+        .jurnal-item { padding: 15px; border-radius: 12px; background: #f9fbf9; border: 1px solid #edf2ed; margin-bottom: 10px; }
+        .jurnal-date { font-size: 10px; font-weight: 800; color: #aaa; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div>
-            <h2 style="letter-spacing: 1px;">PANEL GURU</h2>
-            <p id="guruEmail" style="font-size: 12px; opacity: 0.8;">Memuat profil...</p>
+    <nav class="navbar">
+        <div class="logo">KELAS DIGITAL</div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span id="userEmail" style="font-size: 13px; opacity: 0.8;">Memuat profil...</span>
+            <button class="btn-logout" id="btnLogout">LOGOUT</button>
         </div>
-        <button id="btnLogout" class="btn-logout">LOGOUT</button>
-    </div>
+    </nav>
 
-    <div class="card">
-        <h3>Upload Materi Baru</h3>
-        <form id="uploadForm">
-            <input type="text" id="judulMateri" placeholder="Judul Materi" required>
-            <select id="pilihJenjang" required>
-                <option value="MI">MI (Madrasah Ibtidaiyah)</option>
-                <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
-                <option value="SMA">SMA (Sekolah Menengah Atas)</option>
-            </select>
-            <input type="url" id="linkMateri" placeholder="Link (Google Drive/YouTube)" required>
-            <button type="submit" id="btnUpload" class="btn-upload">PUBLIKASIKAN MATERI</button>
-        </form>
-    </div>
+    <div class="container">
+        <aside>
+            <div class="card">
+                <h3>📝 Jurnal Harian Guru</h3>
+                <form id="jurnalForm">
+                    <div class="input-group">
+                        <label>Materi / Kegiatan</label>
+                        <input type="text" id="jurnalMateri" placeholder="Contoh: Pembahasan Aljabar" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Jenjang & Kelas</label>
+                        <select id="jurnalJenjang">
+                            <option value="MI">MI</option>
+                            <option value="MTs">MTs</option>
+                            <option value="SMA">SMA</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Catatan Tambahan</label>
+                        <textarea id="jurnalCatatan" rows="3" placeholder="Kesan atau kendala..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" id="btnJurnal">Simpan Jurnal</button>
+                </form>
+            </div>
 
-    <div class="card">
-        <h3>Daftar Materi Saya</h3>
-        <div id="listMateriContainer">
-            <p style="color: #888; text-align: center;">Memuat materi...</p>
-        </div>
-    </div>
+            <div class="card">
+                <h3>📋 Riwayat Jurnal</h3>
+                <div id="listJurnal" style="max-height: 300px; overflow-y: auto;">
+                    <p style="text-align: center; color: #ccc; font-size: 12px;">Memuat...</p>
+                </div>
+            </div>
+        </aside>
 
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 20px;">Edit Materi</h3>
-            <form id="editForm">
-                <input type="hidden" id="editId">
-                <input type="text" id="editJudul" required>
-                <select id="editJenjang" required>
-                    <option value="MI">MI</option>
-                    <option value="MTs">MTs</option>
-                    <option value="SMA">SMA</option>
-                </select>
-                <input type="url" id="editLink" required>
-                <button type="submit" class="btn-upload">SIMPAN PERUBAHAN</button>
-                <button type="button" onclick="closeEditModal()" style="background:#ccc; color:#333; margin-top:5px;">BATAL</button>
-            </form>
-        </div>
+        <main>
+            <div class="card">
+                <h3>✅ Absensi Siswa</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <select id="filterJenjang" style="width: 200px;">
+                        <option value="MI">Jenjang: MI</option>
+                        <option value="MTs">Jenjang: MTs</option>
+                        <option value="SMA">Jenjang: SMA</option>
+                    </select>
+                    <button class="btn-primary" id="btnTampilkanSiswa" style="width: auto; margin: 0;">Tampilkan Siswa</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NAMA SISWA</th>
+                            <th>JENJANG</th>
+                            <th style="text-align: right;">STATUS KEHADIRAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableSiswa">
+                        <tr><td colspan="3" style="text-align: center; color: #ccc;">Pilih jenjang dan klik tampilkan.</td></tr>
+                    </tbody>
+                </table>
+                <button class="btn-primary" id="btnSimpanAbsen" style="margin-top: 20px; display: none;">Simpan Semua Absensi</button>
+            </div>
+        </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { 
-            getFirestore, collection, addDoc, serverTimestamp, 
-            query, where, onSnapshot, doc, deleteDoc, updateDoc 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
@@ -110,99 +146,119 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let dataAbsensi = {}; // Menampung status absen sementara
+
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
-                document.getElementById('guruEmail').innerText = `Masuk sebagai: ${user.email}`;
-                loadMyMateri(user.email);
+            if (!user) window.location.href = "index.html";
+            else {
+                document.getElementById('userEmail').innerText = user.email;
+                loadJurnal(user.email);
             }
         });
 
-        // 1. FUNGSI UPLOAD
-        document.getElementById('uploadForm').onsubmit = async (e) => {
+        // --- LOGIKA JURNAL GURU ---
+        document.getElementById('jurnalForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnUpload');
-            btn.innerText = "Memproses..."; btn.disabled = true;
-
+            const btn = document.getElementById('btnJurnal');
+            btn.innerText = "Menyimpan...";
             try {
-                await addDoc(collection(db, "materi"), {
-                    judul: document.getElementById('judulMateri').value,
-                    jenjang: document.getElementById('pilihJenjang').value,
-                    link: document.getElementById('linkMateri').value,
+                await addDoc(collection(db, "jurnal"), {
+                    materi: document.getElementById('jurnalMateri').value,
+                    jenjang: document.getElementById('jurnalJenjang').value,
+                    catatan: document.getElementById('jurnalCatatan').value,
                     guru: auth.currentUser.email,
+                    tanggal: new Date().toLocaleDateString('id-ID'),
                     createdAt: serverTimestamp()
                 });
-                alert("Materi berhasil ditambahkan!");
-                document.getElementById('uploadForm').reset();
-            } catch (err) { alert("Gagal: " + err.message); }
-            finally { btn.innerText = "PUBLIKASIKAN MATERI"; btn.disabled = false; }
+                document.getElementById('jurnalForm').reset();
+            } catch (err) { alert(err.message); }
+            finally { btn.innerText = "Simpan Jurnal"; }
         };
 
-        // 2. FUNGSI LOAD MATERI (REAL-TIME)
-        function loadMyMateri(email) {
-            const container = document.getElementById('listMateriContainer');
-            const q = query(collection(db, "materi"), where("guru", "==", email));
-
-            onSnapshot(q, (snapshot) => {
-                if (snapshot.empty) {
-                    container.innerHTML = "<p style='color:#888; text-align:center;'>Anda belum mengupload materi.</p>";
-                    return;
-                }
-                container.innerHTML = "";
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const id = docSnap.id;
+        function loadJurnal(email) {
+            const q = query(collection(db, "jurnal"), where("guru", "==", email), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snap) => {
+                const container = document.getElementById('listJurnal');
+                container.innerHTML = snap.empty ? "<p style='text-align:center;color:#ccc;'>Belum ada jurnal.</p>" : "";
+                snap.forEach(d => {
+                    const j = d.data();
                     container.innerHTML += `
-                        <div class="materi-item">
-                            <div class="materi-info">
-                                <h4>${data.judul}</h4>
-                                <span>${data.jenjang}</span>
-                            </div>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="openEditModal('${id}', '${data.judul}', '${data.jenjang}', '${data.link}')">Edit</button>
-                                <button class="btn-hapus" onclick="hapusMateri('${id}')">Hapus</button>
-                            </div>
-                        </div>
-                    `;
+                        <div class="jurnal-item">
+                            <p class="jurnal-date">${j.tanggal} • ${j.jenjang}</p>
+                            <p style="font-weight:700; font-size:14px; margin-top:3px;">${j.materi}</p>
+                            <p style="font-size:12px; color:#666; margin-top:2px;">${j.catatan || '-'}</p>
+                        </div>`;
                 });
             });
         }
 
-        // 3. FUNGSI HAPUS
-        window.hapusMateri = async (id) => {
-            if (confirm("Apakah Anda yakin ingin menghapus materi ini?")) {
-                try {
-                    await deleteDoc(doc(db, "materi", id));
-                    alert("Materi dihapus.");
-                } catch (err) { alert("Gagal menghapus: " + err.message); }
+        // --- LOGIKA ABSENSI SISWA ---
+        document.getElementById('btnTampilkanSiswa').onclick = async () => {
+            const jenjang = document.getElementById('filterJenjang').value;
+            const table = document.getElementById('tableSiswa');
+            table.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Mencari siswa...</td></tr>";
+
+            const q = query(collection(db, "users"), where("role", "==", "siswa"), where("jenjang", "==", jenjang));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                table.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Tidak ada siswa di jenjang ini.</td></tr>";
+                document.getElementById('btnSimpanAbsen').style.display = 'none';
+                return;
             }
+
+            table.innerHTML = "";
+            dataAbsensi = {}; // Reset data absen
+            snap.forEach(d => {
+                const s = d.data();
+                dataAbsensi[d.id] = { nama: s.nama, jenjang: s.jenjang, status: 'H' }; // Default Hadir
+                table.innerHTML += `
+                    <tr>
+                        <td><strong>${s.nama}</strong></td>
+                        <td><span style="font-size:11px; color:#888;">${s.jenjang}</span></td>
+                        <td style="text-align: right;">
+                            <button class="status-btn active-h" id="h-${d.id}" onclick="setAbsen('${d.id}', 'H')">H</button>
+                            <button class="status-btn" id="i-${d.id}" onclick="setAbsen('${d.id}', 'I')">I</button>
+                            <button class="status-btn" id="s-${d.id}" onclick="setAbsen('${d.id}', 'S')">S</button>
+                            <button class="status-btn" id="a-${d.id}" onclick="setAbsen('${d.id}', 'A')">A</button>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('btnSimpanAbsen').style.display = 'block';
         };
 
-        // 4. FUNGSI EDIT (MODAL)
-        const modal = document.getElementById('editModal');
-        window.openEditModal = (id, judul, jenjang, link) => {
-            document.getElementById('editId').value = id;
-            document.getElementById('editJudul').value = judul;
-            document.getElementById('editJenjang').value = jenjang;
-            document.getElementById('editLink').value = link;
-            modal.style.display = 'flex';
+        window.setAbsen = (id, status) => {
+            dataAbsensi[id].status = status;
+            // Reset warna tombol di baris tersebut
+            ['H','I','S','A'].forEach(s => {
+                const btn = document.getElementById(`${s.toLowerCase()}-${id}`);
+                btn.className = 'status-btn';
+            });
+            // Aktifkan warna tombol yang dipilih
+            const activeBtn = document.getElementById(`${status.toLowerCase()}-${id}`);
+            activeBtn.className = `status-btn active-${status.toLowerCase()}`;
         };
 
-        window.closeEditModal = () => modal.style.display = 'none';
-
-        document.getElementById('editForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editId').value;
+        document.getElementById('btnSimpanAbsen').onclick = async () => {
+            const btn = document.getElementById('btnSimpanAbsen');
+            btn.innerText = "Menyimpan Absensi..."; btn.disabled = true;
+            
             try {
-                await updateDoc(doc(db, "materi", id), {
-                    judul: document.getElementById('editJudul').value,
-                    jenjang: document.getElementById('editJenjang').value,
-                    link: document.getElementById('editLink').value
-                });
-                alert("Materi diperbarui!");
-                closeEditModal();
-            } catch (err) { alert("Gagal update: " + err.message); }
+                const tanggal = new Date().toLocaleDateString('id-ID');
+                for (let id in dataAbsensi) {
+                    await addDoc(collection(db, "absensi"), {
+                        siswaId: id,
+                        nama: dataAbsensi[id].nama,
+                        jenjang: dataAbsensi[id].jenjang,
+                        status: dataAbsensi[id].status,
+                        tanggal: tanggal,
+                        guru: auth.currentUser.email,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                alert("Absensi hari ini berhasil disimpan!");
+            } catch (err) { alert(err.message); }
+            finally { btn.innerText = "Simpan Semua Absensi"; btn.disabled = false; }
         };
 
         document.getElementById('btnLogout').onclick = () => signOut(auth);
