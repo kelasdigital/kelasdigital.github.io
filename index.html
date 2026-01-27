@@ -3,20 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Academia - Reset Password Ready</title>
+    <title>Academia - Minimalist Green</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- RESET & BASE --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
-        body { 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
-            min-height: 100vh; 
-            color: #333;
+        /* --- ROOT & RESET --- */
+        :root {
+            --primary-green: #2d5a27;
+            --light-green: #eaf2ea;
+            --accent-gold: #ffd600;
+            --text-dark: #1a2e1a;
+            --white: #ffffff;
         }
 
-        /* --- NAVIGATION BAR --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { 
+            background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); 
+            min-height: 100vh;
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
         .navbar { 
-            background: #1a237e; 
-            height: 80px; 
+            height: 70px; 
             display: flex; 
             align-items: center; 
             padding: 0 5%; 
@@ -24,80 +34,115 @@
             position: fixed; 
             width: 100%; 
             top: 0; 
-            z-index: 1000; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
-        .logo { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
-        .nav-right { display: flex; align-items: center; gap: 15px; }
 
-        /* --- BUTTON STYLES --- */
-        button { padding: 10px 24px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 14px; border: none; }
-        .btn-nav-daftar { background: transparent; color: white; border: 2px solid white; }
-        .btn-nav-login { background: #ffd600; color: #1a237e; box-shadow: 0 4px 0 #c7a500; }
-        .btn-nav-login:hover { background: #ffea00; transform: translateY(-2px); }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--white); }
 
-        /* --- HERO SECTION --- */
-        .hero { height: 100vh; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
-        .hero-card { background: white; padding: 60px 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; max-width: 600px; width: 90%; border-bottom: 8px solid #ffd600; }
-        .hero-card h1 { color: #1a237e; font-size: 36px; margin-bottom: 15px; }
+        .nav-right { display: flex; gap: 12px; }
 
-        /* --- MODALS --- */
+        /* --- BUTTONS --- */
+        button { 
+            padding: 8px 20px; border-radius: 50px; font-weight: 600; 
+            cursor: pointer; transition: all 0.3s ease; font-size: 13px; border: none;
+        }
+
+        .btn-nav-daftar { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.4); }
+        .btn-nav-daftar:hover { background: white; color: var(--primary-green); }
+
+        .btn-nav-login { background: var(--white); color: var(--primary-green); }
+        .btn-nav-login:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* --- HERO --- */
+        .hero { 
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 0 20px;
+        }
+
+        .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 15px; }
+        .hero p { font-size: 18px; opacity: 0.8; max-width: 600px; font-weight: 300; }
+
+        /* --- MINIMALIST MODALS --- */
         .modal-overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(26, 35, 126, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; 
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(12px);
+            z-index: 2000; justify-content: center; align-items: center; 
         }
-        .modal-box { background: white; padding: 40px; border-radius: 20px; width: 420px; position: relative; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .modal-box h2 { color: #1a237e; margin-bottom: 25px; text-align: center; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1a237e; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; outline: none; transition: 0.3s; }
-        input:focus { border-color: #1a237e; }
-        
-        .btn-submit { width: 100%; background: #1a237e; color: white; padding: 14px; font-size: 16px; margin-top: 10px; }
-        .btn-close { background: #f44336; color: white; width: 100%; margin-top: 10px; }
 
-        .form-footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .link-action { color: #1a237e; text-decoration: none; font-weight: 700; cursor: pointer; }
-        .link-action:hover { text-decoration: underline; }
+        .modal-box { 
+            background: var(--white); padding: 40px; border-radius: 24px; 
+            width: 100%; max-width: 380px; color: var(--text-dark);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-box h2 { font-size: 24px; margin-bottom: 25px; font-weight: 800; text-align: center; color: var(--primary-green); }
+
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #666; }
+        
+        input, select { 
+            width: 100%; padding: 12px 15px; border: 1.5px solid #eee; 
+            border-radius: 12px; outline: none; transition: 0.3s; background: #f9f9f9;
+        }
+
+        input:focus { border-color: var(--primary-green); background: #fff; }
+
+        .btn-submit { 
+            width: 100%; background: var(--primary-green); color: white; 
+            padding: 14px; border-radius: 12px; font-size: 15px; margin-top: 10px;
+        }
+
+        .form-footer { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-top: 15px; font-size: 12px; color: #888; 
+        }
+
+        .link-action { color: var(--primary-green); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+        .btn-close-text { 
+            display: block; width: 100%; text-align: center; margin-top: 15px; 
+            font-size: 13px; color: #aaa; cursor: pointer; 
+        }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="logo">Academia</div>
-        <div class="nav-right" id="nav-auth">
-            <button class="btn-nav-daftar" onclick="openModal('daftarOverlay')">DAFTAR</button>
-            <button class="btn-nav-login" onclick="openModal('loginOverlay')">LOGIN</button>
+        <div class="logo">ACADEMIA</div>
+        <div class="nav-right">
+            <button class="btn-nav-daftar" onclick="openModal('daftarOverlay')">Daftar</button>
+            <button class="btn-nav-login" onclick="openModal('loginOverlay')">Login</button>
         </div>
     </nav>
 
     <main class="hero">
-        <div class="hero-card">
-            <h1>Portal Akademik Terpadu</h1>
-            <p>Sistem keamanan terbaru telah diaktifkan. Gunakan fitur reset password jika Anda mengalami kendala saat masuk.</p>
-        </div>
+        <h1>Digital Learning Space</h1>
+        <p>Platform akademik terpadu untuk efisiensi pendidikan masa depan.</p>
     </main>
 
     <div id="loginOverlay" class="modal-overlay">
         <div class="modal-box">
-            <h2>Masuk ke Akun</h2>
+            <h2>Welcome Back</h2>
             <form id="loginForm">
                 <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="logEmail" placeholder="nama@email.com" required>
+                    <label>EMAIL</label>
+                    <input type="email" id="logEmail" placeholder="email@domain.com" required>
                 </div>
                 <div class="input-group">
-                    <label>Password</label>
+                    <label>PASSWORD</label>
                     <input type="password" id="logPass" placeholder="••••••••" required>
                 </div>
                 <div class="form-footer">
-                    <label style="cursor: pointer;"><input type="checkbox" id="rememberMe"> Ingat Saya</label>
-                    <span class="link-action" onclick="openResetModal()">Lupa Password?</span>
+                    <label><input type="checkbox" id="rememberMe"> Ingat saya</label>
+                    <span class="link-action" onclick="openResetModal()">Lupa sandi?</span>
                 </div>
-                <button type="submit" class="btn-submit" id="btnLoginBtn">LOGIN SEKARANG</button>
-                <button type="button" class="btn-close" onclick="closeModal()">BATAL</button>
+                <button type="submit" class="btn-submit" id="btnLoginBtn">Sign In</button>
+                <span class="btn-close-text" onclick="closeModal()">Tutup</span>
             </form>
         </div>
     </div>
@@ -105,41 +150,49 @@
     <div id="resetOverlay" class="modal-overlay">
         <div class="modal-box">
             <h2>Reset Password</h2>
-            <p style="font-size: 13px; color: #666; margin-bottom: 20px; text-align: center;">Masukkan email Anda. Kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.</p>
             <form id="resetForm">
                 <div class="input-group">
-                    <label>Email Terdaftar</label>
-                    <input type="email" id="resetEmail" placeholder="nama@email.com" required>
+                    <label>EMAIL TERDAFTAR</label>
+                    <input type="email" id="resetEmail" required>
                 </div>
-                <button type="submit" class="btn-submit" id="btnResetBtn">KIRIM LINK RESET</button>
-                <button type="button" class="btn-close" onclick="closeModal()">KEMBALI</button>
+                <button type="submit" class="btn-submit" id="btnResetBtn">Kirim Instruksi</button>
+                <span class="btn-close-text" onclick="closeModal()">Kembali</span>
             </form>
         </div>
     </div>
 
     <div id="daftarOverlay" class="modal-overlay">
         <div class="modal-box">
-            <h2>Pendaftaran Baru</h2>
+            <h2>Create Account</h2>
             <form id="daftarForm">
-                <div class="input-group"><label>Daftar Sebagai</label>
-                    <select id="regRole"><option value="siswa">Siswa</option><option value="guru">Guru</option></select>
+                <div class="input-group">
+                    <label>DAFTAR SEBAGAI</label>
+                    <select id="regRole">
+                        <option value="siswa">Siswa</option>
+                        <option value="guru">Guru</option>
+                    </select>
                 </div>
-                <div class="input-group"><label>Nama Lengkap</label><input type="text" id="regNama" required></div>
-                <div class="input-group"><label>Email</label><input type="email" id="regEmail" required></div>
-                <div class="input-group"><label>Buat Password</label><input type="password" id="regPass" required></div>
-                <button type="submit" class="btn-submit" id="btnRegBtn" style="background:#2e7d32;">BUAT AKUN</button>
-                <button type="button" class="btn-close" onclick="closeModal()">BATAL</button>
+                <div class="input-group">
+                    <label>NAMA LENGKAP</label>
+                    <input type="text" id="regNama" required>
+                </div>
+                <div class="input-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="input-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="regPass" required>
+                </div>
+                <button type="submit" class="btn-submit" id="btnRegBtn">Daftar Sekarang</button>
+                <span class="btn-close-text" onclick="closeModal()">Tutup</span>
             </form>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
-            setPersistence, browserLocalPersistence, browserSessionPersistence,
-            sendPasswordResetEmail // Tambahan untuk Reset Password
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -148,85 +201,61 @@
             projectId: "kelasdigital-b58ce",
             storageBucket: "kelasdigital-b58ce.firebasestorage.app",
             messagingSenderId: "814579641877",
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c",
-            measurementId: "G-GS1B5E3YFQ"
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- UI FUNCTIONS ---
+        // --- UI LOGIC ---
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-        window.openResetModal = () => {
-            closeModal();
-            openModal('resetOverlay');
-        };
+        window.openResetModal = () => { closeModal(); openModal('resetOverlay'); };
 
-        // --- LOGIKA RESET PASSWORD ---
-        document.getElementById('resetForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            const btn = document.getElementById('btnResetBtn');
-            
-            btn.innerText = "MENGIRIM...";
-            btn.disabled = true;
+        window.onclick = (e) => { if (e.target.classList.contains('modal-overlay')) closeModal(); };
 
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert("Sukses! Link reset password telah dikirim ke email Anda. Silakan cek Inbox atau Spam.");
-                closeModal();
-            } catch (err) {
-                alert("Error: " + err.message);
-            } finally {
-                btn.innerText = "KIRIM LINK RESET";
-                btn.disabled = false;
-            }
-        };
-
-        // --- LOGIN LOGIC ---
+        // --- FIREBASE LOGIC (LOGIN) ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('logEmail').value;
-            const pass = document.getElementById('logPass').value;
-            const remember = document.getElementById('rememberMe').checked;
             const btn = document.getElementById('btnLoginBtn');
-
-            btn.innerText = "MENGECEK...";
-            btn.disabled = true;
+            btn.innerText = "Authenticating..."; btn.disabled = true;
 
             try {
-                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-                const userCred = await signInWithEmailAndPassword(auth, email, pass);
+                const persistence = document.getElementById('rememberMe').checked ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistence);
+                const userCred = await signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value);
                 const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
-                
                 if (userDoc.exists()) {
                     window.location.href = userDoc.data().role === "guru" ? "guru_dashboard.html" : "siswa_dashboard.html";
                 }
-            } catch (err) { alert("Gagal Masuk: " + err.message); }
-            finally { btn.innerText = "LOGIN SEKARANG"; btn.disabled = false; }
+            } catch (err) { alert(err.message); btn.innerText = "Sign In"; btn.disabled = false; }
         };
 
-        // --- REGISTER LOGIC ---
+        // --- FIREBASE LOGIC (DAFTAR) ---
         document.getElementById('daftarForm').onsubmit = async (e) => {
             e.preventDefault();
-            const role = document.getElementById('regRole').value;
-            const nama = document.getElementById('regNama').value;
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPass').value;
             const btn = document.getElementById('btnRegBtn');
-
-            btn.innerText = "MEMPROSES...";
-            btn.disabled = true;
+            btn.innerText = "Creating..."; btn.disabled = true;
 
             try {
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", cred.user.uid), { nama, role, email, createdAt: new Date() });
-                alert("Berhasil Daftar!");
-                closeModal();
+                const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value);
+                await setDoc(doc(db, "users", cred.user.uid), { 
+                    nama: document.getElementById('regNama').value, 
+                    role: document.getElementById('regRole').value, 
+                    email: document.getElementById('regEmail').value 
+                });
+                alert("Registrasi Berhasil!"); closeModal();
+            } catch (err) { alert(err.message); } finally { btn.innerText = "Daftar Sekarang"; btn.disabled = false; }
+        };
+
+        // --- FIREBASE LOGIC (RESET) ---
+        document.getElementById('resetForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await sendPasswordResetEmail(auth, document.getElementById('resetEmail').value);
+                alert("Link reset telah dikirim ke email Anda."); closeModal();
             } catch (err) { alert(err.message); }
-            finally { btn.innerText = "BUAT AKUN"; btn.disabled = false; }
         };
     </script>
 </body>
