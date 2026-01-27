@@ -1,44 +1,76 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Guru Panel - KELAS DIGITAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f0f4f0; padding: 40px; }
         .header { background: #2d5a27; color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 20px; }
+        h3 { color: #2d5a27; margin-bottom: 15px; }
         input, select, button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         button { background: #2d5a27; color: white; border: none; font-weight: bold; cursor: pointer; }
         .btn-logout { background: #ff5252; width: auto; padding: 8px 15px; }
     </style>
 </head>
 <body>
-    <div class="header"><h2>PANEL GURU KELAS DIGITAL</h2><button id="btnLogout" class="btn-logout">LOGOUT</button></div>
+    <div class="header">
+        <h2>PANEL GURU KELAS DIGITAL</h2>
+        <button id="btnLogout" class="btn-logout">LOGOUT</button>
+    </div>
+
     <div class="card">
         <h3>Upload Materi Baru</h3>
         <form id="uploadForm">
-            <input type="text" id="judulMateri" placeholder="Judul Materi" required>
-            <select id="pilihJenjang"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
-            <input type="url" id="linkMateri" placeholder="Link (Drive/YouTube)" required>
-            <button type="submit" id="btnUpload">PUBLIKASIKAN</button>
+            <input type="text" id="judulMateri" placeholder="Judul Materi (Contoh: Fisika Dasar)" required>
+            <select id="pilihJenjang" required>
+                <option value="MI">MI (Madrasah Ibtidaiyah)</option>
+                <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
+                <option value="SMA">SMA (Sekolah Menengah Atas)</option>
+            </select>
+            <input type="url" id="linkMateri" placeholder="Link Materi (Google Drive/YouTube)" required>
+            <button type="submit" id="btnUpload">PUBLIKASIKAN MATERI</button>
         </form>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+        };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
         onAuthStateChanged(auth, (user) => { if (!user) window.location.href = "index.html"; });
+
         document.getElementById('uploadForm').onsubmit = async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('btnUpload');
+            btn.innerText = "Mengirim..."; btn.disabled = true;
             try {
-                await addDoc(collection(db, "materi"), { judul: document.getElementById('judulMateri').value, jenjang: document.getElementById('pilihJenjang').value, link: document.getElementById('linkMateri').value, guru: auth.currentUser.email, createdAt: serverTimestamp() });
-                alert("Berhasil!"); document.getElementById('uploadForm').reset();
+                await addDoc(collection(db, "materi"), {
+                    judul: document.getElementById('judulMateri').value,
+                    jenjang: document.getElementById('pilihJenjang').value,
+                    link: document.getElementById('linkMateri').value,
+                    guru: auth.currentUser.email,
+                    createdAt: serverTimestamp()
+                });
+                alert("Materi berhasil dipublikasikan!");
+                document.getElementById('uploadForm').reset();
             } catch (err) { alert(err.message); }
+            finally { btn.innerText = "PUBLIKASIKAN MATERI"; btn.disabled = false; }
         };
+
         document.getElementById('btnLogout').onclick = () => signOut(auth);
     </script>
 </body>
