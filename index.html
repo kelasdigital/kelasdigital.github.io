@@ -3,78 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Academia - Login</title>
+    <title>Portal Academia - Reset Password Ready</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f4f8; min-height: 100vh; display: flex; flex-direction: column; }
-        .navbar { background: #1a237e; height: 70px; display: flex; align-items: center; color: white; padding: 0 5%; justify-content: space-between; position: fixed; width: 100%; top: 0; z-index: 100; }
-        .hero { flex: 1; display: flex; justify-content: center; align-items: center; padding-top: 70px; }
-        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 90%; }
-        h1 { color: #1a237e; margin-bottom: 20px; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-        button { padding: 12px 25px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-login { background: #ffd600; color: #1a237e; }
-        .btn-daftar { background: transparent; color: #1a237e; border: 2px solid #1a237e; }
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            min-height: 100vh; 
+            color: #333;
+        }
+
+        /* --- NAVIGATION BAR --- */
+        .navbar { 
+            background: #1a237e; 
+            height: 80px; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 5%; 
+            justify-content: space-between; 
+            position: fixed; 
+            width: 100%; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+
+        /* --- BUTTON STYLES --- */
+        button { padding: 10px 24px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 14px; border: none; }
+        .btn-nav-daftar { background: transparent; color: white; border: 2px solid white; }
+        .btn-nav-login { background: #ffd600; color: #1a237e; box-shadow: 0 4px 0 #c7a500; }
+        .btn-nav-login:hover { background: #ffea00; transform: translateY(-2px); }
+
+        /* --- HERO SECTION --- */
+        .hero { height: 100vh; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
+        .hero-card { background: white; padding: 60px 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; max-width: 600px; width: 90%; border-bottom: 8px solid #ffd600; }
+        .hero-card h1 { color: #1a237e; font-size: 36px; margin-bottom: 15px; }
+
+        /* --- MODALS --- */
+        .modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(26, 35, 126, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; 
+        }
+        .modal-box { background: white; padding: 40px; border-radius: 20px; width: 420px; position: relative; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 30px; border-radius: 12px; width: 400px; position: relative; }
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-        .btn-submit { width: 100%; background: #1a237e; color: white; margin-top: 10px; }
+        .modal-box h2 { color: #1a237e; margin-bottom: 25px; text-align: center; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1a237e; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #1a237e; }
+        
+        .btn-submit { width: 100%; background: #1a237e; color: white; padding: 14px; font-size: 16px; margin-top: 10px; }
+        .btn-close { background: #f44336; color: white; width: 100%; margin-top: 10px; }
+
+        .form-footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .link-action { color: #1a237e; text-decoration: none; font-weight: 700; cursor: pointer; }
+        .link-action:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div style="font-size: 20px; font-weight: 800;">ACADEMIA</div>
-        <div id="nav-info">Silakan Login</div>
+        <div class="logo">Academia</div>
+        <div class="nav-right" id="nav-auth">
+            <button class="btn-nav-daftar" onclick="openModal('daftarOverlay')">DAFTAR</button>
+            <button class="btn-nav-login" onclick="openModal('loginOverlay')">LOGIN</button>
+        </div>
     </nav>
 
     <main class="hero">
-        <div class="card">
+        <div class="hero-card">
             <h1>Portal Akademik Terpadu</h1>
-            <p>Sistem integrasi data guru dan siswa berbasis Cloud Firebase.</p>
-            <div class="btn-group">
-                <button class="btn-daftar" onclick="openModal('daftarOverlay')">DAFTAR</button>
-                <button class="btn-login" onclick="openModal('loginOverlay')">LOGIN</button>
-            </div>
+            <p>Sistem keamanan terbaru telah diaktifkan. Gunakan fitur reset password jika Anda mengalami kendala saat masuk.</p>
         </div>
     </main>
 
     <div id="loginOverlay" class="modal-overlay">
         <div class="modal-box">
-            <h2>Login</h2>
+            <h2>Masuk ke Akun</h2>
             <form id="loginForm">
-                <div class="input-group"><label>Email</label><input type="email" id="logEmail" required></div>
-                <div class="input-group"><label>Password</label><input type="password" id="logPass" required></div>
-                <div style="margin-bottom: 15px;"><input type="checkbox" id="rememberMe"> <label style="display:inline;" for="rememberMe">Ingat Saya</label></div>
-                <button type="submit" class="btn-submit" id="btnLoginBtn">MASUK</button>
-                <button type="button" style="background:none; color:red; width:100%;" onclick="closeModal()">Batal</button>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="logEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="logPass" placeholder="••••••••" required>
+                </div>
+                <div class="form-footer">
+                    <label style="cursor: pointer;"><input type="checkbox" id="rememberMe"> Ingat Saya</label>
+                    <span class="link-action" onclick="openResetModal()">Lupa Password?</span>
+                </div>
+                <button type="submit" class="btn-submit" id="btnLoginBtn">LOGIN SEKARANG</button>
+                <button type="button" class="btn-close" onclick="closeModal()">BATAL</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="resetOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Reset Password</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px; text-align: center;">Masukkan email Anda. Kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.</p>
+            <form id="resetForm">
+                <div class="input-group">
+                    <label>Email Terdaftar</label>
+                    <input type="email" id="resetEmail" placeholder="nama@email.com" required>
+                </div>
+                <button type="submit" class="btn-submit" id="btnResetBtn">KIRIM LINK RESET</button>
+                <button type="button" class="btn-close" onclick="closeModal()">KEMBALI</button>
             </form>
         </div>
     </div>
 
     <div id="daftarOverlay" class="modal-overlay">
         <div class="modal-box">
-            <h2>Daftar Akun</h2>
+            <h2>Pendaftaran Baru</h2>
             <form id="daftarForm">
-                <div class="input-group"><label>Sebagai</label>
-                    <select id="regRole"><option value="guru">Guru</option><option value="siswa">Siswa</option></select>
+                <div class="input-group"><label>Daftar Sebagai</label>
+                    <select id="regRole"><option value="siswa">Siswa</option><option value="guru">Guru</option></select>
                 </div>
                 <div class="input-group"><label>Nama Lengkap</label><input type="text" id="regNama" required></div>
                 <div class="input-group"><label>Email</label><input type="email" id="regEmail" required></div>
-                <div class="input-group"><label>Password</label><input type="password" id="regPass" required></div>
-                <button type="submit" class="btn-submit" id="btnRegBtn" style="background:#2e7d32;">PROSES DAFTAR</button>
-                <button type="button" style="background:none; color:red; width:100%;" onclick="closeModal()">Batal</button>
+                <div class="input-group"><label>Buat Password</label><input type="password" id="regPass" required></div>
+                <button type="submit" class="btn-submit" id="btnRegBtn" style="background:#2e7d32;">BUAT AKUN</button>
+                <button type="button" class="btn-close" onclick="closeModal()">BATAL</button>
             </form>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
+            setPersistence, browserLocalPersistence, browserSessionPersistence,
+            sendPasswordResetEmail // Tambahan untuk Reset Password
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -91,8 +156,34 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- UI FUNCTIONS ---
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        window.openResetModal = () => {
+            closeModal();
+            openModal('resetOverlay');
+        };
+
+        // --- LOGIKA RESET PASSWORD ---
+        document.getElementById('resetForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const btn = document.getElementById('btnResetBtn');
+            
+            btn.innerText = "MENGIRIM...";
+            btn.disabled = true;
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert("Sukses! Link reset password telah dikirim ke email Anda. Silakan cek Inbox atau Spam.");
+                closeModal();
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                btn.innerText = "KIRIM LINK RESET";
+                btn.disabled = false;
+            }
+        };
 
         // --- LOGIN LOGIC ---
         document.getElementById('loginForm').onsubmit = async (e) => {
@@ -102,25 +193,22 @@
             const remember = document.getElementById('rememberMe').checked;
             const btn = document.getElementById('btnLoginBtn');
 
-            btn.innerText = "Memverifikasi...";
+            btn.innerText = "MENGECEK...";
             btn.disabled = true;
 
             try {
                 await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
                 const userCred = await signInWithEmailAndPassword(auth, email, pass);
-                
-                // Ambil Role dari Firestore
                 const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+                
                 if (userDoc.exists()) {
-                    const role = userDoc.data().role;
-                    // REDIRECT BERDASARKAN ROLE
-                    window.location.href = role === "guru" ? "guru_dashboard.html" : "siswa_dashboard.html";
+                    window.location.href = userDoc.data().role === "guru" ? "guru_dashboard.html" : "siswa_dashboard.html";
                 }
-            } catch (err) { alert("Error: " + err.message); }
-            finally { btn.innerText = "MASUK"; btn.disabled = false; }
+            } catch (err) { alert("Gagal Masuk: " + err.message); }
+            finally { btn.innerText = "LOGIN SEKARANG"; btn.disabled = false; }
         };
 
-        // --- DAFTAR LOGIC ---
+        // --- REGISTER LOGIC ---
         document.getElementById('daftarForm').onsubmit = async (e) => {
             e.preventDefault();
             const role = document.getElementById('regRole').value;
@@ -129,16 +217,16 @@
             const pass = document.getElementById('regPass').value;
             const btn = document.getElementById('btnRegBtn');
 
-            btn.innerText = "Mendaftarkan...";
+            btn.innerText = "MEMPROSES...";
             btn.disabled = true;
 
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 await setDoc(doc(db, "users", cred.user.uid), { nama, role, email, createdAt: new Date() });
-                alert("Berhasil! Silakan Login.");
+                alert("Berhasil Daftar!");
                 closeModal();
             } catch (err) { alert(err.message); }
-            finally { btn.innerText = "PROSES DAFTAR"; btn.disabled = false; }
+            finally { btn.innerText = "BUAT AKUN"; btn.disabled = false; }
         };
     </script>
 </body>
