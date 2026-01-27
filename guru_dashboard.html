@@ -1,45 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>Dashboard Guru - Academia</title>
+    <title>Guru Panel - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #e8eaf6; padding: 40px; }
-        .header { background: #1a237e; color: white; padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .container { margin-top: 20px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        button { background: #ff5252; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        body { font-family: 'Inter', sans-serif; background: #f0f4f0; padding: 40px; }
+        .header { background: #2d5a27; color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 20px; }
+        input, select, button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        button { background: #2d5a27; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .btn-logout { background: #ff5252; width: auto; padding: 8px 15px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2>PANEL GURU ACADEMIA</h2>
-        <button id="btnLogout">LOGOUT</button>
+    <div class="header"><h2>PANEL GURU KELAS DIGITAL</h2><button id="btnLogout" class="btn-logout">LOGOUT</button></div>
+    <div class="card">
+        <h3>Upload Materi Baru</h3>
+        <form id="uploadForm">
+            <input type="text" id="judulMateri" placeholder="Judul Materi" required>
+            <select id="pilihJenjang"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
+            <input type="url" id="linkMateri" placeholder="Link (Drive/YouTube)" required>
+            <button type="submit" id="btnUpload">PUBLIKASIKAN</button>
+        </form>
     </div>
-    <div class="container">
-        <h1 id="welcome">Memuat data...</h1>
-        <p>Anda memiliki akses untuk mengelola materi, input nilai, dan absensi siswa.</p>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        const firebaseConfig = { /* ... paste config yang sama ... */ 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
-            authDomain: "kelasdigital-b58ce.firebaseapp.com",
-            projectId: "kelasdigital-b58ce",
-            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
-            messagingSenderId: "814579641877",
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c",
-            measurementId: "G-GS1B5E3YFQ"
-        };
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "index.html";
-            else document.getElementById('welcome').innerText = "Selamat Datang, Guru (" + user.email + ")";
-        });
-
+        const db = getFirestore(app);
+        onAuthStateChanged(auth, (user) => { if (!user) window.location.href = "index.html"; });
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await addDoc(collection(db, "materi"), { judul: document.getElementById('judulMateri').value, jenjang: document.getElementById('pilihJenjang').value, link: document.getElementById('linkMateri').value, guru: auth.currentUser.email, createdAt: serverTimestamp() });
+                alert("Berhasil!"); document.getElementById('uploadForm').reset();
+            } catch (err) { alert(err.message); }
+        };
         document.getElementById('btnLogout').onclick = () => signOut(auth);
     </script>
 </body>
