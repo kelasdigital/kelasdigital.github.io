@@ -1,5 +1,20 @@
 <script type="module">
-    // ... (Import & Config tetap sama) ...
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+        authDomain: "kelasdigital-b58ce.firebaseapp.com",
+        projectId: "kelasdigital-b58ce",
+        storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+        messagingSenderId: "814579641877",
+        appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -9,16 +24,21 @@
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    // Gunakan "Tamu" atau "Umum" jika jenjang kosong
+                    
+                    // Mencegah tampilan "undefined" jika data kosong
                     const namaSiswa = userData.nama || "Siswa";
-                    const jenjangSiswa = userData.jenjang || "Umum";
+                    const jenjangSiswa = userData.jenjang || "Belum Diatur";
                     
                     document.getElementById('userTitle').innerText = `${namaSiswa} (${jenjangSiswa})`;
                     
                     if (userData.jenjang) {
                         loadMateri(userData.jenjang);
                     } else {
-                        document.getElementById('materiContainer').innerHTML = "<p>Jenjang Anda belum diatur. Silakan daftar ulang.</p>";
+                        document.getElementById('materiContainer').innerHTML = `
+                            <div style="padding: 20px; color: #777;">
+                                <p>Jenjang sekolah Anda belum terdaftar di sistem.</p>
+                                <p style="font-size: 13px;">Silakan daftar ulang dengan memilih jenjang MI/MTs/SMA.</p>
+                            </div>`;
                     }
                 }
             } catch (err) {
@@ -30,17 +50,42 @@
     async function loadMateri(jen) {
         const container = document.getElementById('materiContainer');
         try {
+            // Query ini membutuhkan Index Komposit di Firebase Console
             const q = query(
                 collection(db, "materi"), 
                 where("jenjang", "==", jen), 
                 orderBy("createdAt", "desc")
             );
+
             const snap = await getDocs(q);
-            // ... (Sisa logika render materi) ...
+            
+            if (snap.empty) {
+                container.innerHTML = `<p style="padding:20px; color:#888;">Belum ada materi untuk jenjang ${jen}.</p>`;
+                return;
+            }
+
+            container.innerHTML = ""; // Bersihkan kontainer
+            snap.forEach((doc) => {
+                const data = doc.data();
+                container.innerHTML += `
+                    <div class="materi-card">
+                        <span class="tag">${data.jenjang}</span>
+                        <h4>${data.judul}</h4>
+                        <p style="font-size:12px; color:#666; margin-top:5px;">Oleh: ${data.guru || 'Guru'}</p>
+                        <a href="${data.link}" target="_blank" class="link-materi">BUKA MATERI →</a>
+                    </div>
+                `;
+            });
         } catch (err) {
-            // Jika error ini muncul, berarti link Indeks di Console F12 harus diklik
-            container.innerHTML = "Error memuat materi. Pastikan Indeks Firestore sudah dibuat (Cek Console F12).";
-            console.error(err);
+            // Pesan ini muncul jika Index belum dibuat
+            container.innerHTML = `
+                <div style="color: #d32f2f; padding: 20px; background: #ffebee; border-radius: 10px;">
+                    <strong>Error:</strong> Gagal memuat materi.<br>
+                    <small>Pastikan Anda sudah klik 'Create Index' di Console F12 browser.</small>
+                </div>`;
+            console.error("Firestore Error:", err);
         }
     }
+
+    window.logout = () => signOut(auth);
 </script>
