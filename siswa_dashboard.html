@@ -3,33 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Siswa Panel - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #e8f5e9; padding: 40px; }
+        body { font-family: 'Inter', sans-serif; background: #f0f4f0; padding: 20px; }
         .header { background: #1b3022; color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .materi-list { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-        .materi-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .materi-card h4 { color: #1b3022; margin-bottom: 5px; }
-        .tag { background: #2d5a27; color: white; padding: 2px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; }
-        .btn-link { display: inline-block; margin-top: 15px; color: #2d5a27; text-decoration: none; font-weight: bold; border: 1px solid #2d5a27; padding: 5px 15px; border-radius: 5px; }
-        .btn-link:hover { background: #2d5a27; color: white; }
+        .grid { display: grid; grid-template-columns: 1fr 400px; gap: 20px; margin-top: 20px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h3 { color: #2d5a27; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; }
+        .materi-card { border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-bottom: 10px; transition: 0.3s; }
+        .materi-card:hover { border-color: #2d5a27; background: #f9fbf9; }
+        .absensi-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f9f9f9; font-size: 13px; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-weight: bold; color: white; font-size: 10px; }
     </style>
 </head>
 <body>
+
     <div class="header">
-        <h2 id="userTitle">Memuat Profil...</h2>
-        <button onclick="logout()" style="cursor:pointer; background:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; color:#d32f2f;">Logout</button>
+        <h2 id="userTitle">PROFIL...</h2>
+        <button onclick="logout()" style="background:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer; color:#d32f2f; font-weight:bold;">LOGOUT</button>
     </div>
 
-    <h3 style="margin-top: 30px; color: #333;">Materi Belajar Anda:</h3>
-    <div id="materiContainer" class="materi-list">
+    <div class="grid">
+        <div class="card">
+            <h3>📚 Materi Belajar</h3>
+            <div id="materiContainer">Memuat materi...</div>
         </div>
+
+        <div class="card">
+            <h3>📊 Kehadiran Saya</h3>
+            <div id="absenContainer">Memuat riwayat...</div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
+        const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
             authDomain: "kelasdigital-b58ce.firebaseapp.com",
             projectId: "kelasdigital-b58ce",
@@ -42,55 +53,41 @@
         const db = getFirestore(app);
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
-                try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        const namaSiswa = userData.nama || "Siswa";
-                        const jenjangSiswa = userData.jenjang || "Belum Diatur";
-                        document.getElementById('userTitle').innerText = `${namaSiswa} (${jenjangSiswa})`;
-                        
-                        if (userData.jenjang) {
-                            loadMateri(userData.jenjang);
-                        } else {
-                            document.getElementById('materiContainer').innerHTML = "<p>Data jenjang tidak ditemukan. Silakan daftar ulang akun Anda.</p>";
-                        }
-                    }
-                } catch (err) { console.error(err); }
+            if (!user) window.location.href = "index.html";
+            else {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const ud = userDoc.data();
+                document.getElementById('userTitle').innerText = `${ud.nama} (${ud.jenjang})`;
+                loadMateri(ud.jenjang);
+                loadAbsensi(user.uid);
             }
         });
 
-        async function loadMateri(jenjang) {
+        async function loadMateri(jen) {
             const container = document.getElementById('materiContainer');
             try {
-                // Catatan: Query ini membutuhkan Index Komposit di Firestore Console
-                const q = query(collection(db, "materi"), where("jenjang", "==", jenjang), orderBy("createdAt", "desc"));
+                const q = query(collection(db, "materi"), where("jenjang", "==", jen), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
-                
-                if (snap.empty) {
-                    container.innerHTML = `<p style="color:#777;">Belum ada materi untuk jenjang ${jenjang}.</p>`;
-                    return;
-                }
-
-                container.innerHTML = "";
+                container.innerHTML = snap.empty ? "Belum ada materi." : "";
                 snap.forEach(d => {
                     const m = d.data();
-                    container.innerHTML += `
-                        <div class="materi-card">
-                            <span class="tag">${m.jenjang}</span>
-                            <h4>${m.judul}</h4>
-                            <p style="font-size:12px; color:#666;">Oleh: ${m.guru}</p>
-                            <a href="${m.link}" target="_blank" class="btn-link">BUKA MATERI →</a>
-                        </div>`;
+                    container.innerHTML += `<div class="materi-card"><h4>${m.judul}</h4><p style="font-size:11px; color:#888;">Guru: ${m.guru}</p><a href="${m.link}" target="_blank" style="color:#2d5a27; font-weight:bold; text-decoration:none;">Buka Materi →</a></div>`;
                 });
-            } catch (err) {
-                container.innerHTML = "Error memuat materi. Pastikan Anda sudah membuat Index di Firestore Console (Cek F12 untuk linknya).";
-                console.error(err);
-            }
+            } catch (e) { container.innerHTML = "Error Index! Cek Console (F12)."; }
         }
+
+        async function loadAbsensi(uid) {
+            const container = document.getElementById('absenContainer');
+            const q = query(collection(db, "absensi"), where("siswaId", "==", uid), orderBy("tanggal", "desc"));
+            const snap = await getDocs(q);
+            container.innerHTML = snap.empty ? "Belum ada riwayat." : "";
+            snap.forEach(d => {
+                const a = d.data();
+                const color = a.status == 'H' ? '#2e7d32' : '#c62828';
+                container.innerHTML += `<div class="absensi-row"><span>📅 ${a.tanggal}</span> <span class="badge" style="background:${color}">${a.status == 'H' ? 'HADIR' : 'ALPA'}</span></div>`;
+            });
+        }
+
         window.logout = () => signOut(auth);
     </script>
 </body>
