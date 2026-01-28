@@ -20,11 +20,31 @@
             min-height: 100vh; 
             color: var(--white); 
             overflow-x: hidden; 
+            position: relative; /* Penting untuk overlay chipset */
         }
 
-        /* --- NAVBAR (DIPERBESAR AGAR ELEGAN) --- */
+        /* --- BACKGROUND CHIPSET OVERLAY --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('./img/bg-chipset.png'); /* Pastikan file ada di folder img */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* Efek magic: Menghilangkan hitam, menyisakan garis sirkuit di atas hijau */
+            mix-blend-mode: screen; 
+            opacity: 0.35; /* Atur kepekatan pola di sini */
+            pointer-events: none;
+        }
+
+        /* --- NAVBAR --- */
         .navbar { 
-            height: 100px; /* Naik dari 80px */
+            height: 100px; 
             display: flex; 
             align-items: center; 
             padding: 0 5%; 
@@ -38,13 +58,8 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .logo { 
-            display: flex; 
-            align-items: center; 
-        }
-
         .logo img { 
-            height: 75px; /* Naik dari 55px - Lebih Berwibawa */
+            height: 75px; 
             width: auto; 
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.2));
@@ -91,13 +106,13 @@
             box-shadow: 0 8px 25px rgba(0, 242, 255, 0.4);
         }
 
-        /* --- HERO & SLIDER (RAMPING & PROPORSIONAL) --- */
+        /* --- HERO & SLIDER --- */
         .hero { 
             height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            padding-top: 100px; /* Sesuai tinggi navbar */
+            padding-top: 100px; 
         }
 
         .slider-wrapper { 
@@ -128,7 +143,7 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            filter: brightness(0.45); 
+            filter: brightness(0.5); 
         }
 
         .slide-content { 
@@ -243,21 +258,21 @@
         <div class="slider-wrapper">
             <div class="slides" id="slideTrack">
                 <div class="slide">
-                    <img src="./img/slide1.png" alt="Digital Space">
+                    <img src="./img/slide1.jpg" alt="Digital Space">
                     <div class="slide-content">
                         <h1>Digital Learning Space</h1>
                         <p>Platform akademik terpadu untuk efisiensi pendidikan masa depan yang lebih cerdas.</p>
                     </div>
                 </div>
                 <div class="slide">
-                    <img src="./img/slide2.png" alt="Kolaborasi">
+                    <img src="./img/slide2.jpg" alt="Kolaborasi">
                     <div class="slide-content">
                         <h1>Kolaborasi Tanpa Batas</h1>
                         <p>Hubungkan guru dan siswa dalam satu ekosistem digital yang dinamis.</p>
                     </div>
                 </div>
                 <div class="slide">
-                    <img src="./img/slide3.png" alt="Akses Mudah">
+                    <img src="./img/slide3.jpg" alt="Akses Mudah">
                     <div class="slide-content">
                         <h1>Akses Kapan Saja</h1>
                         <p>Nikmati kemudahan akses materi pembelajaran real-time di mana saja.</p>
@@ -304,6 +319,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Konfigurasi Firebase Anda
         const firebaseConfig = {
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
             authDomain: "kelasdigital-b58ce.firebaseapp.com",
@@ -317,6 +333,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Slider Logic
         let currentSlide = 0;
         const track = document.getElementById('slideTrack');
         const dots = document.querySelectorAll('.dot');
@@ -330,9 +347,11 @@
         
         setInterval(() => { currentSlide = (currentSlide + 1) % 3; goToSlide(currentSlide); }, 7000);
 
+        // Modal Logic
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
+        // Form Submission Logic
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnLoginBtn');
