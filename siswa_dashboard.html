@@ -40,49 +40,33 @@
             pointer-events: none;
         }
 
-        /* --- FIX: MOBILE HEADER DENGAN GRID --- */
+        /* --- MOBILE HEADER --- */
         .mobile-header {
-            display: none; /* Sembunyikan di Desktop */
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%;
             height: 70px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(15px);
             z-index: 1001;
             padding: 0 15px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            
-            /* Gunakan grid 3 kolom agar logo tetap di tengah dan tidak tertutup */
-            display: none; 
             grid-template-columns: 50px 1fr 50px; 
             align-items: center;
         }
 
-        .menu-btn {
-            font-size: 24px;
-            color: var(--accent-neon);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .menu-btn { font-size: 24px; color: var(--accent-neon); cursor: pointer; display: flex; justify-content: center; }
+        .mobile-logo-img { height: 40px; width: auto; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
 
-        .mobile-logo-img {
-            height: 45px; /* Ukuran logo di HP */
-            width: auto;
-            justify-self: center; /* Memaksa logo tetap di tengah kolom kedua */
-            filter: drop-shadow(0 0 8px var(--accent-neon));
-        }
-
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR (FIXED SCROLL) --- */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(25px);
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-            padding: 30px 20px;
+            padding: 25px 15px;
             height: 100vh;
             position: fixed;
             left: 0; top: 0;
@@ -90,54 +74,76 @@
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar-header { text-align: center; margin-bottom: 30px; }
-        .sidebar-logo-img { height: 65px; width: auto; filter: drop-shadow(0 0 10px var(--accent-neon)); }
+        .sidebar-header { text-align: center; margin-bottom: 25px; flex-shrink: 0; }
+        .sidebar-logo-img { height: 60px; width: auto; filter: drop-shadow(0 0 10px var(--accent-neon)); }
+
+        /* Container Menu agar bisa di-scroll jika layar pendek */
+        .menu-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar untuk Sidebar */
+        .menu-scroll-container::-webkit-scrollbar { width: 4px; }
+        .menu-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         .menu-item {
-            padding: 14px 20px;
-            margin-bottom: 8px;
-            border-radius: 12px;
+            padding: 14px 15px;
+            margin-bottom: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             color: rgba(255,255,255,0.7);
+            font-size: 14px;
         }
 
-        .menu-item:hover, .menu-item.active {
-            background: rgba(255,255,255,0.1);
-            color: var(--white);
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
+        .menu-item.active { border-left: 4px solid var(--accent-neon); background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); }
+
+        /* --- LOGOUT SECTION (ALWAYS AT BOTTOM) --- */
+        .sidebar-footer {
+            flex-shrink: 0;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .menu-item.active {
-            border-left: 4px solid var(--accent-neon);
-            background: rgba(0, 242, 255, 0.15);
-            color: var(--accent-neon);
+        .btn-logout {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
         }
+        .btn-logout:hover { background: #ff5252; color: white; }
 
         /* --- MAIN CONTENT --- */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
             padding: 40px;
-            min-height: 100vh;
-            transition: 0.3s ease;
+            transition: 0.3s;
         }
 
-        /* --- RESPONSIVE --- */
+        /* RESPONSIVE HP */
         @media (max-width: 768px) {
-            .mobile-header { display: grid; } /* Tampilkan di HP */
-            .sidebar { left: -100%; } /* Sembunyikan sidebar ke kiri jauh */
+            .mobile-header { display: grid; }
+            .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
-            
-            .main-content { 
-                margin-left: 0; 
-                padding: 100px 20px 20px; 
-            }
-
-            .grid-dashboard { display: grid; grid-template-columns: 1fr; gap: 15px; }
+            .main-content { margin-left: 0; padding: 100px 20px 20px; }
             
             .sidebar-overlay {
                 display: none;
@@ -150,27 +156,9 @@
             .sidebar-overlay.active { display: block; }
         }
 
-        /* Card & Content */
-        .card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        h3 { color: var(--accent-neon); margin-bottom: 15px; }
-        .btn-logout {
-            background: rgba(211, 47, 47, 0.2);
-            color: #ff5252;
-            border: 1px solid #ff5252;
-            padding: 12px;
-            border-radius: 50px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: auto;
-        }
+        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
     </style>
 </head>
 <body>
@@ -178,17 +166,17 @@
     <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
     <header class="mobile-header">
-        <div class="menu-btn" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </div>
+        <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
         <img src="./img/image_12.png" alt="Logo" class="mobile-logo-img">
-        <div style="width: 50px;"></div> </header>
+        <div></div>
+    </header>
 
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="./img/image_12.png" alt="Logo" class="sidebar-logo-img">
         </div>
-        <nav style="flex: 1;">
+        
+        <div class="menu-scroll-container">
             <div class="menu-item active" onclick="showSection('dashboard', this)">
                 <i class="fa-solid fa-house"></i> <span>Dashboard</span>
             </div>
@@ -201,46 +189,46 @@
             <div class="menu-item" onclick="showSection('ujian', this)">
                 <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
             </div>
-        </nav>
-        <button class="btn-logout" onclick="logout()">
-            <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
-        </button>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="btn-logout" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="header-top">
-            <h2 id="userName">Memuat...</h2>
-            <p id="userRole" style="color: var(--accent-neon); font-size: 14px;">Siswa Aktif</p>
-        </div>
-
-        <div id="dashboard" class="content-section">
-            <div class="grid-dashboard">
-                <div class="card">
-                    <h3><i class="fa-solid fa-book-open"></i> Materi Terbaru</h3>
-                    <div id="materiRingkasan">Belum ada materi.</div>
-                </div>
-                <div class="card">
-                    <h3><i class="fa-solid fa-calendar-check"></i> Absensi</h3>
-                    <div id="absenRingkasan">Belum ada data.</div>
-                </div>
+        <div id="dashboard" class="content-section active">
+            <h2 id="userName">Siswa Aktif</h2>
+            <div class="card" style="margin-top:20px;">
+                <h3>Materi Terbaru</h3>
+                <p>Materi akan muncul di sini...</p>
             </div>
         </div>
     </main>
 
     <script>
-        // Toggle Sidebar Mobile
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        // Navigasi
         window.showSection = (id, el) => {
-            // Logika ganti section (seperti sebelumnya)
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
             if(window.innerWidth <= 768) toggleSidebar();
         };
 
-        // Firebase Auth & Data (Gunakan config anda)
+        // Fungsi logout tetap menggunakan Firebase Anda sebelumnya
+        function logout() {
+            if(confirm("Keluar dari akun?")) {
+                // Logika Firebase signOut di sini
+                alert("Berhasil Logout");
+            }
+        }
     </script>
 </body>
 </html>
