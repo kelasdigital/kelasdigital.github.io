@@ -40,40 +40,56 @@
             pointer-events: none;
         }
 
-        /* --- MOBILE HEADER --- */
-        .mobile-header {
-            display: none;
+        /* --- TOP HEADER (TAMPILAN UTAMA) --- */
+        .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100%;
             height: 70px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(20px);
             z-index: 1001;
-            padding: 0 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            grid-template-columns: 50px 1fr 50px; 
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 50px 1fr auto; /* Tombol - Logo - Keluar */
             align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .menu-btn { font-size: 24px; color: var(--accent-neon); cursor: pointer; display: flex; justify-content: center; }
-        .mobile-logo-img { height: 40px; width: auto; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
+
+        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; }
+        .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
+
+        /* --- TOMBOL KELUAR DI POJOK KANAN ATAS --- */
+        .btn-keluar-top {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+        }
+        .btn-keluar-top:hover { background: #ff5252; color: white; box-shadow: 0 0 15px rgba(255, 82, 82, 0.4); }
 
         /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(25px);
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-            padding: 25px 15px;
+            padding: 90px 15px 25px; /* Padding atas disesuaikan height navbar */
             height: 100vh;
             position: fixed;
             left: 0; top: 0;
-            z-index: 1002;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            transition: 0.3s ease;
         }
-        .sidebar-header { text-align: center; margin-bottom: 25px; }
-        .sidebar-logo-img { height: 60px; width: auto; filter: drop-shadow(0 0 10px var(--accent-neon)); }
 
         .menu-item {
             padding: 14px 15px;
@@ -88,53 +104,22 @@
             color: rgba(255,255,255,0.7);
         }
         .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
-        .menu-item.active { border-left: 4px solid var(--accent-neon); background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); }
+        .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); }
 
-        /* --- MAIN CONTENT & TOP HEADER --- */
+        /* --- MAIN CONTENT --- */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
-            padding: 40px;
+            padding: 100px 40px 40px;
             transition: 0.3s;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between; /* Memisahkan info (kiri) dan logout (kanan) */
-            align-items: center;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.05);
-            padding: 15px 25px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* --- FIX: TOMBOL LOGOUT POJOK KANAN ATAS --- */
-        .btn-logout {
-            background: rgba(211, 47, 47, 0.2);
-            color: #ff5252;
-            border: 1px solid #ff5252;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            font-size: 14px;
-        }
-        .btn-logout:hover { background: #ff5252; color: white; transform: translateY(-2px); }
-
-        /* RESPONSIVE HP */
+        /* RESPONSIVE LAYOUT */
         @media (max-width: 768px) {
-            .mobile-header { display: grid; }
             .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
             .main-content { margin-left: 0; padding: 90px 15px 15px; }
-            .header-top { padding: 12px 15px; flex-direction: row; } /* Tetap sebaris di HP */
-            .user-info h2 { font-size: 18px; }
-            .btn-logout { padding: 8px 12px; font-size: 12px; }
+            .btn-keluar-top span { display: none; } /* Hanya ikon di layar kecil */
             
             .sidebar-overlay {
                 display: none;
@@ -147,56 +132,42 @@
             .sidebar-overlay.active { display: block; }
         }
 
-        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-        .content-section { display: none; }
-        .content-section.active { display: block; }
+        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; }
     </style>
 </head>
 <body>
 
     <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <header class="mobile-header">
+    <header class="top-navbar">
         <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
-        <img src="./img/image_12.png" alt="Logo" class="mobile-logo-img">
-        <div></div>
+        <img src="./img/image_12.png" alt="Logo" class="nav-logo-img">
+        <button class="btn-keluar-top" onclick="logout()">
+            <i class="fa-solid fa-power-off"></i> <span>KELUAR</span>
+        </button>
     </header>
 
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="./img/image_12.png" alt="Logo" class="sidebar-logo-img">
+        <div class="menu-item active" onclick="showSection('dashboard', this)">
+            <i class="fa-solid fa-house"></i> <span>Dashboard</span>
         </div>
-        <nav>
-            <div class="menu-item active" onclick="showSection('dashboard', this)">
-                <i class="fa-solid fa-house"></i> <span>Dashboard</span>
-            </div>
-            <div class="menu-item" onclick="showSection('biodata', this)">
-                <i class="fa-solid fa-user"></i> <span>Biodata</span>
-            </div>
-            <div class="menu-item" onclick="showSection('materi', this)">
-                <i class="fa-solid fa-book"></i> <span>Materi</span>
-            </div>
-            <div class="menu-item" onclick="showSection('ujian', this)">
-                <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
-            </div>
-        </nav>
+        <div class="menu-item" onclick="showSection('biodata', this)">
+            <i class="fa-solid fa-user"></i> <span>Biodata</span>
+        </div>
+        <div class="menu-item" onclick="showSection('materi', this)">
+            <i class="fa-solid fa-book"></i> <span>Materi</span>
+        </div>
+        <div class="menu-item" onclick="showSection('ujian', this)">
+            <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="header-top">
-            <div class="user-info">
-                <h2 id="userName">Siswa Aktif</h2>
-                <p id="userRole" style="color: var(--accent-neon); font-size: 13px; font-weight: 600;">KELAS DIGITAL</p>
-            </div>
-            <button class="btn-logout" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i> <span>KELUAR</span>
-            </button>
-        </div>
-
-        <div id="dashboard" class="content-section active">
+        <div id="dashboard" class="content-section">
+            <h2 id="userName" style="margin-bottom: 20px;">Halo, Siswa Aktif</h2>
             <div class="card">
-                <h3>Selamat Datang di Kelas Digital</h3>
-                <p style="margin-top:10px; opacity:0.8;">Pilih menu di samping untuk mengakses materi, absensi, atau ujian Anda.</p>
+                <h3 style="color: var(--accent-neon);">Selamat Datang di Kelas Digital</h3>
+                <p style="margin-top:10px; opacity:0.8;">Pilih menu di samping untuk mengakses materi atau ujian Anda.</p>
             </div>
         </div>
     </main>
@@ -207,17 +178,9 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        window.showSection = (id, el) => {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-            if(window.innerWidth <= 768) toggleSidebar();
-        };
-
         function logout() {
             if(confirm("Apakah Anda yakin ingin keluar?")) {
-                // Tambahkan logika firebase.auth().signOut() di sini
+                // Logika Firebase signOut di sini
                 alert("Berhasil Logout");
             }
         }
