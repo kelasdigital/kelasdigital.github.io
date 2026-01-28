@@ -11,7 +11,7 @@
             --text-dark: #333333;
             --text-muted: #666666;
             --bg-light: #f8f9fa;
-            --sidebar-width: 260px;
+            --sidebar-width: 280px;
             --border-color: #e0e0e0;
         }
 
@@ -27,6 +27,7 @@
             border-right: 1px solid var(--border-color);
             padding: 20px 0;
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .sidebar-header { padding: 0 25px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; }
@@ -44,18 +45,20 @@
             cursor: pointer;
             margin-bottom: 2px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
         }
         .menu-item:hover { background-color: #f5f5f5; }
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
 
+        /* Sub Menu Styles */
         .sub-menu {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
             background-color: #fafafa;
             border-radius: 8px;
+            margin-bottom: 5px;
         }
         .menu-item.active-parent .chevron { transform: rotate(180deg); }
         .show-sub { max-height: 1000px; }
@@ -76,8 +79,7 @@
         /* --- MAIN CONTENT --- */
         .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 40px; }
         
-        /* Form Section Container */
-        .form-page { display: none; } /* Sembunyi secara default */
+        .form-page { display: none; }
         .form-page.active { display: block; animation: fadeIn 0.3s ease; }
 
         @keyframes fadeIn {
@@ -88,7 +90,7 @@
         .card { 
             background: white; padding: 35px; border-radius: 12px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #eee;
-            max-width: 800px; margin: 0 auto;
+            max-width: 900px; margin: 0 auto;
         }
         
         .section-header { 
@@ -108,15 +110,12 @@
         input:focus, textarea:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1); }
         textarea { resize: vertical; min-height: 120px; }
 
-        .btn-action-group { display: flex; gap: 15px; margin-top: 30px; }
         .btn-save {
             background: var(--primary-green); color: white; border: none;
             padding: 15px 30px; border-radius: 8px; font-weight: 700;
-            cursor: pointer; flex-grow: 1; font-size: 15px;
+            cursor: pointer; width: 100%; font-size: 15px; margin-top: 30px;
         }
-        .btn-next { background: #eee; color: #555; border: none; padding: 15px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* Attendance grid */
         .attendance-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
     </style>
 </head>
@@ -127,22 +126,35 @@
         
         <nav class="menu-group">
             <div class="menu-wrapper">
-                <div class="menu-item active-parent" onclick="toggleSubMenu('jurnalSub')">
-                    <i class="fa-solid fa-book"></i>
+                <div class="menu-item" onclick="toggleSubMenu('jurnalGuruSub')">
+                    <i class="fa-solid fa-user-tie"></i>
                     <span>Jurnal Guru</span>
                     <i class="fa-solid fa-chevron-down chevron"></i>
                 </div>
-                <div id="jurnalSub" class="sub-menu show-sub">
-                    <div class="sub-item active" onclick="showForm('page-identitas', this)">Identitas</div>
-                    <div class="sub-item" onclick="showForm('page-data-pembelajaran', this)">Data Pembelajaran</div>
-                    <div class="sub-item" onclick="showForm('page-materi', this)">Materi & Kompetensi</div>
-                    <div class="sub-item" onclick="showForm('page-kbm', this)">Kegiatan KBM</div>
-                    <div class="sub-item" onclick="showForm('page-evaluasi', this)">Evaluasi & Kehadiran</div>
-                    <div class="sub-item" onclick="showForm('page-refleksi', this)">Refleksi & Tindak Lanjut</div>
+                <div id="jurnalGuruSub" class="sub-menu">
+                    <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
+                    <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
+                    <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
+                    <div class="sub-item" onclick="showForm('pg-g-kbm', this)">Kegiatan KBM</div>
+                    <div class="sub-item" onclick="showForm('pg-g-evaluasi', this)">Evaluasi & Kehadiran</div>
+                    <div class="sub-item" onclick="showForm('pg-g-refleksi', this)">Refleksi & Tindak Lanjut</div>
                 </div>
             </div>
 
-            <div class="menu-item"><i class="fa-solid fa-chalkboard-user"></i><span>Jurnal Kelas</span></div>
+            <div class="menu-wrapper">
+                <div class="menu-item active-parent" onclick="toggleSubMenu('jurnalKelasSub')">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Jurnal Kelas</span>
+                    <i class="fa-solid fa-chevron-down chevron"></i>
+                </div>
+                <div id="jurnalKelasSub" class="sub-menu show-sub">
+                    <div class="sub-item active" onclick="showForm('pg-k-identitas', this)">Identitas</div>
+                    <div class="sub-item" onclick="showForm('pg-k-perencanaan', this)">Perencanaan</div>
+                    <div class="sub-item" onclick="showForm('pg-k-pelaksanaan', this)">Pelaksanaan</div>
+                    <div class="sub-item" onclick="showForm('pg-k-evaluasi', this)">Evaluasi / Catatan</div>
+                </div>
+            </div>
+
             <div class="menu-item"><i class="fa-solid fa-users"></i><span>Absensi Siswa</span></div>
             <div class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Materi</span></div>
             <div class="menu-item"><i class="fa-solid fa-pen-to-square"></i><span>Ulangan</span></div>
@@ -152,132 +164,112 @@
     <main class="main-content">
         <div class="card">
             
-            <div id="page-identitas" class="form-page active">
-                <div class="section-header"><i class="fa-solid fa-id-card"></i> Identitas Guru</div>
+            <div id="pg-k-identitas" class="form-page active">
+                <div class="section-header"><i class="fa-solid fa-school"></i> Identitas Jurnal Kelas</div>
                 <div class="form-grid">
-                    <div>
-                        <label>Nama Guru</label>
-                        <input type="text" placeholder="Nama Lengkap dan Gelar">
+                    <div class="full-width">
+                        <label>Judul Jurnal</label>
+                        <input type="text" placeholder="Contoh: Jurnal Kelas Harian">
+                    </div>
+                    <div class="full-width">
+                        <label>Nama Sekolah</label>
+                        <input type="text" placeholder="Masukkan Nama Sekolah">
                     </div>
                     <div>
                         <label>Mata Pelajaran</label>
-                        <input type="text" placeholder="Contoh: Matematika">
+                        <input type="text" placeholder="Mata Pelajaran">
+                    </div>
+                    <div>
+                        <label>Kelas</label>
+                        <input type="text" placeholder="Contoh: IX-B">
                     </div>
                     <div>
                         <label>Semester</label>
                         <select><option>Ganjil</option><option>Genap</option></select>
                     </div>
                     <div>
-                        <label>Tahun Pelajaran</label>
-                        <input type="text" value="2025/2026">
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-data-pembelajaran" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-calendar-check"></i> Data Pembelajaran</div>
-                <div class="form-grid">
-                    <div>
                         <label>Hari / Tanggal</label>
-                        <input type="date" id="tglOtomatis">
-                    </div>
-                    <div>
-                        <label>Jam Pelajaran</label>
-                        <input type="text" placeholder="Contoh: Jam ke 1 - 4">
-                    </div>
-                    <div class="full-width">
-                        <label>Kelas</label>
-                        <input type="text" placeholder="Contoh: X-IPA 1 / MI-6">
+                        <input type="date" class="tglInput">
                     </div>
                 </div>
             </div>
 
-            <div id="page-materi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-graduation-cap"></i> Materi & Kompetensi</div>
+            <div id="pg-k-perencanaan" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-compass"></i> Perencanaan Pembelajaran</div>
                 <div class="form-grid">
+                    <div class="full-width">
+                        <label>Kompetensi Dasar (KD) / Tujuan Pembelajaran (TP)</label>
+                        <textarea placeholder="Uraikan KD atau Tujuan Pembelajaran yang direncanakan..."></textarea>
+                    </div>
                     <div class="full-width">
                         <label>Materi Pokok</label>
-                        <input type="text" placeholder="Judul Materi Utama">
-                    </div>
-                    <div class="full-width">
-                        <label>Tujuan Pembelajaran</label>
-                        <textarea placeholder="Tuliskan tujuan yang ingin dicapai..."></textarea>
-                    </div>
-                    <div class="full-width">
-                        <label>Kompetensi Dasar (KD) / Capaian</label>
-                        <textarea placeholder="Target kompetensi atau capaian pembelajaran..."></textarea>
+                        <textarea placeholder="Tuliskan materi pokok yang akan diajarkan..."></textarea>
                     </div>
                 </div>
             </div>
 
-            <div id="page-kbm" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-chalkboard-teacher"></i> Kegiatan KBM</div>
+            <div id="pg-k-pelaksanaan" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-play"></i> Pelaksanaan Pembelajaran</div>
                 <div class="form-grid">
-                    <div>
-                        <label>Metode Pembelajaran</label>
-                        <input type="text" placeholder="Contoh: Diskusi, Ceramah, PBL">
-                    </div>
-                    <div>
-                        <label>Media Pembelajaran</label>
-                        <input type="text" placeholder="Contoh: Video, Alat Peraga, PPT">
+                    <div class="full-width">
+                        <label>Kegiatan Pembelajaran (Uraian Proses)</label>
+                        <textarea placeholder="Uraikan proses KBM dari awal sampai akhir..."></textarea>
                     </div>
                     <div class="full-width">
-                        <label>Ringkasan Kegiatan Pembelajaran</label>
-                        <textarea placeholder="Gambarkan singkat alur proses KBM harian..."></textarea>
+                        <label>Penilaian Pembelajaran</label>
+                        <textarea placeholder="Metode atau instrumen penilaian yang digunakan..."></textarea>
                     </div>
                 </div>
             </div>
 
-            <div id="page-evaluasi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-user-check"></i> Evaluasi & Kehadiran</div>
-                <label>Jumlah Kehadiran Siswa</label>
+            <div id="pg-k-evaluasi" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-clipboard-list"></i> Evaluasi / Catatan</div>
+                <label>Presensi Siswa (Jumlah)</label>
                 <div class="attendance-row">
                     <div><label style="color: #c62828;">Sakit (S)</label><input type="number" value="0"></div>
                     <div><label style="color: #ef6c00;">Izin (I)</label><input type="number" value="0"></div>
                     <div><label style="color: #616161;">Alpha (A)</label><input type="number" value="0"></div>
                 </div>
-                <label>Catatan Penilaian / Evaluasi Hasil</label>
-                <textarea placeholder="Tuliskan hasil evaluasi atau kuis singkat jika ada..."></textarea>
-            </div>
-
-            <div id="page-refleksi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-lightbulb"></i> Refleksi & Tindak Lanjut</div>
                 <div class="form-grid">
                     <div class="full-width">
-                        <label>Permasalahan / Kendala yang Dihadapi</label>
-                        <textarea placeholder="Tuliskan hambatan selama KBM..."></textarea>
+                        <label>Catatan / Keterangan</label>
+                        <textarea placeholder="Permasalahan, penanganan, atau kejadian penting lainnya..."></textarea>
                     </div>
                     <div class="full-width">
-                        <label>Rencana Perbaikan / Tindak Lanjut</label>
-                        <textarea placeholder="Langkah perbaikan untuk pertemuan mendatang..."></textarea>
+                        <label>Paraf Guru (Nama Terang / Inisial)</label>
+                        <input type="text" placeholder="Ketik nama atau inisial Anda sebagai verifikasi">
                     </div>
                 </div>
             </div>
 
-            <div class="btn-action-group">
-                <button class="btn-save" onclick="saveAll()">SIMPAN SEMUA DATA</button>
+            <div id="pg-g-identitas" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-id-card"></i> Identitas Guru</div>
+                <div class="form-grid">
+                    <div><label>Nama Guru</label><input type="text"></div>
+                    <div><label>Mata Pelajaran</label><input type="text"></div>
+                    <div><label>Semester</label><select><option>Ganjil</option><option>Genap</option></select></div>
+                    <div><label>Tahun Pelajaran</label><input type="text" value="2025/2026"></div>
+                </div>
             </div>
-
+            <button class="btn-save" onclick="alert('Data Berhasil Disimpan!')">SIMPAN DATA JURNAL</button>
         </div>
     </main>
 
     <script>
-        // Fungsi untuk berpindah halaman form
         function showForm(pageId, element) {
-            // Sembunyikan semua halaman form
+            // Sembunyikan semua form
             const pages = document.querySelectorAll('.form-page');
             pages.forEach(page => page.classList.remove('active'));
 
-            // Tampilkan halaman yang dipilih
-            document.getElementById(pageId).classList.add('active');
+            // Tampilkan yang diklik
+            const target = document.getElementById(pageId);
+            if(target) target.classList.add('active');
 
-            // Ubah status aktif di menu samping
-            const subItems = document.querySelectorAll('.sub-item');
-            subItems.forEach(item => item.classList.remove('active'));
+            // Set menu aktif
+            document.querySelectorAll('.sub-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
-        // Fungsi toggle menu utama
         function toggleSubMenu(id) {
             const subMenu = document.getElementById(id);
             const parentMenu = subMenu.previousElementSibling;
@@ -285,12 +277,8 @@
             parentMenu.classList.toggle('active-parent');
         }
 
-        // Set tanggal hari ini
-        document.getElementById('tglOtomatis').valueAsDate = new Date();
-
-        function saveAll() {
-            alert("Data Jurnal Berhasil Disimpan ke Database!");
-        }
+        // Set tanggal otomatis
+        document.querySelectorAll('.tglInput').forEach(inp => inp.valueAsDate = new Date());
     </script>
 </body>
 </html>
