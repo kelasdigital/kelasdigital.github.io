@@ -11,14 +11,14 @@
             --text-dark: #333333;
             --text-muted: #666666;
             --bg-light: #f8f9fa;
-            --sidebar-width: 250px;
+            --sidebar-width: 260px;
             --border-color: #e0e0e0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-light); display: flex; min-height: 100vh; }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR STYLE --- */
         .sidebar {
             width: var(--sidebar-width);
             background: white;
@@ -27,199 +27,154 @@
             border-right: 1px solid var(--border-color);
             padding: 20px 0;
             z-index: 1000;
+            overflow-y: auto;
         }
 
-        .sidebar-header { padding: 0 25px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .sidebar-header { padding: 0 25px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; }
         .logo-text { font-weight: 800; font-size: 18px; color: var(--primary-green); }
 
-        .menu-group { padding: 0 12px; }
+        .menu-group { padding: 0 10px; }
+        
+        /* Menu Utama */
         .menu-item {
             display: flex;
             align-items: center;
             padding: 12px 15px;
             color: var(--text-dark);
             text-decoration: none;
-            border-radius: 10px;
+            border-radius: 8px;
             transition: all 0.2s;
             cursor: pointer;
-            margin-bottom: 6px;
+            margin-bottom: 2px;
+            font-size: 14px;
+            font-weight: 500;
         }
-        .menu-item:hover, .menu-item.active { background-color: #f0f2f5; color: var(--primary-green); }
-        .menu-item i { width: 24px; font-size: 18px; margin-right: 12px; color: var(--text-muted); text-align: center; }
-        .menu-item:hover i, .menu-item.active i { color: var(--primary-green); }
+        .menu-item:hover { background-color: #f5f5f5; }
+        .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
+        .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
+
+        /* Sub Menu Container */
+        .sub-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #fafafa;
+            border-radius: 8px;
+        }
+        
+        /* Menu Aktif / Terbuka */
+        .menu-item.active-parent { color: var(--primary-green); }
+        .menu-item.active-parent .chevron { transform: rotate(180deg); }
+        .show-sub { max-height: 500px; }
+
+        /* Item Sub Menu */
+        .sub-item {
+            display: block;
+            padding: 10px 15px 10px 47px; /* Menjorok ke dalam agar sejajar teks atas */
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .sub-item:hover { color: var(--primary-green); background-color: #f0f0f0; }
 
         /* --- MAIN CONTENT --- */
         .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 30px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-
-        /* --- FORM JURNAL GURU --- */
         .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02); 
-            border: 1px solid #f0f0f0;
-            max-width: 900px;
+            background: white; padding: 30px; border-radius: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04); border: 1px solid #eee;
         }
-
-        .form-section { margin-bottom: 30px; }
-        .form-section-title { 
-            font-size: 14px; 
-            font-weight: 700; 
-            color: var(--primary-green); 
-            text-transform: uppercase; 
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 8px;
-        }
-
-        .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        
-        label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; }
-        input, select, textarea { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; 
-            font-size: 14px; outline: none; transition: border 0.2s;
-        }
-        input:focus, textarea:focus { border-color: var(--primary-green); }
-        textarea { resize: vertical; min-height: 80px; }
-
-        .btn-submit { 
-            background: var(--primary-green); color: white; border: none; 
-            padding: 15px 30px; border-radius: 10px; font-weight: 700; 
-            cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px;
-        }
-        .btn-submit:hover { opacity: 0.9; }
-
-        .attendance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        h3 { margin-bottom: 20px; color: var(--primary-green); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header"><div class="logo-text">KELAS DIGITAL</div></div>
+        
         <nav class="menu-group">
-            <a href="#" class="menu-item active"><i class="fa-solid fa-book-bookmark"></i><span>Jurnal Guru</span></a>
-            <a href="#" class="menu-item"><i class="fa-solid fa-chalkboard-user"></i><span>Jurnal Kelas</span></a>
-            <a href="#" class="menu-item"><i class="fa-solid fa-clipboard-user"></i><span>Absensi Siswa</span></a>
-            <a href="#" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Materi</span></a>
-            <a href="#" class="menu-item"><i class="fa-solid fa-pen-to-square"></i><span>Ulangan</span></a>
+            <div class="menu-wrapper">
+                <div class="menu-item" onclick="toggleSubMenu('jurnalSub')">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Jurnal Guru</span>
+                    <i class="fa-solid fa-chevron-down chevron"></i>
+                </div>
+                <div id="jurnalSub" class="sub-menu">
+                    <a href="#identitas" class="sub-item">Identitas</a>
+                    <a href="#data-belajar" class="sub-item">Data Pembelajaran</a>
+                    <a href="#materi-kompetensi" class="sub-item">Materi & Kompetensi</a>
+                    <a href="#kegiatan-kbm" class="sub-item">Kegiatan KBM</a>
+                    <a href="#evaluasi" class="sub-item">Evaluasi & Kehadiran</a>
+                    <a href="#refleksi" class="sub-item">Refleksi & Tindak Lanjut</a>
+                </div>
+            </div>
+
+            <div class="menu-item"><i class="fa-solid fa-chalkboard-user"></i><span>Jurnal Kelas</span></div>
+            <div class="menu-item"><i class="fa-solid fa-users"></i><span>Absensi Siswa</span></div>
+            <div class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Materi</span></div>
+            <div class="menu-item"><i class="fa-solid fa-pen-to-square"></i><span>Ulangan</span></div>
         </nav>
     </aside>
 
     <main class="main-content">
-        <header class="header-top">
-            <div>
-                <h2 style="font-size: 22px;">Input Jurnal Guru</h2>
-                <p style="color: var(--text-muted); font-size: 14px;">Lengkapi data kegiatan belajar mengajar harian.</p>
-            </div>
-        </header>
-
-        <form id="formJurnalGuru" class="card">
-            <div class="form-section">
-                <div class="form-section-title"><i class="fa-solid fa-id-card"></i> Identitas</div>
-                <div class="grid-row">
-                    <div>
-                        <label>Nama Guru</label>
-                        <input type="text" id="namaGuru" placeholder="Masukkan nama lengkap" required>
-                    </div>
-                    <div>
-                        <label>Mata Pelajaran</label>
-                        <input type="text" id="mapel" placeholder="Contoh: Matematika" required>
-                    </div>
+        <div class="card">
+            <h3 id="identitas">Jurnal Guru - Identitas</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Nama Guru</label>
+                    <input type="text" placeholder="Nama Lengkap">
                 </div>
-                <div class="grid-row">
-                    <div>
-                        <label>Semester</label>
-                        <select id="semester">
-                            <option value="Ganjil">Ganjil</option>
-                            <option value="Genap">Genap</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Tahun Pelajaran</label>
-                        <input type="text" id="tahunPelajaran" placeholder="Contoh: 2025/2026">
-                    </div>
+                <div>
+                    <label>Mata Pelajaran</label>
+                    <input type="text" placeholder="Mata Pelajaran">
+                </div>
+                <div>
+                    <label>Semester</label>
+                    <select><option>Ganjil</option><option>Genap</option></select>
+                </div>
+                <div>
+                    <label>Tahun Pelajaran</label>
+                    <input type="text" value="2025/2026">
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="form-section-title"><i class="fa-solid fa-calendar-day"></i> Data Pembelajaran</div>
-                <div class="grid-row">
-                    <div>
-                        <label>Hari / Tanggal</label>
-                        <input type="date" id="tglJurnal" required>
-                    </div>
-                    <div>
-                        <label>Jam Pelajaran</label>
-                        <input type="text" id="jamKe" placeholder="Contoh: 1 - 3">
-                    </div>
+            <h3 id="data-belajar" style="margin-top: 40px;">Data Pembelajaran</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Hari/Tanggal</label>
+                    <input type="date">
                 </div>
-                <label>Kelas</label>
-                <input type="text" id="kelasJurnal" placeholder="Contoh: X-A / MI-6">
-            </div>
-
-            <div class="form-section">
-                <div class="form-section-title"><i class="fa-solid fa-graduation-cap"></i> Materi & Kompetensi</div>
-                <label>Materi Pokok</label>
-                <input type="text" id="materiPokok" placeholder="Judul materi hari ini" style="margin-bottom: 15px;">
-                <div class="grid-row">
-                    <div>
-                        <label>Tujuan Pembelajaran</label>
-                        <textarea id="tujuanBelajar" placeholder="Apa yang ingin dicapai..."></textarea>
-                    </div>
-                    <div>
-                        <label>KD / Capaian Pembelajaran</label>
-                        <textarea id="kdCapaian" placeholder="Kompetensi Dasar..."></textarea>
-                    </div>
+                <div>
+                    <label>Jam Pelajaran</label>
+                    <input type="text" placeholder="Contoh: 1-2">
+                </div>
+                <div style="grid-column: span 2;">
+                    <label>Kelas</label>
+                    <input type="text" placeholder="Pilih Kelas">
                 </div>
             </div>
-
-            <div class="form-section">
-                <div class="form-section-title"><i class="fa-solid fa-chalkboard"></i> Kegiatan KBM</div>
-                <div class="grid-row">
-                    <div>
-                        <label>Metode Pembelajaran</label>
-                        <input type="text" id="metode" placeholder="Contoh: Ceramah, Diskusi">
-                    </div>
-                    <div>
-                        <label>Media Pembelajaran</label>
-                        <input type="text" id="media" placeholder="Contoh: LCD, Modul, Internet">
-                    </div>
-                </div>
-                <label>Ringkasan Kegiatan</label>
-                <textarea id="ringkasanKBM" placeholder="Gambarkan singkat alur KBM..."></textarea>
-            </div>
-
-            <div class="form-section">
-                <div class="form-section-title"><i class="fa-solid fa-user-check"></i> Evaluasi & Kehadiran</div>
-                <label>Kehadiran Siswa (Jumlah)</label>
-                <div class="attendance-grid" style="margin-bottom: 15px;">
-                    <div><label style="color: #d32f2f;">Sakit (S)</label><input type="number" id="absenS" value="0"></div>
-                    <div><label style="color: #f57c00;">Izin (I)</label><input type="number" id="absenI" value="0"></div>
-                    <div><label style="color: #7d7d7d;">Alpha (A)</label><input type="number" id="absenA" value="0"></div>
-                </div>
-                <label>Penilaian / Evaluasi Hasil</label>
-                <textarea id="evaluasiHasil" placeholder="Catatan penilaian atau hasil kuis singkat..."></textarea>
-            </div>
-
-            <div class="form-section" style="margin-bottom: 10px;">
-                <div class="form-section-title"><i class="fa-solid fa-lightbulb"></i> Refleksi & Tindak Lanjut</div>
-                <label>Permasalahan / Kendala</label>
-                <textarea id="kendala" placeholder="Masalah yang muncul saat KBM..."></textarea>
-                <label style="margin-top: 15px;">Rencana Perbaikan / Tindak Lanjut</label>
-                <textarea id="rencanaLanjut" placeholder="Apa yang akan dilakukan di pertemuan berikutnya..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-submit">Simpan Jurnal Hari Ini</button>
-        </form>
+            
+            <p style="color: #999; font-size: 13px; margin-top: 20px;">*Gunakan menu di samping untuk berpindah antar bagian jurnal.</p>
+        </div>
     </main>
 
     <script>
-        // Set tanggal hari ini secara otomatis
-        document.getElementById('tglJurnal').valueAsDate = new Date();
+        function toggleSubMenu(id) {
+            const subMenu = document.getElementById(id);
+            const parentMenu = subMenu.previousElementSibling;
+            
+            // Toggle class untuk animasi buka/tutup
+            subMenu.classList.toggle('show-sub');
+            parentMenu.classList.toggle('active-parent');
+        }
+
+        // Otomatis buka sub-menu saat halaman dimuat (opsional)
+        window.onload = () => {
+            toggleSubMenu('jurnalSub');
+        };
     </script>
 </body>
 </html>
