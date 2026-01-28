@@ -14,6 +14,7 @@
             --bg-light: #f8f9fa;
             --sidebar-width: 280px;
             --border-color: #e0e0e0;
+            --danger-red: #d32f2f;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -28,29 +29,30 @@
             border-right: 1px solid var(--border-color);
             padding: 20px 0;
             z-index: 1000;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column; /* Membuat isi sidebar bisa diatur atas-bawah */
         }
 
-        /* Update Header untuk Logo */
         .sidebar-header { 
             padding: 0 25px 20px; 
             border-bottom: 1px solid #f0f0f0; 
             margin-bottom: 10px;
             display: flex;
-            justify-content: center; /* Memposisikan logo di tengah sidebar */
+            justify-content: center;
         }
         
         .sidebar-logo {
-            height: 65px; /* Ukuran yang pas untuk sidebar */
+            height: 65px;
             width: auto;
             transition: 0.3s;
         }
-        
-        .sidebar-logo:hover {
-            transform: scale(1.05);
+
+        .menu-container {
+            flex-grow: 1; /* Mengisi ruang kosong agar menu logout terdorong ke bawah */
+            overflow-y: auto;
+            padding: 0 10px;
         }
 
-        .menu-group { padding: 0 10px; }
         .menu-item {
             display: flex;
             align-items: center;
@@ -68,6 +70,19 @@
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
 
+        /* Style Khusus Logout */
+        .menu-logout {
+            margin: 20px 10px;
+            padding: 12px 15px;
+            color: var(--danger-red) !important;
+            border: 1px solid transparent;
+        }
+        .menu-logout i { color: var(--danger-red) !important; }
+        .menu-logout:hover {
+            background-color: #fff5f5 !important;
+            border-color: #ffcdd2;
+        }
+
         /* Sub Menu Styles */
         .sub-menu {
             max-height: 0;
@@ -77,9 +92,7 @@
             border-radius: 8px;
             margin-bottom: 5px;
         }
-        .menu-item.active-parent .chevron { transform: rotate(180deg); }
         .show-sub { max-height: 1000px; }
-
         .sub-item {
             display: block;
             padding: 10px 15px 10px 47px;
@@ -95,7 +108,6 @@
 
         /* --- MAIN CONTENT --- */
         .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 40px; }
-        
         .form-page { display: none; }
         .form-page.active { display: block; animation: fadeIn 0.3s ease; }
 
@@ -116,20 +128,10 @@
             border-bottom: 2px solid #f0f0f0; padding-bottom: 12px;
         }
 
-        /* --- DASHBOARD STYLES --- */
+        /* Dashboard Profile */
         .profile-display { display: flex; gap: 30px; align-items: center; background: #f9fdf9; padding: 30px; border-radius: 15px; border: 1px solid #e8f5e9; }
         .profile-pic-large { width: 180px; height: 180px; border-radius: 15px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #eee; }
-        .profile-info h2 { font-size: 24px; color: var(--text-dark); margin-bottom: 5px; }
-        .profile-info p { font-size: 16px; color: var(--text-muted); margin-bottom: 15px; }
-        .data-badge { display: inline-block; padding: 6px 12px; background: var(--primary-green); color: white; border-radius: 6px; font-size: 12px; font-weight: 600; }
-
-        /* --- FORM STYLES --- */
-        .date-container { background: #f9fdf9; padding: 15px; border-radius: 10px; border: 1px dashed var(--primary-green); display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; margin-bottom: 25px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: span 2; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #444; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; }
-        input:focus, textarea:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1); }
+        
         .btn-save { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 30px; }
     </style>
 </head>
@@ -140,7 +142,7 @@
             <img src="./img/image_12.png" alt="Logo KELAS DIGITAL" class="sidebar-logo">
         </div>
         
-        <nav class="menu-group">
+        <nav class="menu-container">
             <div class="menu-item active-menu" onclick="showForm('pg-dashboard', this)">
                 <i class="fa-solid fa-gauge-high"></i>
                 <span>Dashboard</span>
@@ -161,25 +163,8 @@
                 </div>
                 <div id="jurnalGuruSub" class="sub-menu">
                     <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
-                    <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
-                    <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
-                    <div class="sub-item" onclick="showForm('pg-g-kbm', this)">Kegiatan KBM</div>
-                    <div class="sub-item" onclick="showForm('pg-g-evaluasi', this)">Evaluasi & Kehadiran</div>
-                    <div class="sub-item" onclick="showForm('pg-g-refleksi', this)">Refleksi & Tindak Lanjut</div>
-                </div>
-            </div>
-
-            <div class="menu-wrapper">
-                <div class="menu-item" onclick="toggleSubMenu('jurnalKelasSub')">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <span>Jurnal Kelas</span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </div>
-                <div id="jurnalKelasSub" class="sub-menu">
-                    <div class="sub-item" onclick="showForm('pg-k-identitas', this)">Identitas</div>
-                    <div class="sub-item" onclick="showForm('pg-k-perencanaan', this)">Perencanaan</div>
-                    <div class="sub-item" onclick="showForm('pg-k-pelaksanaan', this)">Pelaksanaan</div>
-                    <div class="sub-item" onclick="showForm('pg-k-evaluasi', this)">Evaluasi / Catatan</div>
+                    <div class="sub-item">Data Pembelajaran</div>
+                    <div class="sub-item">Materi & Kompetensi</div>
                 </div>
             </div>
 
@@ -187,6 +172,11 @@
             <div class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Materi</span></div>
             <div class="menu-item"><i class="fa-solid fa-pen-to-square"></i><span>Ulangan</span></div>
         </nav>
+
+        <div class="menu-item menu-logout" onclick="confirmLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Keluar / Logout</span>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -196,7 +186,7 @@
                 <div class="profile-display">
                     <img id="display-foto" src="https://via.placeholder.com/180" class="profile-pic-large" alt="Foto Profil">
                     <div class="profile-info">
-                        <h2 id="display-nama">Nama Guru Belum Diisi</h2>
+                        <h2 id="display-nama">Memuat Nama...</h2>
                         <p id="display-nip">NIP/NUPTK: -</p>
                         <div style="margin-top:10px;">
                             <span class="data-badge" id="display-mapel">Mata Pelajaran: -</span>
@@ -204,63 +194,52 @@
                         </div>
                     </div>
                 </div>
-                <div style="margin-top:30px; border-top: 1px solid #eee; padding-top:20px; color:#666; font-size:14px;">
-                    <p><i class="fa-solid fa-circle-info"></i> Selamat datang di Kelas Digital. Semua data pengisian Anda akan tercatat secara sistematis di sini.</p>
-                </div>
             </div>
 
             <div id="pg-biodata" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-user-pen"></i> Pengisian Biodata Guru</div>
-                <div class="form-grid">
-                    <div class="full-width">
-                        <label>Upload Foto Profil</label>
-                        <input type="file" id="input-foto" accept="image/*" style="padding:8px;">
-                    </div>
-                    <div>
-                        <label>Nama Lengkap (beserta gelar)</label>
-                        <input type="text" id="input-nama" placeholder="Contoh: Budi Santoso, S.Pd.">
-                    </div>
-                    <div>
-                        <label>NIP / NUPTK</label>
-                        <input type="text" id="input-nip" placeholder="Nomor Induk Pegawai">
-                    </div>
-                    <div>
-                        <label>Mata Pelajaran Utama</label>
-                        <input type="text" id="input-mapel" placeholder="Contoh: Matematika">
-                    </div>
-                    <div>
-                        <label>Unit Kerja / Sekolah</label>
-                        <input type="text" id="input-sekolah" placeholder="Nama Sekolah Anda">
-                    </div>
-                    <div class="full-width">
-                        <label>Alamat Lengkap</label>
-                        <textarea id="input-alamat" placeholder="Tuliskan alamat domisili saat ini..."></textarea>
-                    </div>
-                </div>
+                <div class="section-header"><i class="fa-solid fa-user-pen"></i> Pengisian Biodata</div>
                 <button class="btn-save" onclick="updateDashboard()">UPDATE DASHBOARD</button>
-            </div>
-
-            <div id="pg-g-identitas" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-id-card"></i> Jurnal Guru: Identitas</div>
-                <div class="date-container">
-                    <div><label>Hari</label><input type="text" class="dayInput" readonly></div>
-                    <div><label>Tanggal & Tahun</label><input type="date" class="tglInput"></div>
-                </div>
-                <div class="form-grid">
-                    <div class="full-width"><label>Nama Guru</label><input type="text"></div>
-                    <div class="full-width"><label>Mata Pelajaran</label><input type="text"></div>
-                    <div><label>Semester</label><select><option>Ganjil</option><option>Genap</option></select></div>
-                    <div><label>Tahun Pelajaran</label><input type="text" value="2025/2026"></div>
-                </div>
-            </div>
-
-            <div id="global-save-btn" style="display:none;">
-                <button class="btn-save" onclick="alert('Data Berhasil Disimpan!')">SIMPAN DATA</button>
             </div>
         </div>
     </main>
 
+    <script type="module">
+        // Import Firebase (Sesuaikan dengan setup anda)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Fungsi Logout
+        window.confirmLogout = function() {
+            if(confirm("Apakah anda yakin ingin keluar dari sistem?")) {
+                signOut(auth).then(() => {
+                    window.location.href = "index.html"; // Redirect ke halaman login
+                }).catch((error) => {
+                    alert("Gagal Logout: " + error.message);
+                });
+            }
+        }
+
+        // Cek Sesi (Jika tidak login, tendang ke index)
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+
     <script>
+        // Navigasi Form
         function showForm(pageId, element) {
             document.querySelectorAll('.form-page').forEach(page => page.classList.remove('active'));
             const target = document.getElementById(pageId);
@@ -276,59 +255,12 @@
             } else {
                 element.classList.add('active-menu');
             }
-
-            document.getElementById('global-save-btn').style.display = (pageId === 'pg-dashboard') ? 'none' : 'block';
         }
 
         function toggleSubMenu(id) {
             const subMenu = document.getElementById(id);
-            const parentMenu = subMenu.previousElementSibling;
             subMenu.classList.toggle('show-sub');
-            parentMenu.classList.toggle('active-parent');
         }
-
-        function updateDashboard() {
-            const nama = document.getElementById('input-nama').value;
-            const nip = document.getElementById('input-nip').value;
-            const mapel = document.getElementById('input-mapel').value;
-            const sekolah = document.getElementById('input-sekolah').value;
-            const fileFoto = document.getElementById('input-foto').files[0];
-
-            if(nama) document.getElementById('display-nama').innerText = nama;
-            if(nip) document.getElementById('display-nip').innerText = "NIP/NUPTK: " + nip;
-            if(mapel) document.getElementById('display-mapel').innerText = "Mata Pelajaran: " + mapel;
-            if(sekolah) document.getElementById('display-sekolah').innerText = "Sekolah: " + sekolah;
-
-            if (fileFoto) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('display-foto').src = e.target.result;
-                }
-                reader.readAsDataURL(fileFoto);
-            }
-
-            alert("Biodata berhasil diperbarui! Silahkan cek Dashboard.");
-            showForm('pg-dashboard', document.querySelector('.menu-item:first-child'));
-        }
-
-        function updateAllDates() {
-            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const today = new Date();
-            const dateString = today.toISOString().split('T')[0];
-            document.querySelectorAll('.tglInput').forEach(inp => {
-                inp.value = dateString;
-                inp.onchange = function() {
-                    const sel = new Date(this.value);
-                    this.closest('.date-container').querySelector('.dayInput').value = days[sel.getDay()];
-                };
-            });
-            document.querySelectorAll('.dayInput').forEach(inp => inp.value = days[today.getDay()]);
-        }
-
-        window.onload = () => {
-            updateAllDates();
-        };
     </script>
 </body>
 </html>
-
