@@ -16,25 +16,34 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
         body { 
+            /* Warna dasar gradien hijau */
             background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); 
             min-height: 100vh; 
             color: var(--white); 
             display: flex;
             overflow: hidden;
-            position: relative;
+            position: relative; /* Penting untuk menampung ::before */
         }
 
-        /* --- FIX: BACKGROUND CHIPSET OVERLAY --- */
-        .bg-overlay {
+        /* --- PERBAIKAN: BACKGROUND CHIPSET TRANSPARAN --- */
+        /* Menggunakan pseudo-element body::before agar lebih stabil */
+        body::before {
+            content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; /* Di atas background body, di bawah konten */
+            /* Z-index negatif agar berada di belakang konten utama, tapi di depan background body */
+            z-index: -1; 
+            
+            /* Pastikan nama file dan path sudah benar */
             background-image: url('./img/image_7cfeb8.png'); 
+            
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-            mix-blend-mode: screen; /* Menghilangkan warna hitam */
-            opacity: 0.35; 
+            
+            /* Kunci transparansi: menghilangkan warna hitam */
+            mix-blend-mode: screen; 
+            opacity: 0.3; /* Kecerahan background */
             pointer-events: none;
         }
 
@@ -49,17 +58,16 @@
             padding: 30px 20px;
             height: 100vh;
             position: relative;
-            z-index: 10;
+            z-index: 1; /* Memastikan sidebar di atas background chipset */
         }
 
-        /* FIX: Logo di Sidebar */
         .sidebar-header {
             text-align: center;
             margin-bottom: 40px;
         }
 
         .sidebar-logo-img {
-            height: 70px; /* Ukuran logo */
+            height: 70px; 
             width: auto;
             filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
             transition: 0.3s;
@@ -100,7 +108,7 @@
             padding: 40px;
             overflow-y: auto;
             position: relative;
-            z-index: 10;
+            z-index: 1; /* Memastikan konten di atas background chipset */
         }
 
         .header-top {
@@ -124,6 +132,7 @@
         }
         .btn-logout:hover { background: #ff5252; color: white; }
 
+        /* Card Style dengan efek kaca agar background terlihat */
         .card {
             background: rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(15px);
@@ -157,8 +166,6 @@
     </style>
 </head>
 <body>
-
-    <div class="bg-overlay"></div>
 
     <div class="sidebar">
         <div class="sidebar-header">
