@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guru Dashboard - KELAS DIGITAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,8 +31,24 @@
             overflow-y: auto;
         }
 
-        .sidebar-header { padding: 0 25px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; }
-        .logo-text { font-weight: 800; font-size: 18px; color: var(--primary-green); }
+        /* Update Header untuk Logo */
+        .sidebar-header { 
+            padding: 0 25px 20px; 
+            border-bottom: 1px solid #f0f0f0; 
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center; /* Memposisikan logo di tengah sidebar */
+        }
+        
+        .sidebar-logo {
+            height: 65px; /* Ukuran yang pas untuk sidebar */
+            width: auto;
+            transition: 0.3s;
+        }
+        
+        .sidebar-logo:hover {
+            transform: scale(1.05);
+        }
 
         .menu-group { padding: 0 10px; }
         .menu-item {
@@ -114,13 +131,14 @@
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; }
         input:focus, textarea:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1); }
         .btn-save { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 30px; }
-        .attendance-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header"><div class="logo-text">KELAS DIGITAL</div></div>
+        <div class="sidebar-header">
+            <img src="./img/image_12.png" alt="Logo KELAS DIGITAL" class="sidebar-logo">
+        </div>
         
         <nav class="menu-group">
             <div class="menu-item active-menu" onclick="showForm('pg-dashboard', this)">
@@ -173,7 +191,6 @@
 
     <main class="main-content">
         <div class="card">
-            
             <div id="pg-dashboard" class="form-page active">
                 <div class="section-header"><i class="fa-solid fa-house-user"></i> Dashboard Guru</div>
                 <div class="profile-display">
@@ -236,6 +253,7 @@
                     <div><label>Tahun Pelajaran</label><input type="text" value="2025/2026"></div>
                 </div>
             </div>
+
             <div id="global-save-btn" style="display:none;">
                 <button class="btn-save" onclick="alert('Data Berhasil Disimpan!')">SIMPAN DATA</button>
             </div>
@@ -248,20 +266,17 @@
             const target = document.getElementById(pageId);
             if(target) target.classList.add('active');
 
-            // Reset status aktif menu
             document.querySelectorAll('.menu-item, .sub-item').forEach(item => {
                 item.classList.remove('active-menu');
                 item.classList.remove('active');
             });
 
-            // Set menu/sub-menu aktif
             if(element.classList.contains('sub-item')) {
                 element.classList.add('active');
             } else {
                 element.classList.add('active-menu');
             }
 
-            // Sembunyikan tombol simpan di dashboard
             document.getElementById('global-save-btn').style.display = (pageId === 'pg-dashboard') ? 'none' : 'block';
         }
 
@@ -272,22 +287,18 @@
             parentMenu.classList.toggle('active-parent');
         }
 
-        // LOGIKA UPDATE DASHBOARD DARI BIODATA
         function updateDashboard() {
-            // Ambil Nilai
             const nama = document.getElementById('input-nama').value;
             const nip = document.getElementById('input-nip').value;
             const mapel = document.getElementById('input-mapel').value;
             const sekolah = document.getElementById('input-sekolah').value;
             const fileFoto = document.getElementById('input-foto').files[0];
 
-            // Update Teks di Dashboard
             if(nama) document.getElementById('display-nama').innerText = nama;
             if(nip) document.getElementById('display-nip').innerText = "NIP/NUPTK: " + nip;
             if(mapel) document.getElementById('display-mapel').innerText = "Mata Pelajaran: " + mapel;
             if(sekolah) document.getElementById('display-sekolah').innerText = "Sekolah: " + sekolah;
 
-            // Update Foto Profil
             if (fileFoto) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
