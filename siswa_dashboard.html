@@ -54,11 +54,10 @@
             grid-template-columns: 50px 1fr 50px; 
             align-items: center;
         }
-
         .menu-btn { font-size: 24px; color: var(--accent-neon); cursor: pointer; display: flex; justify-content: center; }
         .mobile-logo-img { height: 40px; width: auto; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
 
-        /* --- SIDEBAR (FIXED SCROLL) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background: rgba(0, 0, 0, 0.7);
@@ -73,21 +72,8 @@
             z-index: 1002;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .sidebar-header { text-align: center; margin-bottom: 25px; flex-shrink: 0; }
+        .sidebar-header { text-align: center; margin-bottom: 25px; }
         .sidebar-logo-img { height: 60px; width: auto; filter: drop-shadow(0 0 10px var(--accent-neon)); }
-
-        /* Container Menu agar bisa di-scroll jika layar pendek */
-        .menu-scroll-container {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding-right: 5px;
-        }
-
-        /* Custom Scrollbar untuk Sidebar */
-        .menu-scroll-container::-webkit-scrollbar { width: 4px; }
-        .menu-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         .menu-item {
             padding: 14px 15px;
@@ -100,37 +86,11 @@
             align-items: center;
             gap: 12px;
             color: rgba(255,255,255,0.7);
-            font-size: 14px;
         }
-
         .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); }
 
-        /* --- LOGOUT SECTION (ALWAYS AT BOTTOM) --- */
-        .sidebar-footer {
-            flex-shrink: 0;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .btn-logout {
-            background: rgba(211, 47, 47, 0.2);
-            color: #ff5252;
-            border: 1px solid #ff5252;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-        .btn-logout:hover { background: #ff5252; color: white; }
-
-        /* --- MAIN CONTENT --- */
+        /* --- MAIN CONTENT & TOP HEADER --- */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -138,12 +98,43 @@
             transition: 0.3s;
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between; /* Memisahkan info (kiri) dan logout (kanan) */
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- FIX: TOMBOL LOGOUT POJOK KANAN ATAS --- */
+        .btn-logout {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .btn-logout:hover { background: #ff5252; color: white; transform: translateY(-2px); }
+
         /* RESPONSIVE HP */
         @media (max-width: 768px) {
             .mobile-header { display: grid; }
             .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
-            .main-content { margin-left: 0; padding: 100px 20px 20px; }
+            .main-content { margin-left: 0; padding: 90px 15px 15px; }
+            .header-top { padding: 12px 15px; flex-direction: row; } /* Tetap sebaris di HP */
+            .user-info h2 { font-size: 18px; }
+            .btn-logout { padding: 8px 12px; font-size: 12px; }
             
             .sidebar-overlay {
                 display: none;
@@ -175,8 +166,7 @@
         <div class="sidebar-header">
             <img src="./img/image_12.png" alt="Logo" class="sidebar-logo-img">
         </div>
-        
-        <div class="menu-scroll-container">
+        <nav>
             <div class="menu-item active" onclick="showSection('dashboard', this)">
                 <i class="fa-solid fa-house"></i> <span>Dashboard</span>
             </div>
@@ -189,21 +179,24 @@
             <div class="menu-item" onclick="showSection('ujian', this)">
                 <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
             </div>
-        </div>
-        
-        <div class="sidebar-footer">
-            <button class="btn-logout" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
-            </button>
-        </div>
+        </nav>
     </aside>
 
     <main class="main-content">
+        <div class="header-top">
+            <div class="user-info">
+                <h2 id="userName">Siswa Aktif</h2>
+                <p id="userRole" style="color: var(--accent-neon); font-size: 13px; font-weight: 600;">KELAS DIGITAL</p>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> <span>KELUAR</span>
+            </button>
+        </div>
+
         <div id="dashboard" class="content-section active">
-            <h2 id="userName">Siswa Aktif</h2>
-            <div class="card" style="margin-top:20px;">
-                <h3>Materi Terbaru</h3>
-                <p>Materi akan muncul di sini...</p>
+            <div class="card">
+                <h3>Selamat Datang di Kelas Digital</h3>
+                <p style="margin-top:10px; opacity:0.8;">Pilih menu di samping untuk mengakses materi, absensi, atau ujian Anda.</p>
             </div>
         </div>
     </main>
@@ -222,10 +215,9 @@
             if(window.innerWidth <= 768) toggleSidebar();
         };
 
-        // Fungsi logout tetap menggunakan Firebase Anda sebelumnya
         function logout() {
-            if(confirm("Keluar dari akun?")) {
-                // Logika Firebase signOut di sini
+            if(confirm("Apakah Anda yakin ingin keluar?")) {
+                // Tambahkan logika firebase.auth().signOut() di sini
                 alert("Berhasil Logout");
             }
         }
