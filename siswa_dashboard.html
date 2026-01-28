@@ -25,7 +25,7 @@
             position: relative;
         }
 
-        /* --- BACKGROUND CHIPSET --- */
+        /* --- BACKGROUND CHIPSET TRANSPARAN --- */
         body::before {
             content: "";
             position: fixed;
@@ -40,7 +40,7 @@
             pointer-events: none;
         }
 
-        /* --- TOP NAVBAR --- */
+        /* --- TOP NAVBAR (FIXED) --- */
         .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -55,10 +55,9 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; }
+        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; display: flex; align-items: center; }
         .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
 
-        /* TOMBOL KELUAR DI POJOK KANAN ATAS */
         .btn-keluar-top {
             background: rgba(211, 47, 47, 0.2);
             color: #ff5252;
@@ -88,7 +87,7 @@
             position: fixed;
             left: 0; top: 0;
             z-index: 1000;
-            transition: 0.3s ease;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-item {
@@ -96,11 +95,14 @@
             margin-bottom: 5px;
             border-radius: 10px;
             cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             color: rgba(255,255,255,0.7);
         }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
 
         /* --- MAIN CONTENT --- */
@@ -111,17 +113,33 @@
             transition: 0.3s;
         }
 
+        /* RESPONSIVE LAYOUT */
         @media (max-width: 768px) {
             .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
             .main-content { margin-left: 0; padding: 100px 15px 15px; }
-            .btn-keluar-top span { display: none; }
+            .btn-keluar-top span { display: none; } /* Hanya ikon di HP */
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 999;
+                backdrop-filter: blur(3px);
+            }
+            .sidebar-overlay.active { display: block; }
         }
 
-        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; }
+        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
     <header class="top-navbar">
         <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
@@ -132,23 +150,43 @@
     </header>
 
     <aside class="sidebar" id="sidebar">
-        <div class="menu-item active">
+        <div class="menu-item active" onclick="showSection('dashboard', this)">
             <i class="fa-solid fa-house"></i> <span>Dashboard</span>
         </div>
-        </aside>
+        <div class="menu-item" onclick="showSection('biodata', this)">
+            <i class="fa-solid fa-user"></i> <span>Biodata</span>
+        </div>
+        <div class="menu-item" onclick="showSection('materi', this)">
+            <i class="fa-solid fa-book"></i> <span>Materi</span>
+        </div>
+        <div class="menu-item" onclick="showSection('ujian', this)">
+            <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
+        </div>
+    </aside>
 
     <main class="main-content">
-        <div class="card">
-            <h2 id="userName">Memuat Nama...</h2>
-            <p>Selamat datang di panel KELAS DIGITAL.</p>
+        <div id="dashboard" class="content-section active">
+            <h2 id="userName" style="margin-bottom: 20px;">Memuat...</h2>
+            <div class="card">
+                <h3 style="color: var(--accent-neon);">Papan Informasi</h3>
+                <p style="margin-top:10px; opacity:0.8;">Selamat datang di KELAS DIGITAL. Silakan pilih menu untuk memulai pembelajaran.</p>
+            </div>
+        </div>
+
+        <div id="biodata" class="content-section">
+            <div class="card">
+                <h3>Biodata Siswa</h3>
+                <div id="bioContent" style="margin-top:15px; line-height: 1.8;">Memuat data...</div>
+            </div>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase
+        // Konfigurasi Firebase Proyek Anda
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
             authDomain: "kelasdigital-b58ce.firebaseapp.com",
@@ -160,31 +198,47 @@
         
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // --- SOLUSI AGAR TOMBOL BERFUNGSI ---
-        // Karena script ini bertipe "module", kita harus menempelkan fungsi ke "window"
+        // Fungsi Logout (Didaftarkan ke window agar terbaca oleh onclick)
         window.logout = async () => {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 try {
                     await signOut(auth);
-                    window.location.href = "index.html"; // Redirect ke halaman login
-                } catch (error) {
-                    console.error("Logout Error:", error);
-                    alert("Gagal keluar: " + error.message);
-                }
+                    window.location.href = "index.html"; 
+                } catch (err) { alert("Gagal keluar: " + err.message); }
             }
+        };
+
+        // Fungsi Navigasi
+        window.showSection = (id, el) => {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+            if(window.innerWidth <= 768) window.toggleSidebar();
         };
 
         window.toggleSidebar = () => {
             document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
         };
 
-        // Cek status login
-        onAuthStateChanged(auth, (user) => {
+        // Memantau Sesi Pengguna
+        onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                window.location.href = "index.html";
+                window.location.href = "index.html"; 
             } else {
-                document.getElementById('userName').innerText = "Halo, " + (user.displayName || "Siswa");
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists()){
+                    const ud = userDoc.data();
+                    document.getElementById('userName').innerText = "Halo, " + ud.nama;
+                    document.getElementById('bioContent').innerHTML = `
+                        <b>Nama:</b> ${ud.nama}<br>
+                        <b>Email:</b> ${ud.email}<br>
+                        <b>Jenjang:</b> ${ud.jenjang}
+                    `;
+                }
             }
         });
     </script>
