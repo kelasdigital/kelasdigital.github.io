@@ -51,6 +51,7 @@
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
 
+        /* Sub Menu Styles */
         .sub-menu {
             max-height: 0;
             overflow: hidden;
@@ -125,13 +126,13 @@
         
         <nav class="menu-group">
             <div class="menu-wrapper">
-                <div class="menu-item active-parent" onclick="toggleSubMenu('jurnalGuruSub')">
+                <div class="menu-item" onclick="toggleSubMenu('jurnalGuruSub')">
                     <i class="fa-solid fa-user-tie"></i>
                     <span>Jurnal Guru</span>
                     <i class="fa-solid fa-chevron-down chevron"></i>
                 </div>
-                <div id="jurnalGuruSub" class="sub-menu show-sub">
-                    <div class="sub-item active" onclick="showForm('pg-g-identitas', this)">Identitas</div>
+                <div id="jurnalGuruSub" class="sub-menu">
+                    <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
                     <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
                     <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
                     <div class="sub-item" onclick="showForm('pg-g-kbm', this)">Kegiatan KBM</div>
@@ -163,124 +164,113 @@
     <main class="main-content">
         <div class="card">
             
-            <div id="pg-g-identitas" class="form-page active">
-                <div class="section-header"><i class="fa-solid fa-id-card"></i> Identitas Guru</div>
+            <div id="pg-g-identitas" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-id-card"></i> Jurnal Guru: Identitas</div>
                 <div class="form-grid">
-                    <div class="full-width">
-                        <label>Nama Guru</label>
-                        <input type="text" placeholder="Nama Lengkap dan Gelar">
-                    </div>
-                    <div class="full-width">
-                        <label>Mata Pelajaran</label>
-                        <input type="text" placeholder="Contoh: Matematika">
-                    </div>
-                    <div>
-                        <label>Semester</label>
-                        <select><option>Ganjil</option><option>Genap</option></select>
-                    </div>
-                    <div>
-                        <label>Tahun Pelajaran</label>
-                        <input type="text" value="2025/2026">
-                    </div>
+                    <div class="full-width"><label>Nama Guru</label><input type="text" placeholder="Nama Lengkap"></div>
+                    <div class="full-width"><label>Mata Pelajaran</label><input type="text" placeholder="Mapel"></div>
+                    <div><label>Semester</label><select><option>Ganjil</option><option>Genap</option></select></div>
+                    <div><label>Tahun Pelajaran</label><input type="text" value="2025/2026"></div>
                 </div>
             </div>
 
             <div id="pg-g-data" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-calendar-day"></i> Data Pembelajaran</div>
+                <div class="section-header"><i class="fa-solid fa-calendar-day"></i> Jurnal Guru: Data Pembelajaran</div>
                 <div class="form-grid">
-                    <div>
-                        <label>Hari / Tanggal</label>
-                        <input type="date" class="tglInput">
-                    </div>
-                    <div>
-                        <label>Jam Pelajaran</label>
-                        <input type="text" placeholder="Contoh: Jam ke 1 - 3">
-                    </div>
-                    <div class="full-width">
-                        <label>Kelas</label>
-                        <input type="text" placeholder="Contoh: X-A / MI-6">
-                    </div>
+                    <div><label>Hari / Tanggal</label><input type="date" class="tglInput"></div>
+                    <div><label>Jam Pelajaran</label><input type="text" placeholder="Jam ke..."></div>
+                    <div class="full-width"><label>Kelas</label><input type="text" placeholder="Kelas"></div>
                 </div>
             </div>
 
             <div id="pg-g-materi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-graduation-cap"></i> Materi & Kompetensi</div>
+                <div class="section-header"><i class="fa-solid fa-graduation-cap"></i> Jurnal Guru: Materi & Kompetensi</div>
                 <div class="form-grid">
-                    <div class="full-width">
-                        <label>Materi Pokok</label>
-                        <input type="text" placeholder="Judul materi utama">
-                    </div>
-                    <div class="full-width">
-                        <label>Tujuan Pembelajaran</label>
-                        <textarea placeholder="Uraikan tujuan pembelajaran hari ini..."></textarea>
-                    </div>
-                    <div class="full-width">
-                        <label>Kompetensi Dasar (KD) / Capaian Pembelajaran</label>
-                        <textarea placeholder="Uraikan KD atau CP yang dipelajari..."></textarea>
-                    </div>
+                    <div class="full-width"><label>Materi Pokok</label><input type="text"></div>
+                    <div class="full-width"><label>Tujuan Pembelajaran</label><textarea></textarea></div>
+                    <div class="full-width"><label>KD / Capaian Pembelajaran</label><textarea></textarea></div>
                 </div>
             </div>
 
             <div id="pg-g-kbm" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-chalkboard"></i> Kegiatan KBM</div>
+                <div class="section-header"><i class="fa-solid fa-chalkboard"></i> Jurnal Guru: Kegiatan KBM</div>
                 <div class="form-grid">
-                    <div>
-                        <label>Metode Pembelajaran</label>
-                        <input type="text" placeholder="Contoh: Ceramah, Diskusi, Projek">
-                    </div>
-                    <div>
-                        <label>Media Pembelajaran</label>
-                        <input type="text" placeholder="Contoh: PPT, Video, Alat Peraga">
-                    </div>
-                    <div class="full-width">
-                        <label>Ringkasan Kegiatan Pembelajaran</label>
-                        <textarea placeholder="Uraikan ringkasan alur kegiatan pembelajaran..."></textarea>
-                    </div>
+                    <div><label>Metode Pembelajaran</label><input type="text"></div>
+                    <div><label>Media Pembelajaran</label><input type="text"></div>
+                    <div class="full-width"><label>Ringkasan Kegiatan</label><textarea></textarea></div>
                 </div>
             </div>
 
             <div id="pg-g-evaluasi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-user-check"></i> Evaluasi & Kehadiran</div>
-                <label>Catatan Kehadiran Siswa (S/I/A)</label>
+                <div class="section-header"><i class="fa-solid fa-user-check"></i> Jurnal Guru: Evaluasi & Kehadiran</div>
                 <div class="attendance-row">
-                    <div><label style="color: #c62828;">Sakit (S)</label><input type="number" value="0"></div>
-                    <div><label style="color: #ef6c00;">Izin (I)</label><input type="number" value="0"></div>
-                    <div><label style="color: #616161;">Alpha (A)</label><input type="number" value="0"></div>
+                    <div><label>Sakit</label><input type="number" value="0"></div>
+                    <div><label>Izin</label><input type="number" value="0"></div>
+                    <div><label>Alpha</label><input type="number" value="0"></div>
                 </div>
-                <div class="full-width">
-                    <label>Penilaian / Evaluasi Hasil</label>
-                    <textarea placeholder="Catatan penilaian atau evaluasi pembelajaran..."></textarea>
-                </div>
+                <textarea placeholder="Penilaian / Evaluasi"></textarea>
             </div>
 
             <div id="pg-g-refleksi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-lightbulb"></i> Refleksi & Tindak Lanjut</div>
+                <div class="section-header"><i class="fa-solid fa-lightbulb"></i> Jurnal Guru: Refleksi</div>
+                <div class="full-width"><label>Permasalahan / Kendala</label><textarea></textarea></div>
+                <div class="full-width" style="margin-top:15px;"><label>Rencana Tindak Lanjut</label><textarea></textarea></div>
+            </div>
+
+            <div id="pg-k-identitas" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-school"></i> Jurnal Kelas: Identitas</div>
                 <div class="form-grid">
-                    <div class="full-width">
-                        <label>Permasalahan / Kendala yang Dihadapi</label>
-                        <textarea placeholder="Catat kendala selama proses KBM..."></textarea>
-                    </div>
-                    <div class="full-width">
-                        <label>Rencana Perbaikan / Tindak Lanjut</label>
-                        <textarea placeholder="Langkah perbaikan untuk pertemuan berikutnya..."></textarea>
-                    </div>
+                    <div class="full-width"><label>Judul Jurnal</label><input type="text"></div>
+                    <div class="full-width"><label>Nama Sekolah</label><input type="text"></div>
+                    <div><label>Mata Pelajaran</label><input type="text"></div>
+                    <div><label>Kelas</label><input type="text"></div>
+                    <div><label>Semester</label><select><option>Ganjil</option><option>Genap</option></select></div>
+                    <div><label>Hari / Tanggal</label><input type="date" class="tglInput"></div>
                 </div>
             </div>
 
-            <button class="btn-save" onclick="alert('Jurnal Berhasil Disimpan!')">SIMPAN DATA JURNAL</button>
+            <div id="pg-k-perencanaan" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-compass"></i> Jurnal Kelas: Perencanaan</div>
+                <div class="full-width"><label>KD / Tujuan Pembelajaran (TP)</label><textarea></textarea></div>
+                <div class="full-width" style="margin-top:15px;"><label>Materi Pokok</label><textarea></textarea></div>
+            </div>
+
+            <div id="pg-k-pelaksanaan" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-play"></i> Jurnal Kelas: Pelaksanaan</div>
+                <div class="full-width"><label>Kegiatan Pembelajaran (Uraian)</label><textarea></textarea></div>
+                <div class="full-width" style="margin-top:15px;"><label>Penilaian Pembelajaran</label><textarea></textarea></div>
+            </div>
+
+            <div id="pg-k-evaluasi" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-clipboard-list"></i> Jurnal Kelas: Evaluasi</div>
+                <div class="attendance-row">
+                    <div><label>S</label><input type="number" value="0"></div>
+                    <div><label>I</label><input type="number" value="0"></div>
+                    <div><label>A</label><input type="number" value="0"></div>
+                </div>
+                <label>Catatan / Keterangan Kejadian Penting</label>
+                <textarea></textarea>
+                <div style="margin-top:15px;"><label>Paraf Guru</label><input type="text" placeholder="Nama Guru"></div>
+            </div>
+
+            <button class="btn-save" onclick="alert('Data Berhasil Disimpan!')">SIMPAN DATA</button>
         </div>
     </main>
 
     <script>
         function showForm(pageId, element) {
-            // Sembunyikan semua form-page
+            // Sembunyikan semua halaman form
             document.querySelectorAll('.form-page').forEach(page => page.classList.remove('active'));
 
-            // Tampilkan form-page yang dipilih
+            // Tampilkan halaman target
             const target = document.getElementById(pageId);
-            if(target) target.classList.add('active');
+            if(target) {
+                target.classList.add('active');
+            } else {
+                console.error("ID Halaman tidak ditemukan: " + pageId);
+            }
 
-            // Set menu sub-item aktif
+            // Update status menu aktif
             document.querySelectorAll('.sub-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
@@ -289,13 +279,21 @@
             const subMenu = document.getElementById(id);
             const parentMenu = subMenu.previousElementSibling;
             
-            // Toggle dropdown
+            // Tutup semua sub-menu lain agar rapi (opsional)
+            // document.querySelectorAll('.sub-menu').forEach(m => { if(m.id !== id) m.classList.remove('show-sub'); });
+
             subMenu.classList.toggle('show-sub');
             parentMenu.classList.toggle('active-parent');
         }
 
-        // Set tanggal hari ini otomatis
-        document.querySelectorAll('.tglInput').forEach(inp => inp.valueAsDate = new Date());
+        // Set tanggal otomatis dan buka form pertama sebagai default
+        window.onload = () => {
+            document.querySelectorAll('.tglInput').forEach(inp => inp.valueAsDate = new Date());
+            // Tampilkan identitas guru sebagai halaman awal
+            const firstMenu = document.querySelector('.sub-item');
+            showForm('pg-g-identitas', firstMenu);
+            toggleSubMenu('jurnalGuruSub');
+        };
     </script>
 </body>
 </html>
