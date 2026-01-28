@@ -6,7 +6,6 @@
     <title>Guru Dashboard - KELAS DIGITAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root { 
             --primary-green: #2d5a27; 
@@ -32,24 +31,23 @@
             overflow-y: auto;
         }
 
+        /* Update Header untuk Logo */
         .sidebar-header { 
             padding: 0 25px 20px; 
             border-bottom: 1px solid #f0f0f0; 
             margin-bottom: 10px;
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Memposisikan logo di tengah sidebar */
         }
         
-        /* Pemanggilan Nama Logo Baru */
         .sidebar-logo {
-            height: 70px; 
+            height: 65px; /* Ukuran yang pas untuk sidebar */
             width: auto;
-            transition: 0.3s ease;
+            transition: 0.3s;
         }
         
         .sidebar-logo:hover {
             transform: scale(1.05);
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
         }
 
         .menu-group { padding: 0 10px; }
@@ -70,6 +68,7 @@
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
 
+        /* Sub Menu Styles */
         .sub-menu {
             max-height: 0;
             overflow: hidden;
@@ -96,6 +95,7 @@
 
         /* --- MAIN CONTENT --- */
         .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 40px; }
+        
         .form-page { display: none; }
         .form-page.active { display: block; animation: fadeIn 0.3s ease; }
 
@@ -107,7 +107,7 @@
         .card { 
             background: white; padding: 35px; border-radius: 12px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #eee;
-            max-width: 950px; margin: 0 auto;
+            max-width: 900px; margin: 0 auto;
         }
         
         .section-header { 
@@ -116,57 +116,70 @@
             border-bottom: 2px solid #f0f0f0; padding-bottom: 12px;
         }
 
-        /* Profile Style */
+        /* --- DASHBOARD STYLES --- */
         .profile-display { display: flex; gap: 30px; align-items: center; background: #f9fdf9; padding: 30px; border-radius: 15px; border: 1px solid #e8f5e9; }
-        .profile-pic-large { width: 180px; height: 180px; border-radius: 15px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .profile-pic-large { width: 180px; height: 180px; border-radius: 15px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #eee; }
+        .profile-info h2 { font-size: 24px; color: var(--text-dark); margin-bottom: 5px; }
+        .profile-info p { font-size: 16px; color: var(--text-muted); margin-bottom: 15px; }
         .data-badge { display: inline-block; padding: 6px 12px; background: var(--primary-green); color: white; border-radius: 6px; font-size: 12px; font-weight: 600; }
 
-        /* Form Style */
+        /* --- FORM STYLES --- */
+        .date-container { background: #f9fdf9; padding: 15px; border-radius: 10px; border: 1px dashed var(--primary-green); display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; margin-bottom: 25px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #444; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .btn-save { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 30px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; }
+        input:focus, textarea:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1); }
+        .btn-save { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="./img/logo_dashboard.png" alt="Logo KELAS DIGITAL" class="sidebar-logo">
+            <img src="./img/image_12.png" alt="Logo KELAS DIGITAL" class="sidebar-logo">
         </div>
         
         <nav class="menu-group">
             <div class="menu-item active-menu" onclick="showForm('pg-dashboard', this)">
-                <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dashboard</span>
             </div>
 
             <div class="menu-item" onclick="showForm('pg-biodata', this)">
-                <i class="fa-solid fa-id-card"></i><span>Biodata Guru</span>
+                <i class="fa-solid fa-id-card"></i>
+                <span>Biodata Guru</span>
             </div>
 
             <hr style="margin: 10px 15px; border: 0; border-top: 1px solid #eee;">
 
             <div class="menu-wrapper">
                 <div class="menu-item" onclick="toggleSubMenu('jurnalGuruSub')">
-                    <i class="fa-solid fa-user-tie"></i><span>Jurnal Guru</span>
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>Jurnal Guru</span>
                     <i class="fa-solid fa-chevron-down chevron"></i>
                 </div>
                 <div id="jurnalGuruSub" class="sub-menu">
                     <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
                     <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
                     <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
+                    <div class="sub-item" onclick="showForm('pg-g-kbm', this)">Kegiatan KBM</div>
+                    <div class="sub-item" onclick="showForm('pg-g-evaluasi', this)">Evaluasi & Kehadiran</div>
+                    <div class="sub-item" onclick="showForm('pg-g-refleksi', this)">Refleksi & Tindak Lanjut</div>
                 </div>
             </div>
 
             <div class="menu-wrapper">
                 <div class="menu-item" onclick="toggleSubMenu('jurnalKelasSub')">
-                    <i class="fa-solid fa-chalkboard-user"></i><span>Jurnal Kelas</span>
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Jurnal Kelas</span>
                     <i class="fa-solid fa-chevron-down chevron"></i>
                 </div>
                 <div id="jurnalKelasSub" class="sub-menu">
                     <div class="sub-item" onclick="showForm('pg-k-identitas', this)">Identitas</div>
+                    <div class="sub-item" onclick="showForm('pg-k-perencanaan', this)">Perencanaan</div>
                     <div class="sub-item" onclick="showForm('pg-k-pelaksanaan', this)">Pelaksanaan</div>
+                    <div class="sub-item" onclick="showForm('pg-k-evaluasi', this)">Evaluasi / Catatan</div>
                 </div>
             </div>
 
@@ -181,52 +194,97 @@
             <div id="pg-dashboard" class="form-page active">
                 <div class="section-header"><i class="fa-solid fa-house-user"></i> Dashboard Guru</div>
                 <div class="profile-display">
-                    <img id="display-foto" src="https://via.placeholder.com/180" class="profile-pic-large" alt="Foto">
+                    <img id="display-foto" src="https://via.placeholder.com/180" class="profile-pic-large" alt="Foto Profil">
                     <div class="profile-info">
-                        <h2 id="display-nama">Nama Guru</h2>
+                        <h2 id="display-nama">Nama Guru Belum Diisi</h2>
                         <p id="display-nip">NIP/NUPTK: -</p>
                         <div style="margin-top:10px;">
-                            <span class="data-badge" id="display-mapel">Mapel: -</span>
+                            <span class="data-badge" id="display-mapel">Mata Pelajaran: -</span>
                             <span class="data-badge" style="background:#555;" id="display-sekolah">Sekolah: -</span>
                         </div>
                     </div>
                 </div>
+                <div style="margin-top:30px; border-top: 1px solid #eee; padding-top:20px; color:#666; font-size:14px;">
+                    <p><i class="fa-solid fa-circle-info"></i> Selamat datang di Kelas Digital. Semua data pengisian Anda akan tercatat secara sistematis di sini.</p>
+                </div>
             </div>
 
             <div id="pg-biodata" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-user-pen"></i> Update Biodata</div>
+                <div class="section-header"><i class="fa-solid fa-user-pen"></i> Pengisian Biodata Guru</div>
                 <div class="form-grid">
-                    <div class="full-width"><label>Foto Profil</label><input type="file" id="input-foto" accept="image/*"></div>
-                    <div><label>Nama Lengkap</label><input type="text" id="input-nama"></div>
-                    <div><label>NIP / NUPTK</label><input type="text" id="input-nip"></div>
-                    <div><label>Mata Pelajaran</label><input type="text" id="input-mapel"></div>
-                    <div><label>Unit Kerja</label><input type="text" id="input-sekolah"></div>
+                    <div class="full-width">
+                        <label>Upload Foto Profil</label>
+                        <input type="file" id="input-foto" accept="image/*" style="padding:8px;">
+                    </div>
+                    <div>
+                        <label>Nama Lengkap (beserta gelar)</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Budi Santoso, S.Pd.">
+                    </div>
+                    <div>
+                        <label>NIP / NUPTK</label>
+                        <input type="text" id="input-nip" placeholder="Nomor Induk Pegawai">
+                    </div>
+                    <div>
+                        <label>Mata Pelajaran Utama</label>
+                        <input type="text" id="input-mapel" placeholder="Contoh: Matematika">
+                    </div>
+                    <div>
+                        <label>Unit Kerja / Sekolah</label>
+                        <input type="text" id="input-sekolah" placeholder="Nama Sekolah Anda">
+                    </div>
+                    <div class="full-width">
+                        <label>Alamat Lengkap</label>
+                        <textarea id="input-alamat" placeholder="Tuliskan alamat domisili saat ini..."></textarea>
+                    </div>
                 </div>
-                <button class="btn-save" onclick="updateDashboard()">UPDATE DATA</button>
+                <button class="btn-save" onclick="updateDashboard()">UPDATE DASHBOARD</button>
             </div>
-            
+
+            <div id="pg-g-identitas" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-id-card"></i> Jurnal Guru: Identitas</div>
+                <div class="date-container">
+                    <div><label>Hari</label><input type="text" class="dayInput" readonly></div>
+                    <div><label>Tanggal & Tahun</label><input type="date" class="tglInput"></div>
+                </div>
+                <div class="form-grid">
+                    <div class="full-width"><label>Nama Guru</label><input type="text"></div>
+                    <div class="full-width"><label>Mata Pelajaran</label><input type="text"></div>
+                    <div><label>Semester</label><select><option>Ganjil</option><option>Genap</option></select></div>
+                    <div><label>Tahun Pelajaran</label><input type="text" value="2025/2026"></div>
+                </div>
+            </div>
+
             <div id="global-save-btn" style="display:none;">
-                <button class="btn-save" onclick="alert('Data Tersimpan!')">SIMPAN JURNAL</button>
+                <button class="btn-save" onclick="alert('Data Berhasil Disimpan!')">SIMPAN DATA</button>
             </div>
         </div>
     </main>
 
     <script>
         function showForm(pageId, element) {
-            document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.menu-item, .sub-item').forEach(i => {
-                i.classList.remove('active-menu');
-                i.classList.remove('active');
+            document.querySelectorAll('.form-page').forEach(page => page.classList.remove('active'));
+            const target = document.getElementById(pageId);
+            if(target) target.classList.add('active');
+
+            document.querySelectorAll('.menu-item, .sub-item').forEach(item => {
+                item.classList.remove('active-menu');
+                item.classList.remove('active');
             });
-            element.classList.add(element.classList.contains('sub-item') ? 'active' : 'active-menu');
+
+            if(element.classList.contains('sub-item')) {
+                element.classList.add('active');
+            } else {
+                element.classList.add('active-menu');
+            }
+
             document.getElementById('global-save-btn').style.display = (pageId === 'pg-dashboard') ? 'none' : 'block';
         }
 
         function toggleSubMenu(id) {
-            const sub = document.getElementById(id);
-            sub.classList.toggle('show-sub');
-            sub.previousElementSibling.classList.toggle('active-parent');
+            const subMenu = document.getElementById(id);
+            const parentMenu = subMenu.previousElementSibling;
+            subMenu.classList.toggle('show-sub');
+            parentMenu.classList.toggle('active-parent');
         }
 
         function updateDashboard() {
@@ -234,21 +292,43 @@
             const nip = document.getElementById('input-nip').value;
             const mapel = document.getElementById('input-mapel').value;
             const sekolah = document.getElementById('input-sekolah').value;
-            const file = document.getElementById('input-foto').files[0];
+            const fileFoto = document.getElementById('input-foto').files[0];
 
             if(nama) document.getElementById('display-nama').innerText = nama;
-            if(nip) document.getElementById('display-nip').innerText = "NIP: " + nip;
-            if(mapel) document.getElementById('display-mapel').innerText = "Mapel: " + mapel;
+            if(nip) document.getElementById('display-nip').innerText = "NIP/NUPTK: " + nip;
+            if(mapel) document.getElementById('display-mapel').innerText = "Mata Pelajaran: " + mapel;
             if(sekolah) document.getElementById('display-sekolah').innerText = "Sekolah: " + sekolah;
 
-            if (file) {
+            if (fileFoto) {
                 const reader = new FileReader();
-                reader.onload = (e) => document.getElementById('display-foto').src = e.target.result;
-                reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    document.getElementById('display-foto').src = e.target.result;
+                }
+                reader.readAsDataURL(fileFoto);
             }
-            alert("Berhasil!");
+
+            alert("Biodata berhasil diperbarui! Silahkan cek Dashboard.");
             showForm('pg-dashboard', document.querySelector('.menu-item:first-child'));
         }
+
+        function updateAllDates() {
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.querySelectorAll('.tglInput').forEach(inp => {
+                inp.value = dateString;
+                inp.onchange = function() {
+                    const sel = new Date(this.value);
+                    this.closest('.date-container').querySelector('.dayInput').value = days[sel.getDay()];
+                };
+            });
+            document.querySelectorAll('.dayInput').forEach(inp => inp.value = days[today.getDay()]);
+        }
+
+        window.onload = () => {
+            updateAllDates();
+        };
     </script>
 </body>
 </html>
+
