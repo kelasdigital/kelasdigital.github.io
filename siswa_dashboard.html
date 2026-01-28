@@ -40,7 +40,7 @@
             pointer-events: none;
         }
 
-        /* --- TOP HEADER (TAMPILAN UTAMA) --- */
+        /* --- TOP NAVBAR --- */
         .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -50,7 +50,7 @@
             z-index: 1001;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: 50px 1fr auto; /* Tombol - Logo - Keluar */
+            grid-template-columns: 50px 1fr auto;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
@@ -58,7 +58,7 @@
         .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; }
         .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
 
-        /* --- TOMBOL KELUAR DI POJOK KANAN ATAS --- */
+        /* TOMBOL KELUAR DI POJOK KANAN ATAS */
         .btn-keluar-top {
             background: rgba(211, 47, 47, 0.2);
             color: #ff5252;
@@ -73,7 +73,7 @@
             gap: 6px;
             transition: 0.3s;
         }
-        .btn-keluar-top:hover { background: #ff5252; color: white; box-shadow: 0 0 15px rgba(255, 82, 82, 0.4); }
+        .btn-keluar-top:hover { background: #ff5252; color: white; }
 
         /* --- SIDEBAR --- */
         .sidebar {
@@ -83,7 +83,7 @@
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-            padding: 90px 15px 25px; /* Padding atas disesuaikan height navbar */
+            padding: 90px 15px 25px;
             height: 100vh;
             position: fixed;
             left: 0; top: 0;
@@ -96,15 +96,12 @@
             margin-bottom: 5px;
             border-radius: 10px;
             cursor: pointer;
-            transition: 0.2s;
-            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             color: rgba(255,255,255,0.7);
         }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
-        .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); }
+        .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
 
         /* --- MAIN CONTENT --- */
         .main-content {
@@ -114,30 +111,17 @@
             transition: 0.3s;
         }
 
-        /* RESPONSIVE LAYOUT */
         @media (max-width: 768px) {
             .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
-            .main-content { margin-left: 0; padding: 90px 15px 15px; }
-            .btn-keluar-top span { display: none; } /* Hanya ikon di layar kecil */
-            
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.6);
-                z-index: 999;
-                backdrop-filter: blur(3px);
-            }
-            .sidebar-overlay.active { display: block; }
+            .main-content { margin-left: 0; padding: 100px 15px 15px; }
+            .btn-keluar-top span { display: none; }
         }
 
         .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; }
     </style>
 </head>
 <body>
-
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
     <header class="top-navbar">
         <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
@@ -148,42 +132,61 @@
     </header>
 
     <aside class="sidebar" id="sidebar">
-        <div class="menu-item active" onclick="showSection('dashboard', this)">
+        <div class="menu-item active">
             <i class="fa-solid fa-house"></i> <span>Dashboard</span>
         </div>
-        <div class="menu-item" onclick="showSection('biodata', this)">
-            <i class="fa-solid fa-user"></i> <span>Biodata</span>
-        </div>
-        <div class="menu-item" onclick="showSection('materi', this)">
-            <i class="fa-solid fa-book"></i> <span>Materi</span>
-        </div>
-        <div class="menu-item" onclick="showSection('ujian', this)">
-            <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
-        </div>
-    </aside>
+        </aside>
 
     <main class="main-content">
-        <div id="dashboard" class="content-section">
-            <h2 id="userName" style="margin-bottom: 20px;">Halo, Siswa Aktif</h2>
-            <div class="card">
-                <h3 style="color: var(--accent-neon);">Selamat Datang di Kelas Digital</h3>
-                <p style="margin-top:10px; opacity:0.8;">Pilih menu di samping untuk mengakses materi atau ujian Anda.</p>
-            </div>
+        <div class="card">
+            <h2 id="userName">Memuat Nama...</h2>
+            <p>Selamat datang di panel KELAS DIGITAL.</p>
         </div>
     </main>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        function logout() {
-            if(confirm("Apakah Anda yakin ingin keluar?")) {
-                // Logika Firebase signOut di sini
-                alert("Berhasil Logout");
+        // Konfigurasi Firebase
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- SOLUSI AGAR TOMBOL BERFUNGSI ---
+        // Karena script ini bertipe "module", kita harus menempelkan fungsi ke "window"
+        window.logout = async () => {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                try {
+                    await signOut(auth);
+                    window.location.href = "index.html"; // Redirect ke halaman login
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                    alert("Gagal keluar: " + error.message);
+                }
             }
-        }
+        };
+
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        };
+
+        // Cek status login
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('userName').innerText = "Halo, " + (user.displayName || "Siswa");
+            }
+        });
     </script>
 </body>
 </html>
