@@ -3,37 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siswa - KELAS DIGITAL</title>
+    <title>Siswa AI - KELAS DIGITAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { 
-            --primary-green: #1e3d1a; /* Hijau gelap sesuai gambar */
-            --accent-green: #2d5a27;
-            --text-light: #ffffff;
-            --bg-light: #f4f7f4;
+            --primary-dark-green: #0a1f0a; /* Latar belakang utama yang sangat gelap */
+            --sidebar-green: #112911; /* Warna sidebar sedikit lebih terang */
+            --accent-green: #2d5a27; /* Warna hover menu */
+            --neon-green: #39ff14; /* Warna aksen menyala untuk logo dan teks penting */
+            --text-light: #e0e0e0;
             --sidebar-width: 280px;
+            --chipset-pattern-color: rgba(57, 255, 20, 0.07); /* Warna transparan untuk pola sirkuit */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); display: flex; min-height: 100vh; }
+        
+        body { 
+            background-color: var(--primary-dark-green); 
+            display: flex; 
+            min-height: 100vh; 
+            color: var(--text-light);
+        }
 
-        /* --- SIDEBAR (Kiri - Seperti Guru) --- */
+        /* --- SIDEBAR KIRI --- */
         .sidebar {
             width: var(--sidebar-width); 
-            background: var(--primary-green); 
+            background: var(--sidebar-green); 
             height: 100vh; 
             position: fixed;
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             padding: 30px 0; 
-            display: flex; 
-            flex-direction: column; 
-            color: white;
+            display: flex; flex-direction: column; 
+            border-right: 1px solid rgba(57, 255, 20, 0.1); /* Batas hijau tipis */
             z-index: 1000;
         }
-        .sidebar-header { padding: 0 25px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .sidebar-logo { height: 55px; width: auto; }
+        
+        /* Logo Baru (Chipset AI) */
+        .sidebar-header { 
+            padding: 0 20px 30px; 
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; 
+        }
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 18px; font-weight: 700; color: white; letter-spacing: 1px;
+        }
+        .brand-logo i {
+            font-size: 32px; color: var(--neon-green); /* Ikon chipset menyala */
+        }
 
         .menu-container { flex-grow: 1; padding: 0 15px; }
         .menu-item {
@@ -41,67 +59,86 @@
             text-decoration: none; border-radius: 12px; transition: 0.3s; cursor: pointer;
             margin-bottom: 8px; font-size: 14px; font-weight: 500;
         }
-        .menu-item:hover, .menu-item.active { background-color: var(--accent-green); color: white; }
-        .menu-item i { width: 24px; margin-right: 15px; font-size: 18px; opacity: 0.8; }
+        .menu-item:hover, .menu-item.active { 
+            background-color: var(--accent-green); 
+            color: var(--neon-green); 
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); /* Efek glow saat aktif */
+        }
+        .menu-item i { width: 24px; margin-right: 15px; font-size: 18px; }
 
-        /* --- MAIN CONTENT (Di Sebelah Kanan Sidebar) --- */
+        /* --- KONTEN UTAMA DENGAN BACKGROUND CHIPSET AI --- */
         .main-content { 
             margin-left: var(--sidebar-width); 
             flex-grow: 1; 
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
+            position: relative;
+            /* Membuat Pola Chipset AI Transparan dengan CSS Gradient */
+            background-color: var(--primary-dark-green);
+            background-image: 
+                linear-gradient(var(--chipset-pattern-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--chipset-pattern-color) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, var(--chipset-pattern-color) 2px, transparent 2px);
+            background-size: 50px 50px, 50px 50px, 100px 100px;
+            background-position: -1px -1px, -1px -1px, -1px -1px;
         }
         
-        /* Hero Banner */
-        .hero-banner {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('./img/hero_siswa.jpg'); 
-            background-size: cover; 
-            background-position: center;
-            height: 250px; 
-            margin: 20px; 
-            border-radius: 20px;
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center;
-            padding: 0 50px; 
-            color: white;
+        /* Overlay gradient agar bagian atas lebih gelap dan pola lebih halus */
+        .main-content::before {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: radial-gradient(circle at top right, transparent 0%, var(--primary-dark-green) 70%);
+            pointer-events: none;
         }
-        .hero-banner h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        .hero-banner p { font-size: 14px; opacity: 0.9; max-width: 450px; }
 
-        .container { padding: 0 20px 40px; }
-        .content-section { display: none; margin-top: 10px; }
-        .content-section.active { display: block; animation: fadeInUp 0.4s ease; }
+        .container { padding: 40px 30px; position: relative; z-index: 2; }
+        .content-section { display: none; animation: fadeInUp 0.5s ease; }
+        .content-section.active { display: block; }
 
-        /* Style Card Data */
+        /* Judul Halaman */
+        .page-title {
+            font-size: 24px; font-weight: 700; margin-bottom: 25px; color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+
+        /* Style Card Data (Disesuaikan dengan tema gelap) */
         .data-card {
-            background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px;
-            border: 1px solid #e0e6e0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            background: rgba(20, 40, 20, 0.8); /* Latar belakang kartu semi-transparan */
+            backdrop-filter: blur(5px); /* Efek kaca buram */
+            border-radius: 15px; padding: 25px; margin-bottom: 20px;
+            border: 1px solid var(--accent-green);
             transition: 0.3s;
         }
-        .data-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .data-card h3 { color: var(--primary-green); margin-bottom: 12px; font-size: 18px; }
-        .data-card p { color: #444; font-size: 14px; line-height: 1.6; }
+        .data-card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--neon-green);
+            box-shadow: 0 5px 15px rgba(57, 255, 20, 0.1);
+        }
+        .data-card h3 { color: var(--neon-green); margin-bottom: 12px; font-size: 18px; }
+        .data-card p { color: #ccc; font-size: 14px; line-height: 1.6; }
         
         /* Tombol Aksi */
         .btn-action {
-            display: inline-block; padding: 8px 20px; background: white; color: var(--primary-green);
+            display: inline-block; padding: 10px 25px; 
+            background: transparent; color: var(--neon-green);
             border-radius: 30px; font-weight: 600; text-decoration: none; margin-top: 15px;
-            font-size: 12px; border: 1px solid var(--primary-green); transition: 0.3s;
+            font-size: 13px; border: 2px solid var(--neon-green); transition: 0.3s;
         }
-        .btn-action:hover { background: var(--primary-green); color: white; }
+        .btn-action:hover { background: var(--neon-green); color: var(--primary-dark-green); box-shadow: 0 0 20px var(--neon-green); }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-logout { margin: 20px 15px; color: #ff6b6b !important; border: 1px solid rgba(255,107,107,0.3); }
+        .btn-logout { margin: 20px 15px; color: #ff4d4d !important; border: 1px solid rgba(255, 77, 77, 0.3); }
+        .btn-logout:hover { background: rgba(255, 77, 77, 0.1) !important; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="./img/logo_white.png" alt="Logo" class="sidebar-logo">
+            <div class="brand-logo">
+                <i class="fa-solid fa-microchip"></i>
+                <span>KELAS DIGITAL</span>
+            </div>
         </div>
         
         <nav class="menu-container">
@@ -112,7 +149,7 @@
                 <i class="fa-solid fa-calendar-check"></i><span>Absensi Saya</span>
             </div>
             <div class="menu-item" onclick="showPage('pg-ulangan', this)">
-                <i class="fa-solid fa-file-signature"></i><span>Info Ulangan</span>
+                <i class="fa-solid fa-file-code"></i><span>Info Ulangan</span>
             </div>
         </nav>
 
@@ -122,21 +159,23 @@
     </aside>
 
     <main class="main-content">
-        <div class="hero-banner">
-            <h1>Kolaborasi Tanpa Batas</h1>
-            <p>Hubungkan guru dan siswa dalam satu ekosistem digital yang dinamis.</p>
-        </div>
-
         <div class="container">
             <div id="pg-materi" class="content-section active">
-                <div id="list-materi">Memuat materi...</div>
+                <h2 class="page-title">Materi AI & Pembelajaran</h2>
+                <div id="list-materi">
+                    <p style="text-align:center; padding:50px; color:var(--neon-green);">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Memindai data materi...
+                    </p>
+                </div>
             </div>
 
             <div id="pg-absensi" class="content-section">
+                <h2 class="page-title">Status Kehadiran Digital</h2>
                 <div id="list-absensi">Memuat data absensi...</div>
             </div>
 
             <div id="pg-ulangan" class="content-section">
+                <h2 class="page-title">Jadwal Evaluasi Sistem</h2>
                 <div id="list-ulangan">Memuat info ulangan...</div>
             </div>
         </div>
@@ -147,7 +186,6 @@
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase Anda
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
             authDomain: "kelasdigital-b58ce.firebaseapp.com", 
@@ -160,46 +198,56 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fungsi Menampilkan Data dari Firebase
+        // Fungsi Listener Data Firebase
         function listenData(colName, elementId, templateFunc) {
             const q = query(collection(db, colName), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 let html = '';
                 snapshot.forEach(doc => html += templateFunc(doc.data()));
-                document.getElementById(elementId).innerHTML = html || '<p style="text-align:center; padding:50px; color:#888;">Belum ada data tersedia.</p>';
+                // Tampilan kosong jika tidak ada data
+                document.getElementById(elementId).innerHTML = html || `
+                    <div style="text-align:center; padding:50px; color:#888; border: 1px dashed var(--accent-green); border-radius:15px;">
+                        <i class="fa-solid fa-database" style="font-size:40px; margin-bottom:20px; color:var(--accent-green);"></i><br>
+                        Belum ada data tersedia di sistem.
+                    </div>`;
             });
         }
 
-        // Tampilan Kartu Data
+        // Template Kartu Data (Disesuaikan untuk Dark Mode)
         listenData("materi", "list-materi", (d) => `
             <div class="data-card">
-                <h3>${d.judul}</h3>
+                <h3><i class="fa-solid fa-microchip"></i> ${d.judul}</h3>
                 <p>${d.isi}</p>
-                <a href="#" class="btn-action">Buka Materi</a>
+                <div style="margin-top:15px;">
+                    <span style="font-size:12px; color:#888; background:rgba(45,90,39,0.5); padding: 4px 10px; border-radius:20px;">
+                        Jenjang: ${d.jenjang || 'Umum'}
+                    </span>
+                </div>
+                <a href="#" class="btn-action">AKSES MODULE</a>
             </div>
         `);
 
         listenData("absensi", "list-absensi", (d) => `
-            <div class="data-card">
-                <h3>Absensi Kelas: ${d.kelas}</h3>
-                <p>Status: ${d.keterangan}</p>
+            <div class="data-card" style="border-left: 4px solid var(--neon-green);">
+                <h3><i class="fa-solid fa-fingerprint"></i> Log Kelas: ${d.kelas}</h3>
+                <p>Status Sistem: <span style="color:var(--neon-green);">${d.keterangan}</span></p>
+                <p style="font-size:12px; color:#888; margin-top:10px;">Timestamp: ${d.createdAt?.toDate().toLocaleString()}</p>
             </div>
         `);
 
         listenData("ulangan", "list-ulangan", (d) => `
             <div class="data-card">
-                <h3>${d.judul}</h3>
+                <h3><i class="fa-solid fa-terminal"></i> ${d.judul}</h3>
                 <p>${d.keterangan}</p>
-                <a href="#" class="btn-action">Lihat Jadwal</a>
+                <a href="#" class="btn-action">INISIASI UJIAN</a>
             </div>
         `);
 
-        window.logoutSiswa = () => { if(confirm("Keluar dari sistem?")) signOut(auth).then(() => window.location.href="index.html"); };
+        window.logoutSiswa = () => { if(confirm("Putuskan koneksi dari sistem?")) signOut(auth).then(() => window.location.href="index.html"); };
         onAuthStateChanged(auth, (u) => { if(!u) window.location.href="index.html"; });
     </script>
 
     <script>
-        // Navigasi Antar Halaman
         function showPage(id, el) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
