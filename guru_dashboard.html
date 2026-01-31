@@ -30,7 +30,7 @@
             padding: 20px 0;
             z-index: 1000;
             display: flex;
-            flex-direction: column; /* Membuat isi sidebar bisa diatur atas-bawah */
+            flex-direction: column;
         }
 
         .sidebar-header { 
@@ -41,17 +41,9 @@
             justify-content: center;
         }
         
-        .sidebar-logo {
-            height: 65px;
-            width: auto;
-            transition: 0.3s;
-        }
+        .sidebar-logo { height: 65px; width: auto; }
 
-        .menu-container {
-            flex-grow: 1; /* Mengisi ruang kosong agar menu logout terdorong ke bawah */
-            overflow-y: auto;
-            padding: 0 10px;
-        }
+        .menu-container { flex-grow: 1; overflow-y: auto; padding: 0 10px; }
 
         .menu-item {
             display: flex;
@@ -70,20 +62,6 @@
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
 
-        /* Style Khusus Logout */
-        .menu-logout {
-            margin: 20px 10px;
-            padding: 12px 15px;
-            color: var(--danger-red) !important;
-            border: 1px solid transparent;
-        }
-        .menu-logout i { color: var(--danger-red) !important; }
-        .menu-logout:hover {
-            background-color: #fff5f5 !important;
-            border-color: #ffcdd2;
-        }
-
-        /* Sub Menu Styles */
         .sub-menu {
             max-height: 0;
             overflow: hidden;
@@ -128,29 +106,44 @@
             border-bottom: 2px solid #f0f0f0; padding-bottom: 12px;
         }
 
-        /* Dashboard Profile */
+        /* --- FORM STYLES --- */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+        .form-control {
+            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 14px; transition: border-color 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        textarea.form-control { min-height: 100px; resize: vertical; }
+
+        /* Buttons */
+        .btn-primary { background: var(--primary-green); color: white; border: none; padding: 14px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 14px; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Dashboard Profile Display */
         .profile-display { display: flex; gap: 30px; align-items: center; background: #f9fdf9; padding: 30px; border-radius: 15px; border: 1px solid #e8f5e9; }
-        .profile-pic-large { width: 180px; height: 180px; border-radius: 15px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #eee; }
-        
-        .btn-save { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 30px; }
+        .profile-pic-large { width: 150px; height: 150px; border-radius: 15px; object-fit: cover; background: #eee; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .data-badge { display: inline-block; padding: 5px 12px; background: var(--primary-green); color: white; border-radius: 20px; font-size: 12px; margin-right: 5px; }
+
+        .menu-logout { margin: 20px 10px; color: var(--danger-red) !important; font-weight: 700; }
+        .menu-logout:hover { background-color: #fff5f5 !important; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="./img/image_12.png" alt="Logo KELAS DIGITAL" class="sidebar-logo">
+            <img src="./img/image_12.png" alt="Logo" class="sidebar-logo">
         </div>
         
         <nav class="menu-container">
             <div class="menu-item active-menu" onclick="showForm('pg-dashboard', this)">
-                <i class="fa-solid fa-gauge-high"></i>
-                <span>Dashboard</span>
+                <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
             </div>
 
             <div class="menu-item" onclick="showForm('pg-biodata', this)">
-                <i class="fa-solid fa-id-card"></i>
-                <span>Biodata Guru</span>
+                <i class="fa-solid fa-id-card"></i><span>Biodata Guru</span>
             </div>
 
             <hr style="margin: 10px 15px; border: 0; border-top: 1px solid #eee;">
@@ -163,8 +156,8 @@
                 </div>
                 <div id="jurnalGuruSub" class="sub-menu">
                     <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
-                    <div class="sub-item">Data Pembelajaran</div>
-                    <div class="sub-item">Materi & Kompetensi</div>
+                    <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
+                    <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
                 </div>
             </div>
 
@@ -174,22 +167,22 @@
         </nav>
 
         <div class="menu-item menu-logout" onclick="confirmLogout()">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Keluar / Logout</span>
+            <i class="fa-solid fa-right-from-bracket"></i><span>Keluar / Logout</span>
         </div>
     </aside>
 
     <main class="main-content">
         <div class="card">
+            
             <div id="pg-dashboard" class="form-page active">
                 <div class="section-header"><i class="fa-solid fa-house-user"></i> Dashboard Guru</div>
                 <div class="profile-display">
-                    <img id="display-foto" src="https://via.placeholder.com/180" class="profile-pic-large" alt="Foto Profil">
+                    <img id="display-foto" src="https://via.placeholder.com/150" class="profile-pic-large" alt="Foto">
                     <div class="profile-info">
                         <h2 id="display-nama">Memuat Nama...</h2>
-                        <p id="display-nip">NIP/NUPTK: -</p>
-                        <div style="margin-top:10px;">
-                            <span class="data-badge" id="display-mapel">Mata Pelajaran: -</span>
+                        <p id="display-nip" style="color:#666; margin-bottom:10px;">NIP/NUPTK: -</p>
+                        <div>
+                            <span class="data-badge" id="display-mapel">Mapel: -</span>
                             <span class="data-badge" style="background:#555;" id="display-sekolah">Sekolah: -</span>
                         </div>
                     </div>
@@ -198,13 +191,85 @@
 
             <div id="pg-biodata" class="form-page">
                 <div class="section-header"><i class="fa-solid fa-user-pen"></i> Pengisian Biodata</div>
-                <button class="btn-save" onclick="updateDashboard()">UPDATE DASHBOARD</button>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Nama Lengkap (Beserta Gelar)</label>
+                        <input type="text" class="form-control" id="f-nama" placeholder="Contoh: Ahmad, S.Pd.">
+                    </div>
+                    <div class="form-group">
+                        <label>NIP / NUPTK</label>
+                        <input type="text" class="form-control" id="f-nip" placeholder="Masukkan nomor identitas">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jenjang Sekolah</label>
+                    <select class="form-control" id="f-jenjang">
+                        <option value="MI">MI (Madrasah Ibtidaiyah)</option>
+                        <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
+                        <option value="SMA">SMA / MA</option>
+                    </select>
+                </div>
+                <button class="btn-primary">UPDATE BIODATA</button>
             </div>
+
+            <div id="pg-g-identitas" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-address-book"></i> Identitas Jurnal Guru</div>
+                <div class="form-group">
+                    <label>Tahun Pelajaran</label>
+                    <input type="text" class="form-control" placeholder="Contoh: 2025/2026">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Semester</label>
+                        <select class="form-control">
+                            <option>Ganjil</option>
+                            <option>Genap</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mata Pelajaran Utama</label>
+                        <input type="text" class="form-control" placeholder="Nama Mapel">
+                    </div>
+                </div>
+                <button class="btn-primary">SIMPAN IDENTITAS</button>
+            </div>
+
+            <div id="pg-g-data" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-chalkboard-user"></i> Data Pembelajaran Harian</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Hari / Tanggal</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Kelas</label>
+                        <input type="text" class="form-control" placeholder="Contoh: XII-IPA 1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jam Ke- (Waktu Mengajar)</label>
+                    <input type="text" class="form-control" placeholder="Contoh: 1 - 4">
+                </div>
+                <button class="btn-primary">INPUT DATA MENGAJAR</button>
+            </div>
+
+            <div id="pg-g-materi" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-book"></i> Materi & Kompetensi</div>
+                <div class="form-group">
+                    <label>Kompetensi Dasar (KD) / Tujuan Pembelajaran (TP)</label>
+                    <input type="text" class="form-control" placeholder="Masukkan Kode atau Judul KD">
+                </div>
+                <div class="form-group">
+                    <label>Ringkasan Materi Pembelajaran</label>
+                    <textarea class="form-control" placeholder="Tuliskan poin-poin materi yang disampaikan hari ini..."></textarea>
+                </div>
+                <button class="btn-primary">SIMPAN MATERI</button>
+            </div>
+
         </div>
     </main>
 
     <script type="module">
-        // Import Firebase (Sesuaikan dengan setup anda)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -219,37 +284,40 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Fungsi Logout
         window.confirmLogout = function() {
-            if(confirm("Apakah anda yakin ingin keluar dari sistem?")) {
-                signOut(auth).then(() => {
-                    window.location.href = "index.html"; // Redirect ke halaman login
-                }).catch((error) => {
-                    alert("Gagal Logout: " + error.message);
-                });
+            if(confirm("Apakah anda yakin ingin keluar?")) {
+                signOut(auth).then(() => { window.location.href = "index.html"; });
             }
         }
 
-        // Cek Sesi (Jika tidak login, tendang ke index)
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            }
+            if (!user) window.location.href = "index.html";
         });
     </script>
 
     <script>
-        // Navigasi Form
+        // FUNGSI NAVIGASI HALAMAN (Sangat Penting)
         function showForm(pageId, element) {
-            document.querySelectorAll('.form-page').forEach(page => page.classList.remove('active'));
             const target = document.getElementById(pageId);
-            if(target) target.classList.add('active');
+            
+            if (!target) {
+                alert("Halaman dengan ID " + pageId + " belum tersedia.");
+                return;
+            }
 
+            // Sembunyikan semua halaman
+            document.querySelectorAll('.form-page').forEach(page => page.classList.remove('active'));
+            
+            // Tampilkan halaman target
+            target.classList.add('active');
+
+            // Reset status active di sidebar
             document.querySelectorAll('.menu-item, .sub-item').forEach(item => {
                 item.classList.remove('active-menu');
                 item.classList.remove('active');
             });
 
+            // Beri tanda active pada menu yang diklik
             if(element.classList.contains('sub-item')) {
                 element.classList.add('active');
             } else {
@@ -257,9 +325,18 @@
             }
         }
 
+        // FUNGSI BUKA TUTUP SUB-MENU
         function toggleSubMenu(id) {
             const subMenu = document.getElementById(id);
             subMenu.classList.toggle('show-sub');
+            
+            // Putar icon chevron
+            const icon = subMenu.previousElementSibling.querySelector('.chevron');
+            if(subMenu.classList.contains('show-sub')) {
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                icon.style.transform = "rotate(0deg)";
+            }
         }
     </script>
 </body>
