@@ -8,99 +8,137 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            --primary-blue: #1a73e8; 
-            --text-dark: #333333;
-            --bg-light: #f1f3f4;
-            --sidebar-width: 260px;
+            --primary-green: #1e3d1a; /* Hijau gelap sesuai gambar */
+            --accent-green: #2d5a27;
+            --text-light: #ffffff;
+            --bg-light: #f4f7f4;
+            --sidebar-width: 280px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-light); display: flex; min-height: 100vh; }
 
-        /* --- SIDEBAR SISWA --- */
+        /* --- SIDEBAR (Kiri - Seperti Guru) --- */
         .sidebar {
-            width: var(--sidebar-width); background: white; height: 100vh; position: fixed;
-            border-right: 1px solid #dadce0; padding: 20px 0; display: flex; flex-direction: column;
+            width: var(--sidebar-width); 
+            background: var(--primary-green); 
+            height: 100vh; 
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 30px 0; 
+            display: flex; 
+            flex-direction: column; 
+            color: white;
+            z-index: 1000;
         }
-        .sidebar-header { padding: 0 25px 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 15px; }
-        .sidebar-logo { height: 50px; width: auto; }
+        .sidebar-header { padding: 0 25px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .sidebar-logo { height: 55px; width: auto; }
 
+        .menu-container { flex-grow: 1; padding: 0 15px; }
         .menu-item {
-            display: flex; align-items: center; padding: 12px 20px; color: var(--text-dark);
-            text-decoration: none; border-radius: 0 25px 25px 0; transition: 0.2s; cursor: pointer;
-            margin-bottom: 4px; font-size: 14px; font-weight: 500; margin-right: 10px;
+            display: flex; align-items: center; padding: 14px 20px; color: rgba(255,255,255,0.7);
+            text-decoration: none; border-radius: 12px; transition: 0.3s; cursor: pointer;
+            margin-bottom: 8px; font-size: 14px; font-weight: 500;
         }
-        .menu-item:hover, .menu-item.active { background-color: #e8f0fe; color: var(--primary-blue); }
-        .menu-item i { width: 24px; margin-right: 15px; font-size: 18px; color: #5f6368; }
-        .menu-item.active i { color: var(--primary-blue); }
+        .menu-item:hover, .menu-item.active { background-color: var(--accent-green); color: white; }
+        .menu-item i { width: 24px; margin-right: 15px; font-size: 18px; opacity: 0.8; }
 
-        /* --- CONTENT AREA --- */
-        .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 30px; }
-        .container { max-width: 1000px; margin: 0 auto; }
+        /* --- MAIN CONTENT (Di Sebelah Kanan Sidebar) --- */
+        .main-content { 
+            margin-left: var(--sidebar-width); 
+            flex-grow: 1; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
         
-        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .page-header h2 { font-size: 22px; color: var(--text-dark); }
-
-        .content-section { display: none; }
-        .content-section.active { display: block; animation: fadeIn 0.3s ease; }
-
-        /* Card Style (Tampilan Seperti Semula) */
-        .data-card {
-            background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px;
-            border: 1px solid #dadce0; transition: box-shadow 0.2s;
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('./img/hero_siswa.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            height: 250px; 
+            margin: 20px; 
+            border-radius: 20px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            padding: 0 50px; 
+            color: white;
         }
-        .data-card:hover { box-shadow: 0 1px 6px rgba(32,33,36,0.28); }
-        .data-card h3 { color: var(--primary-blue); margin-bottom: 8px; font-size: 18px; }
-        .data-card p { color: #3c4043; font-size: 14px; line-height: 1.6; }
-        .data-card .footer-info { margin-top: 15px; font-size: 12px; color: #70757a; border-top: 1px solid #f1f3f4; padding-top: 10px; }
+        .hero-banner h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .hero-banner p { font-size: 14px; opacity: 0.9; max-width: 450px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .container { padding: 0 20px 40px; }
+        .content-section { display: none; margin-top: 10px; }
+        .content-section.active { display: block; animation: fadeInUp 0.4s ease; }
 
-        .btn-logout { margin-top: auto; color: #d93025 !important; }
+        /* Style Card Data */
+        .data-card {
+            background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px;
+            border: 1px solid #e0e6e0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: 0.3s;
+        }
+        .data-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .data-card h3 { color: var(--primary-green); margin-bottom: 12px; font-size: 18px; }
+        .data-card p { color: #444; font-size: 14px; line-height: 1.6; }
+        
+        /* Tombol Aksi */
+        .btn-action {
+            display: inline-block; padding: 8px 20px; background: white; color: var(--primary-green);
+            border-radius: 30px; font-weight: 600; text-decoration: none; margin-top: 15px;
+            font-size: 12px; border: 1px solid var(--primary-green); transition: 0.3s;
+        }
+        .btn-action:hover { background: var(--primary-green); color: white; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-logout { margin: 20px 15px; color: #ff6b6b !important; border: 1px solid rgba(255,107,107,0.3); }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="./img/image_12.png" alt="Logo" class="sidebar-logo">
+            <img src="./img/logo_white.png" alt="Logo" class="sidebar-logo">
         </div>
         
-        <nav style="flex-grow: 1;">
+        <nav class="menu-container">
             <div class="menu-item active" onclick="showPage('pg-materi', this)">
-                <i class="fa-solid fa-book-bookmark"></i><span>Materi Pelajaran</span>
+                <i class="fa-solid fa-book-open"></i><span>Materi Pelajaran</span>
             </div>
             <div class="menu-item" onclick="showPage('pg-absensi', this)">
-                <i class="fa-solid fa-user-check"></i><span>Absensi Saya</span>
+                <i class="fa-solid fa-calendar-check"></i><span>Absensi Saya</span>
             </div>
             <div class="menu-item" onclick="showPage('pg-ulangan', this)">
-                <i class="fa-solid fa-file-pen"></i><span>Info Ulangan</span>
+                <i class="fa-solid fa-file-signature"></i><span>Info Ulangan</span>
             </div>
         </nav>
 
         <div class="menu-item btn-logout" onclick="logoutSiswa()">
-            <i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span>
+            <i class="fa-solid fa-power-off"></i><span>Keluar</span>
         </div>
     </aside>
 
     <main class="main-content">
+        <div class="hero-banner">
+            <h1>Kolaborasi Tanpa Batas</h1>
+            <p>Hubungkan guru dan siswa dalam satu ekosistem digital yang dinamis.</p>
+        </div>
+
         <div class="container">
-            
             <div id="pg-materi" class="content-section active">
-                <div class="page-header"><h2>📚 Materi Terkini</h2></div>
                 <div id="list-materi">Memuat materi...</div>
             </div>
 
             <div id="pg-absensi" class="content-section">
-                <div class="page-header"><h2>✅ Kehadiran</h2></div>
                 <div id="list-absensi">Memuat data absensi...</div>
             </div>
 
             <div id="pg-ulangan" class="content-section">
-                <div class="page-header"><h2>📝 Jadwal Ulangan</h2></div>
                 <div id="list-ulangan">Memuat info ulangan...</div>
             </div>
-
         </div>
     </main>
 
@@ -109,60 +147,64 @@
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Konfigurasi Firebase Anda
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
             authDomain: "kelasdigital-b58ce.firebaseapp.com", 
-            projectId: "kelasdigital-b58ce" 
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fungsi Load Data Real-time (Sesuai aslinya)
+        // Fungsi Menampilkan Data dari Firebase
         function listenData(colName, elementId, templateFunc) {
             const q = query(collection(db, colName), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 let html = '';
                 snapshot.forEach(doc => html += templateFunc(doc.data()));
-                document.getElementById(elementId).innerHTML = html || '<p style="padding:20px; color:#999;">Belum ada data.</p>';
+                document.getElementById(elementId).innerHTML = html || '<p style="text-align:center; padding:50px; color:#888;">Belum ada data tersedia.</p>';
             });
         }
 
-        // Jalankan Listener
-        listenData("materi", "list-materi", (data) => `
+        // Tampilan Kartu Data
+        listenData("materi", "list-materi", (d) => `
             <div class="data-card">
-                <h3>${data.judul}</h3>
-                <p>${data.isi}</p>
-                <div class="footer-info">Jenjang: ${data.jenjang || '-'} | Diupdate: ${data.createdAt?.toDate().toLocaleDateString()}</div>
+                <h3>${d.judul}</h3>
+                <p>${d.isi}</p>
+                <a href="#" class="btn-action">Buka Materi</a>
             </div>
         `);
 
-        listenData("absensi", "list-absensi", (data) => `
+        listenData("absensi", "list-absensi", (d) => `
             <div class="data-card">
-                <h3>Kelas: ${data.kelas}</h3>
-                <p>Keterangan: ${data.keterangan}</p>
-                <div class="footer-info">Tanggal: ${data.createdAt?.toDate().toLocaleDateString()}</div>
+                <h3>Absensi Kelas: ${d.kelas}</h3>
+                <p>Status: ${d.keterangan}</p>
             </div>
         `);
 
-        listenData("ulangan", "list-ulangan", (data) => `
+        listenData("ulangan", "list-ulangan", (d) => `
             <div class="data-card">
-                <h3>${data.judul}</h3>
-                <p>${data.keterangan}</p>
-                <div class="footer-info">Info: Harap persiapkan diri dengan baik.</div>
+                <h3>${d.judul}</h3>
+                <p>${d.keterangan}</p>
+                <a href="#" class="btn-action">Lihat Jadwal</a>
             </div>
         `);
 
-        window.logoutSiswa = () => signOut(auth).then(() => window.location.href="index.html");
+        window.logoutSiswa = () => { if(confirm("Keluar dari sistem?")) signOut(auth).then(() => window.location.href="index.html"); };
         onAuthStateChanged(auth, (u) => { if(!u) window.location.href="index.html"; });
     </script>
 
     <script>
-        function showPage(pageId, element) {
+        // Navigasi Antar Halaman
+        function showPage(id, el) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            document.getElementById(id).classList.add('active');
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            element.classList.add('active');
+            el.classList.add('active');
         }
     </script>
 </body>
