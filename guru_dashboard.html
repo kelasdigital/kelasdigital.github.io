@@ -72,6 +72,7 @@
             background: var(--primary-green); color: white; border: none; padding: 14px; 
             border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px;
         }
+        .btn-save:active { transform: scale(0.98); }
         .profile-display { display: flex; gap: 25px; align-items: center; background: #f9fdf9; padding: 25px; border-radius: 12px; border: 1px solid #e8f5e9; }
         .profile-pic-large { width: 140px; height: 140px; border-radius: 12px; object-fit: cover; background: #eee; }
         .menu-logout { margin: 20px 10px; color: var(--danger-red) !important; }
@@ -85,10 +86,10 @@
         </div>
         
         <nav class="menu-container">
-            <div class="menu-item active-menu" onclick="showForm('pg-dashboard', this)">
+            <div class="menu-item active-menu" id="m-dashboard" onclick="showForm('pg-dashboard', this)">
                 <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
             </div>
-            <div class="menu-item" onclick="showForm('pg-biodata', this)">
+            <div class="menu-item" id="m-biodata" onclick="showForm('pg-biodata', this)">
                 <i class="fa-solid fa-id-card"></i><span>Biodata Guru</span>
             </div>
 
@@ -193,65 +194,91 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- FUNGSI GLOBAL UTK KIRIM DATA ---
-        async function kirimKeFirestore(koleksi, data) {
+        // Fungsi Universal untuk Kirim Data
+        async function sendData(colName, payload) {
             const user = auth.currentUser;
-            if(!user) return alert("Silakan login ulang.");
+            if(!user) return alert("Sesi habis. Silakan login kembali.");
+            
             try {
-                data.uid = user.uid;
-                data.createdAt = serverTimestamp();
-                await addDoc(collection(db, koleksi), data);
+                payload.uid = user.uid;
+                payload.timestamp = serverTimestamp();
+                await addDoc(collection(db, colName), payload);
                 alert("Data berhasil tersimpan!");
-            } catch (e) {
-                console.error(e);
-                alert("Gagal: " + e.message);
+            } catch (err) {
+                console.error("Firebase Error:", err);
+                alert("Gagal menyimpan: " + err.message);
             }
         }
 
-        // --- DAFTARKAN FUNGSI KE WINDOW (AGAR ONCLICK JALAN) ---
-        window.simpanBiodata = () => kirimKeFirestore("biodata_guru", { 
+        // --- EXPOSE FUNGSI KE WINDOW (SOLUSI TOMBOL TIDAK BERFUNGSI) ---
+        window.simpanBiodata = () => sendData("biodata_guru", { 
             nama: document.getElementById('bio-nama').value, 
             nip: document.getElementById('bio-nip').value 
         });
 
-        window.simpanIdentitasGuru = () => kirimKeFirestore("identitas_jurnal", { 
+        window.simpanIdentitasGuru = () => sendData("identitas_jurnal", { 
             tahun: document.getElementById('jg-tahun').value 
         });
 
-        window.simpanDataAjar = () => kirimKeFirestore("jurnal_mengajar", { 
+        window.simpanDataAjar = () => sendData("jurnal_mengajar", { 
             tgl: document.getElementById('jg-tgl').value, 
             kelas: document.getElementById('jg-kelas').value 
         });
 
-        window.simpanAbsensi = () => kirimKeFirestore("absensi_siswa", { 
+        window.simpanAbsensi = () => sendData("absensi_siswa", { 
             kelas: document.getElementById('jk-absensi-kelas').value, 
             ket: document.getElementById('jk-absensi-ket').value 
         });
 
-        window.simpanCatatanKelas = () => kirimKeFirestore("catatan_kelas", { 
+        window.simpanCatatanKelas = () => sendData("catatan_kelas", { 
             isi: document.getElementById('jk-catatan').value 
         });
 
-        window.confirmLogout = () => { if(confirm("Keluar?")) signOut(auth).then(() => window.location.href="index.html"); };
+        window.confirmLogout = () => { if(confirm("Keluar dari aplikasi?")) signOut(auth).then(() => window.location.href="index.html"); };
+
         onAuthStateChanged(auth, (user) => { if(!user) window.location.href="index.html"; });
     </script>
 
     <script>
-        // Logika UI (Bukan Firebase)
         function showForm(pageId, element) {
-            document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            // Sembunyikan semua halaman
+            const pages = document.querySelectorAll('.form-page');
+            pages.forEach(p => p.classList.remove('active'));
+
+            // Tampilkan halaman target
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+            } else {
+                console.error("Halaman ID " + pageId + " tidak ditemukan!");
+            }
+
+            // Atur gaya menu aktif
             document.querySelectorAll('.menu-item, .sub-item').forEach(i => {
                 i.classList.remove('active-menu');
                 i.classList.remove('active');
             });
-            element.classList.add(element.classList.contains('sub-item') ? 'active' : 'active-menu');
+
+            if(element) {
+                if(element.classList.contains('sub-item')) {
+                    element.classList.add('active');
+                } else {
+                    element.classList.add('active-menu');
+                }
+            }
         }
 
         function toggleSubMenu(id) {
-            const el = document.getElementById(id);
-            el.classList.toggle('show-sub');
-            el.previousElementSibling.querySelector('.chevron').style.transform = el.classList.contains('show-sub') ? "rotate(180deg)" : "rotate(0deg)";
+            const sub = document.getElementById(id);
+            if(!sub) return;
+            
+            sub.classList.toggle('show-sub');
+            
+            // Putar chevron
+            const chevron = sub.previousElementSibling.querySelector('.chevron');
+            if(chevron) {
+                chevron.style.transform = sub.classList.contains('show-sub') ? "rotate(180deg)" : "rotate(0deg)";
+            }
         }
     </script>
 </body>
