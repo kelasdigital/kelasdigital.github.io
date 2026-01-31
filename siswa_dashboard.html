@@ -1,256 +1,49 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siswa Panel - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { 
-            --primary-green: #2d5a27; 
-            --accent-neon: #00f2ff;
-            --white: #ffffff; 
-            --sidebar-width: 260px;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        
-        body { 
-            background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); 
-            min-height: 100vh; 
-            color: var(--white); 
-            display: flex;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; 
-            background-image: url('./img/image_7cfeb8.png'); 
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            mix-blend-mode: screen; 
-            opacity: 0.3; 
-            pointer-events: none;
-        }
-
-        /* NAVBAR & SIDEBAR */
-        .top-navbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
-            z-index: 1001; padding: 0 20px; display: grid;
-            grid-template-columns: 50px 1fr auto; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; }
-        .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
-
-        .btn-keluar-top {
-            background: rgba(211, 47, 47, 0.2); color: #ff5252; border: 1px solid #ff5252;
-            padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: 800;
-            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width); background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(25px); border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; padding: 90px 15px 25px;
-            height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .menu-item {
-            padding: 14px 15px; margin-bottom: 5px; border-radius: 10px;
-            cursor: pointer; transition: 0.2s; font-weight: 600;
-            display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7);
-        }
-        .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
-
-        /* CONTENT AREA */
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 100px 40px 40px; transition: 0.3s; }
-        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
-        .content-section { display: none; }
-        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
-
-        /* MATERI LAYOUT */
-        #materiLayout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; min-height: 550px; }
-        .materi-list-box { overflow-y: auto; max-height: 600px; padding-right: 10px; }
-        .materi-card {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;
-        }
-        .materi-card:hover { background: rgba(0, 242, 255, 0.1); border-color: var(--accent-neon); }
-        .preview-pane { 
-            background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        @media (max-width: 768px) {
-            .sidebar { left: -100%; }
-            .sidebar.open { left: 0; }
-            .main-content { margin-left: 0; padding: 100px 15px 15px; }
-            #materiLayout { grid-template-columns: 1fr; }
-            .preview-pane { height: 450px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <header class="top-navbar">
-        <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
-        <img src="./img/image_12.png" alt="Logo" class="nav-logo-img">
-        <button class="btn-keluar-top" onclick="logout()">
-            <i class="fa-solid fa-power-off"></i> <span>KELUAR</span>
-        </button>
-    </header>
-
-    <aside class="sidebar" id="sidebar">
-        <div class="menu-item active" onclick="showSection('dashboard', this)">
-            <i class="fa-solid fa-house"></i> <span>Dashboard</span>
-        </div>
-        <div class="menu-item" onclick="showSection('biodata', this)">
-            <i class="fa-solid fa-user"></i> <span>Biodata</span>
-        </div>
-        <div class="menu-item" onclick="showSection('materi', this)">
-            <i class="fa-solid fa-book"></i> <span>Materi</span>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <div id="dashboard" class="content-section active">
-            <h2 id="userName" style="margin-bottom: 20px;">Memuat...</h2>
-            <div class="card">
-                <h3 style="color: var(--accent-neon);">Papan Informasi</h3>
-                <p style="margin-top:10px; opacity:0.8;">Selamat datang di KELAS DIGITAL. Gunakan menu samping untuk mengakses materi pembelajaran.</p>
+<div id="materi" class="content-section">
+    <div class="card">
+        <h3 style="color: var(--accent-neon); margin-bottom: 20px;">Materi Pembelajaran</h3>
+        <div id="materiLayout" style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
+            <div id="materiList" style="overflow-y: auto; max-height: 500px;">
+                <p>Memuat materi...</p>
+            </div>
+            <div id="materiPreview" style="background: rgba(0,0,0,0.3); border-radius: 15px; height: 550px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <p style="opacity: 0.5;">Pilih materi untuk dibaca</p>
             </div>
         </div>
+    </div>
+</div>
 
-        <div id="materi" class="content-section">
-            <div class="card">
-                <h3 style="color: var(--accent-neon); margin-bottom: 20px;">Materi Pembelajaran (GitHub Sync)</h3>
-                <div id="materiLayout">
-                    <div id="materiList" class="materi-list-box">
-                        <p style="opacity: 0.5;">Sinkronisasi dengan GitHub...</p>
-                    </div>
-                    <div id="materiPreview" class="preview-pane">
-                        <div style="text-align: center; opacity: 0.4;">
-                            <i class="fa-solid fa-file-import" style="font-size: 40px; margin-bottom: 10px;"></i>
-                            <p>Pilih materi untuk ditampilkan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+<script type="module">
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const db = getFirestore();
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    // Fungsi Tampil di Iframe
+    window.viewMateri = (url) => {
+        const preview = document.getElementById('materiPreview');
+        preview.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+        // Gunakan Google Viewer untuk link GitHub RAW
+        const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+        preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none; background:white;"></iframe>`;
+    };
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
-            authDomain: "kelasdigital-b58ce.firebaseapp.com",
-            projectId: "kelasdigital-b58ce",
-            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
-            messagingSenderId: "814579641877",
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
-        };
+    // Load Data dari Firestore
+    async function loadMateriSiswa() {
+        const list = document.getElementById('materiList');
+        const snap = await getDocs(query(collection(db, "materi"), orderBy("createdAt", "desc")));
         
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- GITHUB CONFIG ---
-        // GANTI INI DENGAN LINK RAW MATERI.JSON ANDA
-        const GITHUB_JSON_URL = "https://raw.githubusercontent.com/username/repo/main/materi.json";
-
-        // --- CORE FUNCTIONS ---
-        window.showSection = (id, el) => {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-            if(window.innerWidth <= 768) toggleSidebar();
-        };
-
-        window.toggleSidebar = () => {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        };
-
-        window.logout = async () => {
-            if (confirm("Keluar dari aplikasi?")) {
-                await signOut(auth);
-                window.location.href = "index.html"; 
-            }
-        };
-
-        // --- GITHUB MATERI ENGINE ---
-        window.viewMateri = (url) => {
-            const preview = document.getElementById('materiPreview');
-            preview.innerHTML = `<p><i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan ke GitHub...</p>`;
-            
-            // Gunakan Google Viewer agar PDF GitHub terbuka stabil di Iframe
-            const finalUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-            setTimeout(() => {
-                preview.innerHTML = `<iframe src="${finalUrl}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>`;
-            }, 600);
-        };
-
-        async function fetchGitHubMateri() {
-            const container = document.getElementById('materiList');
-            try {
-                const response = await fetch(GITHUB_JSON_URL);
-                const data = await response.json();
-                const items = data.materi_siswa;
-
-                if (!items || items.length === 0) {
-                    container.innerHTML = "<p>Materi belum tersedia di repositori.</p>";
-                    return;
-                }
-
-                let html = "";
-                items.forEach(item => {
-                    html += `
-                        <div class="materi-card" onclick="viewMateri('${item.link}')">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <i class="fa-solid fa-file-pdf" style="color:var(--accent-neon); font-size:1.4rem;"></i>
-                                <div>
-                                    <div style="font-size:14px; font-weight:700;">${item.judul}</div>
-                                    <div style="font-size:11px; color:var(--accent-neon); font-weight:bold;">${item.jenjang}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-                container.innerHTML = html;
-            } catch (error) {
-                container.innerHTML = "<p>Gagal sinkronisasi GitHub. Periksa URL JSON.</p>";
-            }
-        }
-
-        // --- AUTH SESSION ---
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html"; 
-            } else {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if(userDoc.exists()){
-                    document.getElementById('userName').innerText = "Halo, " + userDoc.data().nama;
-                    fetchGitHubMateri(); // Jalankan sinkronisasi materi
-                }
-            }
+        let html = "";
+        snap.forEach(res => {
+            const d = res.data();
+            html += `
+                <div class="materi-card" onclick="viewMateri('${d.link}')" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; border:1px solid rgba(255,255,255,0.1);">
+                    <div style="font-weight:bold; font-size:14px;">${d.judul}</div>
+                    <div style="font-size:11px; color:var(--accent-neon);">${d.jenjang}</div>
+                </div>`;
         });
-    </script>
-</body>
-</html>
+        list.innerHTML = html || "<p>Tidak ada materi.</p>";
+    }
+
+    // Panggil saat login sukses
+    onAuthStateChanged(auth, (user) => {
+        if(user) loadMateriSiswa();
+    });
+</script>
