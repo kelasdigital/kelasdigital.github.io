@@ -1,83 +1,227 @@
-<div class="card" style="background: white; color: #333; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <h3 style="color: #2d5a27; margin-bottom: 20px;"><i class="fa-solid fa-upload"></i> Upload Materi</h3>
-    
-    <label>Jenjang Sekolah</label>
-    <select id="jenjangMateri" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-        <option value="MI">MI</option>
-        <option value="MTs">MTs</option>
-        <option value="SMA">SMA</option>
-    </select>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary-bg: #f0f7ff; 
+            --sidebar-bg: #ffffff;
+            --active-blue: #e0f2fe;
+            --text-main: #334155;
+            --accent-blue: #0ea5e9;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { background: var(--primary-bg); display: flex; min-height: 100vh; color: var(--text-main); }
 
-    <label>Judul Materi</label>
-    <input type="text" id="judulMateri" placeholder="Masukkan judul materi..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        /* --- SIDEBAR (Sesuai Gambar Referensi) --- */
+        .sidebar {
+            width: 260px; background: var(--sidebar-bg);
+            border-right: 1px solid #e2e8f0; display: flex;
+            flex-direction: column; padding: 20px 0;
+            position: fixed; height: 100vh;
+        }
 
-    <label>Link Video YouTube (Opsional)</label>
-    <input type="text" id="linkVideo" placeholder="https://www.youtube.com/watch?v=..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        .nav-logo { padding: 0 20px 30px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; }
+        .nav-logo img { height: 45px; }
 
-    <label>Atau Pilih File Materi (PDF/Gambar)</label>
-    <input type="file" id="fileMateri" accept=".pdf,image/*" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px dashed #ccc; border-radius: 8px;">
+        .menu-group { padding: 0 12px; }
+        .menu-item {
+            padding: 12px 16px; margin-bottom: 4px; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; display: flex;
+            align-items: center; gap: 12px; color: #64748b;
+            text-decoration: none; font-size: 14px; font-weight: 500;
+        }
 
-    <button id="btnProses" onclick="prosesUploadDanSimpan()" style="width: 100%; background: #2d5a27; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-        SIMPAN MATERI
-    </button>
-</div>
+        .menu-item i { font-size: 18px; width: 24px; text-align: center; }
+        
+        /* State Aktif Sesuai Gambar */
+        .menu-item.active { 
+            background: var(--active-blue); 
+            color: var(--accent-blue); 
+        }
+        
+        .menu-item:hover:not(.active) { background: #f8fafc; color: var(--text-main); }
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        /* --- CONTENT AREA --- */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px; }
+        
+        .top-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; background: white; padding: 15px 25px;
+            border-radius: 12px; border: 1px solid #e2e8f0;
+        }
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
-        authDomain: "kelasdigital-b58ce.firebaseapp.com",
-        projectId: "kelasdigital-b58ce",
-        storageBucket: "kelasdigital-b58ce.firebasestorage.app",
-        messagingSenderId: "814579641877",
-        appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        .btn-keluar {
+            background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;
+            padding: 8px 16px; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: 0.2s; font-size: 13px;
+        }
+        .btn-keluar:hover { background: #ffe4e6; }
 
-    const GITHUB_TOKEN = "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";
-    const GITHUB_USER = "zeens25";
-    const GITHUB_REPO = "materi-kelas";
+        /* --- FORM & CARDS --- */
+        .card { 
+            background: white; border-radius: 12px; padding: 25px;
+            border: 1px solid #e2e8f0; margin-bottom: 25px;
+        }
 
-    window.prosesUploadDanSimpan = async () => {
-        const fileInput = document.getElementById('fileMateri');
-        const linkVideo = document.getElementById('linkVideo').value;
-        const judul = document.getElementById('judulMateri').value;
-        const jenjang = document.getElementById('jenjangMateri').value;
-        const btn = document.getElementById('btnProses');
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #475569; }
+        input, select {
+            width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px;
+            border: 1px solid #cbd5e1; outline: none; font-size: 14px;
+        }
+        
+        .btn-simpan {
+            background: #166534; color: white; border: none; padding: 14px;
+            border-radius: 8px; width: 100%; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+    </style>
+</head>
+<body>
 
-        if (!judul) return alert("Isi judul materi!");
-        btn.disabled = true;
-        btn.innerHTML = "Sedang Memproses...";
+    <aside class="sidebar">
+        <div class="nav-logo">
+            <img src="./img/image_12.png" alt="Logo">
+        </div>
+        <nav class="menu-group">
+            <div class="menu-item active" onclick="showTab('materi', this)">
+                <i class="fa-solid fa-book-open"></i> Materi
+            </div>
+            <div class="menu-item" onclick="showTab('absensi', this)">
+                <i class="fa-solid fa-user-check"></i> Absensi Siswa
+            </div>
+            <div class="menu-item" onclick="showTab('ujian', this)">
+                <i class="fa-solid fa-file-signature"></i> Ujian
+            </div>
+        </nav>
+    </aside>
 
-        try {
-            if (linkVideo && !fileInput.files[0]) {
-                let embed = linkVideo.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/");
-                await addDoc(collection(db, "materi"), { judul, link: embed, jenjang, format: "video", createdAt: serverTimestamp() });
-                alert("Link Video Terkirim!");
-                location.reload();
-            } else if (fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async () => {
-                    const base64 = reader.result.split(',')[1];
-                    const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
-                        method: "PUT",
-                        headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ message: `Upload: ${judul}`, content: base64 })
-                    });
-                    if (res.ok) {
-                        const raw = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
-                        await addDoc(collection(db, "materi"), { judul, link: raw, jenjang, format: "file", createdAt: serverTimestamp() });
-                        alert("File Terkirim!");
-                        location.reload();
-                    }
-                };
+    <main class="main-content">
+        <header class="top-header">
+            <h2 id="tabTitle">Manajemen Materi</h2>
+            <button class="btn-keluar" onclick="logout()">Logout</button>
+        </header>
+
+        <div id="materi" class="section-content active">
+            <div class="card">
+                <label>Jenjang Sekolah</label>
+                <select id="jenjangMateri">
+                    <option value="MI">MI</option>
+                    <option value="MTs">MTs</option>
+                    <option value="SMA">SMA</option>
+                </select>
+
+                <label>Judul Materi</label>
+                <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
+
+                <label>Pilih File (PDF/Gambar)</label>
+                <input type="file" id="fileMateri" accept=".pdf,image/*">
+
+                <button class="btn-simpan" id="btnProses" onclick="prosesUploadDanSimpan()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> SIMPAN MATERI
+                </button>
+            </div>
+        </div>
+
+        <div id="absensi" class="section-content">
+            <div class="card">
+                <h3>Absensi Siswa</h3>
+                <p style="color: #64748b; margin-top: 10px;">Fitur absensi dalam pengembangan...</p>
+            </div>
+        </div>
+
+        <div id="ujian" class="section-content">
+            <div class="card">
+                <h3>Manajemen Ujian</h3>
+                <p style="color: #64748b; margin-top: 10px;">Fitur ujian dalam pengembangan...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Konfigurasi Firebase (Gunakan milik Anda)
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- NAVIGASI TAB ---
+        window.showTab = (id, el) => {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+            document.getElementById('tabTitle').innerText = el.innerText;
+        };
+
+        window.logout = () => {
+            if(confirm("Keluar dari panel?")) {
+                signOut(auth).then(() => window.location.href = "index.html");
             }
-        } catch (e) { alert("Gagal!"); btn.disabled = false; }
-    };
-</script>
+        };
+
+        // --- LOGIKA UPLOAD GITHUB (Tetap zeens25) ---
+        const GITHUB_TOKEN = "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";
+        const GITHUB_USER = "zeens25";
+        const GITHUB_REPO = "materi-kelas";
+
+        window.prosesUploadDanSimpan = async () => {
+            const fileInput = document.getElementById('fileMateri');
+            const judul = document.getElementById('judulMateri').value;
+            const jenjang = document.getElementById('jenjangMateri').value;
+            const btn = document.getElementById('btnProses');
+
+            if (!fileInput.files[0] || !judul) return alert("Lengkapi judul dan file!");
+
+            btn.disabled = true;
+            btn.innerHTML = "Mengunggah...";
+
+            const file = fileInput.files[0];
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64Content = reader.result.split(',')[1];
+                const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
+                });
+
+                if (res.ok) {
+                    const rawLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
+                    await addDoc(collection(db, "materi"), { judul, link: rawLink, jenjang, createdAt: serverTimestamp() });
+                    alert("Berhasil!");
+                    location.reload();
+                } else {
+                    alert("Gagal upload!");
+                    btn.disabled = false;
+                    btn.innerHTML = "SIMPAN MATERI";
+                }
+            };
+        };
+    </script>
+</body>
+</html>
