@@ -3,180 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siswa AI - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Siswa Panel - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            --primary-dark-green: #0a1f0a; /* Latar belakang utama yang sangat gelap */
-            --sidebar-green: #112911; /* Warna sidebar sedikit lebih terang */
-            --accent-green: #2d5a27; /* Warna hover menu */
-            --neon-green: #39ff14; /* Warna aksen menyala untuk logo dan teks penting */
-            --text-light: #e0e0e0;
-            --sidebar-width: 280px;
-            --chipset-pattern-color: rgba(57, 255, 20, 0.07); /* Warna transparan untuk pola sirkuit */
+            --primary-green: #2d5a27; 
+            --accent-neon: #00f2ff;
+            --white: #ffffff; 
+            --sidebar-width: 260px;
         }
-
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
         body { 
-            background-color: var(--primary-dark-green); 
-            display: flex; 
+            background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); 
             min-height: 100vh; 
-            color: var(--text-light);
-        }
-
-        /* --- SIDEBAR KIRI --- */
-        .sidebar {
-            width: var(--sidebar-width); 
-            background: var(--sidebar-green); 
-            height: 100vh; 
-            position: fixed;
-            left: 0; top: 0;
-            padding: 30px 0; 
-            display: flex; flex-direction: column; 
-            border-right: 1px solid rgba(57, 255, 20, 0.1); /* Batas hijau tipis */
-            z-index: 1000;
-        }
-        
-        /* Logo Baru (Chipset AI) */
-        .sidebar-header { 
-            padding: 0 20px 30px; 
-            display: flex; align-items: center; justify-content: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; 
-        }
-        .brand-logo {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 18px; font-weight: 700; color: white; letter-spacing: 1px;
-        }
-        .brand-logo i {
-            font-size: 32px; color: var(--neon-green); /* Ikon chipset menyala */
-        }
-
-        .menu-container { flex-grow: 1; padding: 0 15px; }
-        .menu-item {
-            display: flex; align-items: center; padding: 14px 20px; color: rgba(255,255,255,0.7);
-            text-decoration: none; border-radius: 12px; transition: 0.3s; cursor: pointer;
-            margin-bottom: 8px; font-size: 14px; font-weight: 500;
-        }
-        .menu-item:hover, .menu-item.active { 
-            background-color: var(--accent-green); 
-            color: var(--neon-green); 
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); /* Efek glow saat aktif */
-        }
-        .menu-item i { width: 24px; margin-right: 15px; font-size: 18px; }
-
-        /* --- KONTEN UTAMA DENGAN BACKGROUND CHIPSET AI --- */
-        .main-content { 
-            margin-left: var(--sidebar-width); 
-            flex-grow: 1; 
-            min-height: 100vh;
-            display: flex; flex-direction: column;
+            color: var(--white); 
+            display: flex;
+            overflow-x: hidden;
             position: relative;
-            /* Membuat Pola Chipset AI Transparan dengan CSS Gradient */
-            background-color: var(--primary-dark-green);
-            background-image: 
-                linear-gradient(var(--chipset-pattern-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--chipset-pattern-color) 1px, transparent 1px),
-                radial-gradient(circle at 50% 50%, var(--chipset-pattern-color) 2px, transparent 2px);
-            background-size: 50px 50px, 50px 50px, 100px 100px;
-            background-position: -1px -1px, -1px -1px, -1px -1px;
         }
-        
-        /* Overlay gradient agar bagian atas lebih gelap dan pola lebih halus */
-        .main-content::before {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: radial-gradient(circle at top right, transparent 0%, var(--primary-dark-green) 70%);
+
+        /* --- BACKGROUND CHIPSET TRANSPARAN --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; 
+            background-image: url('./img/image_7cfeb8.png'); 
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            mix-blend-mode: screen; 
+            opacity: 0.3; 
             pointer-events: none;
         }
 
-        .container { padding: 40px 30px; position: relative; z-index: 2; }
-        .content-section { display: none; animation: fadeInUp 0.5s ease; }
-        .content-section.active { display: block; }
-
-        /* Judul Halaman */
-        .page-title {
-            font-size: 24px; font-weight: 700; margin-bottom: 25px; color: var(--neon-green);
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        /* --- TOP NAVBAR (FIXED) --- */
+        .top-navbar {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: 70px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(20px);
+            z-index: 1001;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 50px 1fr auto;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Style Card Data (Disesuaikan dengan tema gelap) */
-        .data-card {
-            background: rgba(20, 40, 20, 0.8); /* Latar belakang kartu semi-transparan */
-            backdrop-filter: blur(5px); /* Efek kaca buram */
-            border-radius: 15px; padding: 25px; margin-bottom: 20px;
-            border: 1px solid var(--accent-green);
+        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; display: flex; align-items: center; }
+        .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
+
+        .btn-keluar-top {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             transition: 0.3s;
         }
-        .data-card:hover { 
-            transform: translateY(-5px); 
-            border-color: var(--neon-green);
-            box-shadow: 0 5px 15px rgba(57, 255, 20, 0.1);
-        }
-        .data-card h3 { color: var(--neon-green); margin-bottom: 12px; font-size: 18px; }
-        .data-card p { color: #ccc; font-size: 14px; line-height: 1.6; }
-        
-        /* Tombol Aksi */
-        .btn-action {
-            display: inline-block; padding: 10px 25px; 
-            background: transparent; color: var(--neon-green);
-            border-radius: 30px; font-weight: 600; text-decoration: none; margin-top: 15px;
-            font-size: 13px; border: 2px solid var(--neon-green); transition: 0.3s;
-        }
-        .btn-action:hover { background: var(--neon-green); color: var(--primary-dark-green); box-shadow: 0 0 20px var(--neon-green); }
+        .btn-keluar-top:hover { background: #ff5252; color: white; }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 90px 15px 25px;
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 1000;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        .btn-logout { margin: 20px 15px; color: #ff4d4d !important; border: 1px solid rgba(255, 77, 77, 0.3); }
-        .btn-logout:hover { background: rgba(255, 77, 77, 0.1) !important; }
+        .menu-item {
+            padding: 14px 15px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
+        .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 100px 40px 40px;
+            transition: 0.3s;
+        }
+
+        /* RESPONSIVE LAYOUT */
+        @media (max-width: 768px) {
+            .sidebar { left: -100%; }
+            .sidebar.open { left: 0; }
+            .main-content { margin-left: 0; padding: 100px 15px 15px; }
+            .btn-keluar-top span { display: none; } /* Hanya ikon di HP */
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 999;
+                backdrop-filter: blur(3px);
+            }
+            .sidebar-overlay.active { display: block; }
+        }
+
+        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="brand-logo">
-                <i class="fa-solid fa-microchip"></i>
-                <span>KELAS DIGITAL</span>
-            </div>
-        </div>
-        
-        <nav class="menu-container">
-            <div class="menu-item active" onclick="showPage('pg-materi', this)">
-                <i class="fa-solid fa-book-open"></i><span>Materi Pelajaran</span>
-            </div>
-            <div class="menu-item" onclick="showPage('pg-absensi', this)">
-                <i class="fa-solid fa-calendar-check"></i><span>Absensi Saya</span>
-            </div>
-            <div class="menu-item" onclick="showPage('pg-ulangan', this)">
-                <i class="fa-solid fa-file-code"></i><span>Info Ulangan</span>
-            </div>
-        </nav>
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-        <div class="menu-item btn-logout" onclick="logoutSiswa()">
-            <i class="fa-solid fa-power-off"></i><span>Keluar</span>
+    <header class="top-navbar">
+        <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+        <img src="./img/image_12.png" alt="Logo" class="nav-logo-img">
+        <button class="btn-keluar-top" onclick="logout()">
+            <i class="fa-solid fa-power-off"></i> <span>KELUAR</span>
+        </button>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="menu-item active" onclick="showSection('dashboard', this)">
+            <i class="fa-solid fa-house"></i> <span>Dashboard</span>
+        </div>
+        <div class="menu-item" onclick="showSection('biodata', this)">
+            <i class="fa-solid fa-user"></i> <span>Biodata</span>
+        </div>
+        <div class="menu-item" onclick="showSection('materi', this)">
+            <i class="fa-solid fa-book"></i> <span>Materi</span>
+        </div>
+        <div class="menu-item" onclick="showSection('ujian', this)">
+            <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
         </div>
     </aside>
 
     <main class="main-content">
-        <div class="container">
-            <div id="pg-materi" class="content-section active">
-                <h2 class="page-title">Materi AI & Pembelajaran</h2>
-                <div id="list-materi">
-                    <p style="text-align:center; padding:50px; color:var(--neon-green);">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i> Memindai data materi...
-                    </p>
-                </div>
+        <div id="dashboard" class="content-section active">
+            <h2 id="userName" style="margin-bottom: 20px;">Memuat...</h2>
+            <div class="card">
+                <h3 style="color: var(--accent-neon);">Papan Informasi</h3>
+                <p style="margin-top:10px; opacity:0.8;">Selamat datang di KELAS DIGITAL. Silakan pilih menu untuk memulai pembelajaran.</p>
             </div>
+        </div>
 
-            <div id="pg-absensi" class="content-section">
-                <h2 class="page-title">Status Kehadiran Digital</h2>
-                <div id="list-absensi">Memuat data absensi...</div>
-            </div>
-
-            <div id="pg-ulangan" class="content-section">
-                <h2 class="page-title">Jadwal Evaluasi Sistem</h2>
-                <div id="list-ulangan">Memuat info ulangan...</div>
+        <div id="biodata" class="content-section">
+            <div class="card">
+                <h3>Biodata Siswa</h3>
+                <div id="bioContent" style="margin-top:15px; line-height: 1.8;">Memuat data...</div>
             </div>
         </div>
     </main>
@@ -184,76 +184,63 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Konfigurasi Firebase Proyek Anda
         const firebaseConfig = { 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
-            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
             projectId: "kelasdigital-b58ce",
             storageBucket: "kelasdigital-b58ce.firebasestorage.app",
             messagingSenderId: "814579641877",
             appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
         };
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fungsi Listener Data Firebase
-        function listenData(colName, elementId, templateFunc) {
-            const q = query(collection(db, colName), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                let html = '';
-                snapshot.forEach(doc => html += templateFunc(doc.data()));
-                // Tampilan kosong jika tidak ada data
-                document.getElementById(elementId).innerHTML = html || `
-                    <div style="text-align:center; padding:50px; color:#888; border: 1px dashed var(--accent-green); border-radius:15px;">
-                        <i class="fa-solid fa-database" style="font-size:40px; margin-bottom:20px; color:var(--accent-green);"></i><br>
-                        Belum ada data tersedia di sistem.
-                    </div>`;
-            });
-        }
+        // Fungsi Logout (Didaftarkan ke window agar terbaca oleh onclick)
+        window.logout = async () => {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                try {
+                    await signOut(auth);
+                    window.location.href = "index.html"; 
+                } catch (err) { alert("Gagal keluar: " + err.message); }
+            }
+        };
 
-        // Template Kartu Data (Disesuaikan untuk Dark Mode)
-        listenData("materi", "list-materi", (d) => `
-            <div class="data-card">
-                <h3><i class="fa-solid fa-microchip"></i> ${d.judul}</h3>
-                <p>${d.isi}</p>
-                <div style="margin-top:15px;">
-                    <span style="font-size:12px; color:#888; background:rgba(45,90,39,0.5); padding: 4px 10px; border-radius:20px;">
-                        Jenjang: ${d.jenjang || 'Umum'}
-                    </span>
-                </div>
-                <a href="#" class="btn-action">AKSES MODULE</a>
-            </div>
-        `);
-
-        listenData("absensi", "list-absensi", (d) => `
-            <div class="data-card" style="border-left: 4px solid var(--neon-green);">
-                <h3><i class="fa-solid fa-fingerprint"></i> Log Kelas: ${d.kelas}</h3>
-                <p>Status Sistem: <span style="color:var(--neon-green);">${d.keterangan}</span></p>
-                <p style="font-size:12px; color:#888; margin-top:10px;">Timestamp: ${d.createdAt?.toDate().toLocaleString()}</p>
-            </div>
-        `);
-
-        listenData("ulangan", "list-ulangan", (d) => `
-            <div class="data-card">
-                <h3><i class="fa-solid fa-terminal"></i> ${d.judul}</h3>
-                <p>${d.keterangan}</p>
-                <a href="#" class="btn-action">INISIASI UJIAN</a>
-            </div>
-        `);
-
-        window.logoutSiswa = () => { if(confirm("Putuskan koneksi dari sistem?")) signOut(auth).then(() => window.location.href="index.html"); };
-        onAuthStateChanged(auth, (u) => { if(!u) window.location.href="index.html"; });
-    </script>
-
-    <script>
-        function showPage(id, el) {
+        // Fungsi Navigasi
+        window.showSection = (id, el) => {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
             el.classList.add('active');
-        }
+            if(window.innerWidth <= 768) window.toggleSidebar();
+        };
+
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        };
+
+        // Memantau Sesi Pengguna
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html"; 
+            } else {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists()){
+                    const ud = userDoc.data();
+                    document.getElementById('userName').innerText = "Halo, " + ud.nama;
+                    document.getElementById('bioContent').innerHTML = `
+                        <b>Nama:</b> ${ud.nama}<br>
+                        <b>Email:</b> ${ud.email}<br>
+                        <b>Jenjang:</b> ${ud.jenjang}
+                    `;
+                }
+            }
+        });
     </script>
 </body>
 </html>
