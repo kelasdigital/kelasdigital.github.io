@@ -1,106 +1,73 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guru - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --p-green: #2d5a27; --bg: #f8f9fa; --sidebar: 280px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); display: flex; }
+<div class="card" style="background: white; color: #333; border-radius: 15px; padding: 25px;">
+    <h3 style="color: #2d5a27; margin-bottom: 20px;"><i class="fa-solid fa-cloud-upload"></i> Kelola Materi</h3>
+    
+    <label>Jenjang Sekolah</label>
+    <select id="jenjangMateri" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        <option value="MI">MI</option>
+        <option value="MTs">MTs</option>
+        <option value="SMA">SMA</option>
+    </select>
 
-        /* Sidebar */
-        .sidebar { width: var(--sidebar); background: white; height: 100vh; position: fixed; border-right: 1px solid #eee; display: flex; flex-direction: column; padding: 20px 0; }
-        .sidebar-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
-        .menu-item { display: flex; align-items: center; padding: 12px 20px; color: #333; cursor: pointer; font-weight: 600; transition: 0.2s; border-radius: 8px; margin: 0 10px 5px; }
-        .menu-item:hover, .menu-item.active { background: #f0f0f0; color: var(--p-green); }
-        .menu-item i { margin-right: 12px; width: 20px; text-align: center; }
+    <label>Judul Materi</label>
+    <input type="text" id="judulMateri" placeholder="Masukkan judul..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
 
-        /* Content */
-        .main { margin-left: var(--sidebar); flex-grow: 1; padding: 40px; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); max-width: 800px; margin: auto; }
-        .section-header { font-size: 18px; font-weight: 700; color: var(--p-green); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        textarea.form-control { min-height: 100px; }
-        .btn-save { background: var(--p-green); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
-        .form-page { display: none; }
-        .form-page.active { display: block; }
-    </style>
-</head>
-<body>
+    <label>Link RAW GitHub (PDF/Gambar)</label>
+    <input type="text" id="linkMateri" placeholder="https://raw.githubusercontent.com/..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
 
-    <aside class="sidebar">
-        <div class="sidebar-header"><img src="./img/image_12.png" style="height:50px;"></div>
-        <nav>
-            <div class="menu-item active" onclick="showForm('pg-materi', this)"><i class="fa-solid fa-book"></i><span>Materi</span></div>
-            <div class="menu-item" onclick="showForm('pg-absensi', this)"><i class="fa-solid fa-users"></i><span>Absensi Siswa</span></div>
-            <div class="menu-item" onclick="showForm('pg-ulangan', this)"><i class="fa-solid fa-pen"></i><span>Ulangan</span></div>
-        </nav>
-    </aside>
+    <button class="btn-action" id="btnSimpan" onclick="simpanMateri()" style="width: 100%; background: #2d5a27; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+        SIMPAN MATERI
+    </button>
+</div>
 
-    <main class="main">
-        <div class="card">
-            <div id="pg-materi" class="form-page active">
-                <div class="section-header"><i class="fa-solid fa-upload"></i> Upload Materi</div>
-                <div class="form-group">
-                    <label>Jenjang Sekolah</label>
-                    <select id="mat-jenjang" class="form-control">
-                        <option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Judul Materi</label><input type="text" id="mat-judul" class="form-control"></div>
-                <div class="form-group"><label>Isi Materi / Link</label><textarea id="mat-isi" class="form-control"></textarea></div>
-                <button class="btn-save" onclick="saveData('materi', {judul: $('#mat-judul').val(), isi: $('#mat-isi').val(), jenjang: $('#mat-jenjang').val()})">SIMPAN MATERI</button>
-            </div>
+<div class="card" style="background: white; color: #333; margin-top: 20px; border-radius: 15px; padding: 25px;">
+    <h4 style="margin-bottom: 15px;">Daftar Materi Terkirim</h4>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; border-bottom: 2px solid #eee;">
+                <th style="padding: 10px;">Judul</th>
+                <th style="padding: 10px;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="tabelMateriBody"></tbody>
+    </table>
+</div>
 
-            <div id="pg-absensi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
-                <div class="form-group"><label>Kelas</label><input type="text" id="abs-kelas" class="form-control"></div>
-                <div class="form-group"><label>Keterangan Siswa Tidak Hadir</label><textarea id="abs-ket" class="form-control"></textarea></div>
-                <button class="btn-save" onclick="saveData('absensi', {kelas: $('#abs-kelas').val(), ket: $('#abs-ket').val()})">SIMPAN ABSENSI</button>
-            </div>
+<script type="module">
+    import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const db = getFirestore();
 
-            <div id="pg-ulangan" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-file-pen"></i> Info Ulangan</div>
-                <div class="form-group"><label>Mata Pelajaran</label><input type="text" id="ul-mapel" class="form-control"></div>
-                <div class="form-group"><label>Keterangan / Tanggal</label><textarea id="ul-ket" class="form-control"></textarea></div>
-                <button class="btn-save" onclick="saveData('ulangan', {mapel: $('#ul-mapel').val(), ket: $('#ul-ket').val()})">SIMPAN ULANGAN</button>
-            </div>
-        </div>
-    </main>
+    // Simpan Data
+    window.simpanMateri = async () => {
+        const judul = document.getElementById('judulMateri').value;
+        const link = document.getElementById('linkMateri').value;
+        const jenjang = document.getElementById('jenjangMateri').value;
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
-            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
-            projectId: "kelasdigital-b58ce" 
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        if(!judul || !link) return alert("Isi semua kolom!");
 
-        window.saveData = async (col, data) => {
-            try {
-                data.createdAt = serverTimestamp();
-                await addDoc(collection(db, col), data);
-                alert("Data Berhasil Terkirim ke Siswa!");
-                location.reload();
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-    </script>
-    <script>
-        function showForm(id, el) {
-            $('.form-page').removeClass('active'); $('#' + id).addClass('active');
-            $('.menu-item').removeClass('active'); $(el).addClass('active');
-        }
-    </script>
-</body>
-</html>
+        await addDoc(collection(db, "materi"), {
+            judul, link, jenjang, createdAt: serverTimestamp()
+        });
+        alert("Berhasil!");
+        document.getElementById('judulMateri').value = "";
+        document.getElementById('linkMateri').value = "";
+    };
+
+    // Muat Tabel Real-time
+    onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
+        let html = "";
+        snap.forEach(res => {
+            const d = res.data();
+            html += `<tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;">${d.judul} <br><small>${d.jenjang}</small></td>
+                <td style="padding: 10px;">
+                    <button onclick="hapusMateri('${res.id}')" style="background:red; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('tabelMateriBody').innerHTML = html;
+    });
+
+    window.hapusMateri = async (id) => {
+        if(confirm("Hapus materi?")) await deleteDoc(doc(db, "materi", id));
+    };
+</script>
