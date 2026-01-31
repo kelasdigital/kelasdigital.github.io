@@ -1,46 +1,72 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <title>Dashboard Guru - Academia</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #e8eaf6; padding: 40px; }
-        .header { background: #1a237e; color: white; padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .container { margin-top: 20px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        button { background: #ff5252; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h2>PANEL GURU ACADEMIA</h2>
-        <button id="btnLogout">LOGOUT</button>
-    </div>
-    <div class="container">
-        <h1 id="welcome">Memuat data...</h1>
-        <p>Anda memiliki akses untuk mengelola materi, input nilai, dan absensi siswa.</p>
-    </div>
+// --- BAGIAN FUNGSI PROSES UPLOAD DI GURU.HTML ---
+window.prosesUploadDanSimpan = async () => {
+    const fileInput = document.getElementById('fileMateri');
+    const judul = document.getElementById('judulMateri').value;
+    const jenjang = document.getElementById('jenjangMateri').value;
+    const btn = document.getElementById('btnProses');
+    
+    // Kita tambahkan pengecekan apakah input judul mengandung link youtube jika file kosong
+    let linkInput = "";
+    const inputLinkElem = document.getElementById('linkVideo'); 
+    if(inputLinkElem) linkInput = inputLinkElem.value;
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    if (!judul) return alert("Harap isi judul materi!");
+    if (!fileInput.files[0] && !linkInput) return alert("Pilih file atau masukkan link video!");
 
-        const firebaseConfig = { /* ... paste config yang sama ... */ 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
-            authDomain: "kelasdigital-b58ce.firebaseapp.com",
-            projectId: "kelasdigital-b58ce",
-            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
-            messagingSenderId: "814579641877",
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c",
-            measurementId: "G-GS1B5E3YFQ"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`;
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "index.html";
-            else document.getElementById('welcome').innerText = "Selamat Datang, Guru (" + user.email + ")";
-        });
+    try {
+        // JIKA KIRIM LINK VIDEO (YOUTUBE)
+        if (linkInput && !fileInput.files[0]) {
+            let embedLink = linkInput;
+            if (linkInput.includes("youtube.com/watch?v=")) {
+                embedLink = linkInput.replace("watch?v=", "embed/");
+            } else if (linkInput.includes("youtu.be/")) {
+                embedLink = linkInput.replace("youtu.be/", "www.youtube.com/embed/");
+            }
 
-        document.getElementById('btnLogout').onclick = () => signOut(auth);
-    </script>
-</body>
-</html>
+            await addDoc(collection(db, "materi"), {
+                judul: judul,
+                link: embedLink,
+                jenjang: jenjang,
+                format: "video", // Tandai sebagai video
+                createdAt: serverTimestamp()
+            });
+            alert("Link Video Berhasil Terbit!");
+            location.reload();
+        } 
+        // JIKA UPLOAD FILE KE GITHUB
+        else {
+            const file = fileInput.files[0];
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64Content = reader.result.split(',')[1];
+                const ghResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
+                });
+
+                if (ghResponse.ok) {
+                    const rawLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
+                    await addDoc(collection(db, "materi"), {
+                        judul: judul,
+                        link: rawLink,
+                        jenjang: jenjang,
+                        format: "file", // Tandai sebagai file
+                        createdAt: serverTimestamp()
+                    });
+                    alert("File Materi Berhasil Terbit!");
+                    location.reload();
+                }
+            };
+        }
+    } catch (e) {
+        alert("Gagal: " + e.message);
+        btn.disabled = false;
+        btn.innerHTML = "SIMPAN & KIRIM MATERI";
+    }
+};
