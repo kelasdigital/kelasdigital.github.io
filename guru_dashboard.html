@@ -30,7 +30,6 @@
         .sidebar-logo { height: 60px; width: auto; }
         .menu-container { flex-grow: 1; overflow-y: auto; padding: 0 10px; }
 
-        /* Menu Items */
         .menu-item {
             display: flex; align-items: center; padding: 12px 15px; color: var(--text-dark);
             text-decoration: none; border-radius: 8px; transition: 0.2s; cursor: pointer;
@@ -40,7 +39,6 @@
         .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
         .chevron { margin-left: auto; font-size: 10px; transition: 0.3s; }
 
-        /* Sub Menu */
         .sub-menu { max-height: 0; overflow: hidden; transition: 0.3s ease-out; background-color: #fafafa; border-radius: 8px; margin-bottom: 5px; }
         .show-sub { max-height: 500px; padding: 5px 0; }
         .sub-item {
@@ -64,25 +62,18 @@
             display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #f0f0f0; padding-bottom: 12px;
         }
 
-        /* --- FORMS --- */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
         .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; }
-        .form-control:focus { outline: none; border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(45,90,39,0.1); }
         textarea.form-control { min-height: 100px; resize: vertical; }
         
         .btn-save { 
             background: var(--primary-green); color: white; border: none; padding: 14px; 
             border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px;
         }
-        .btn-save:disabled { background: #ccc; cursor: not-allowed; }
-
-        /* Profiles */
         .profile-display { display: flex; gap: 25px; align-items: center; background: #f9fdf9; padding: 25px; border-radius: 12px; border: 1px solid #e8f5e9; }
         .profile-pic-large { width: 140px; height: 140px; border-radius: 12px; object-fit: cover; background: #eee; }
-        .data-badge { display: inline-block; padding: 4px 12px; background: var(--primary-green); color: white; border-radius: 20px; font-size: 11px; margin-top: 8px; }
-
         .menu-logout { margin: 20px 10px; color: var(--danger-red) !important; }
     </style>
 </head>
@@ -111,7 +102,6 @@
                 <div id="sub-jurnal-guru" class="sub-menu">
                     <div class="sub-item" onclick="showForm('pg-g-identitas', this)">Identitas</div>
                     <div class="sub-item" onclick="showForm('pg-g-data', this)">Data Pembelajaran</div>
-                    <div class="sub-item" onclick="showForm('pg-g-materi', this)">Materi & Kompetensi</div>
                 </div>
             </div>
 
@@ -125,9 +115,6 @@
                     <div class="sub-item" onclick="showForm('pg-k-catatan', this)">Catatan Kelas</div>
                 </div>
             </div>
-
-            <div class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Materi Pelajaran</span></div>
-            <div class="menu-item"><i class="fa-solid fa-pen-to-square"></i><span>Ulangan / Ujian</span></div>
         </nav>
 
         <div class="menu-item menu-logout" onclick="confirmLogout()">
@@ -145,7 +132,6 @@
                     <div>
                         <h2 id="display-nama">Memuat Nama...</h2>
                         <p id="display-nip" style="color: #666;">NIP: -</p>
-                        <span class="data-badge" id="display-sekolah">Sekolah: -</span>
                     </div>
                 </div>
             </div>
@@ -162,10 +148,6 @@
             <div id="pg-g-identitas" class="form-page">
                 <div class="section-header"><i class="fa-solid fa-address-book"></i> Identitas Jurnal</div>
                 <div class="form-group"><label>Tahun Pelajaran</label><input type="text" id="jg-tahun" class="form-control" placeholder="2025/2026"></div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Semester</label><select id="jg-semester" class="form-control"><option>Ganjil</option><option>Genap</option></select></div>
-                    <div class="form-group"><label>Mata Pelajaran</label><input type="text" id="jg-mapel" class="form-control"></div>
-                </div>
                 <button class="btn-save" onclick="simpanIdentitasGuru()">SIMPAN IDENTITAS</button>
             </div>
 
@@ -175,19 +157,19 @@
                     <div class="form-group"><label>Tanggal</label><input type="date" id="jg-tgl" class="form-control"></div>
                     <div class="form-group"><label>Kelas</label><input type="text" id="jg-kelas" class="form-control"></div>
                 </div>
-                <button class="btn-save" onclick="simpanDataAjar()">INPUT DATA MENGAJAR</button>
+                <button class="btn-save" onclick="simpanDataAjar()">SIMPAN DATA MENGAJAR</button>
             </div>
 
             <div id="pg-k-absensi" class="form-page">
                 <div class="section-header"><i class="fa-solid fa-users"></i> Absensi Siswa</div>
-                <div class="form-group"><label>Pilih Kelas</label><input type="text" id="jk-absensi-kelas" class="form-control"></div>
-                <div class="form-group"><label>Keterangan Siswa Tidak Hadir (Nama - Alasan)</label><textarea id="jk-absensi-ket" class="form-control"></textarea></div>
+                <div class="form-group"><label>Kelas</label><input type="text" id="jk-absensi-kelas" class="form-control"></div>
+                <div class="form-group"><label>Keterangan Siswa Tidak Hadir</label><textarea id="jk-absensi-ket" class="form-control"></textarea></div>
                 <button class="btn-save" onclick="simpanAbsensi()">SIMPAN ABSENSI</button>
             </div>
 
             <div id="pg-k-catatan" class="form-page">
                 <div class="section-header"><i class="fa-solid fa-clipboard-list"></i> Catatan Kejadian Kelas</div>
-                <div class="form-group"><label>Kejadian / Masalah di Kelas</label><textarea id="jk-catatan" class="form-control" placeholder="Tuliskan jika ada kejadian khusus..."></textarea></div>
+                <div class="form-group"><label>Kejadian / Masalah di Kelas</label><textarea id="jk-catatan" class="form-control"></textarea></div>
                 <button class="btn-save" onclick="simpanCatatanKelas()">SIMPAN CATATAN</button>
             </div>
 
@@ -211,46 +193,54 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- FUNGSI SIMPAN KE FIRESTORE ---
-        window.simpanDataAjar = async function() {
-            const data = {
-                tanggal: document.getElementById('jg-tgl').value,
-                kelas: document.getElementById('jg-kelas').value,
-                timestamp: serverTimestamp()
-            };
-            await kirimData("jurnal_mengajar", data);
-        }
-
-        window.simpanAbsensi = async function() {
-            const data = {
-                kelas: document.getElementById('jk-absensi-kelas').value,
-                keterangan: document.getElementById('jk-absensi-ket').value,
-                timestamp: serverTimestamp()
-            };
-            await kirimData("absensi_siswa", data);
-        }
-
-        async function kirimData(namaKoleksi, dataObj) {
+        // --- FUNGSI GLOBAL UTK KIRIM DATA ---
+        async function kirimKeFirestore(koleksi, data) {
             const user = auth.currentUser;
-            if(!user) return alert("Sesi berakhir, silakan login ulang.");
+            if(!user) return alert("Silakan login ulang.");
             try {
-                dataObj.uid = user.uid;
-                await addDoc(collection(db, namaKoleksi), dataObj);
-                alert("Berhasil disimpan ke " + namaKoleksi);
-            } catch (e) { alert("Gagal simpan: " + e.message); }
+                data.uid = user.uid;
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, koleksi), data);
+                alert("Data berhasil tersimpan!");
+            } catch (e) {
+                console.error(e);
+                alert("Gagal: " + e.message);
+            }
         }
 
-        // --- AUTH LOGIC ---
+        // --- DAFTARKAN FUNGSI KE WINDOW (AGAR ONCLICK JALAN) ---
+        window.simpanBiodata = () => kirimKeFirestore("biodata_guru", { 
+            nama: document.getElementById('bio-nama').value, 
+            nip: document.getElementById('bio-nip').value 
+        });
+
+        window.simpanIdentitasGuru = () => kirimKeFirestore("identitas_jurnal", { 
+            tahun: document.getElementById('jg-tahun').value 
+        });
+
+        window.simpanDataAjar = () => kirimKeFirestore("jurnal_mengajar", { 
+            tgl: document.getElementById('jg-tgl').value, 
+            kelas: document.getElementById('jg-kelas').value 
+        });
+
+        window.simpanAbsensi = () => kirimKeFirestore("absensi_siswa", { 
+            kelas: document.getElementById('jk-absensi-kelas').value, 
+            ket: document.getElementById('jk-absensi-ket').value 
+        });
+
+        window.simpanCatatanKelas = () => kirimKeFirestore("catatan_kelas", { 
+            isi: document.getElementById('jk-catatan').value 
+        });
+
         window.confirmLogout = () => { if(confirm("Keluar?")) signOut(auth).then(() => window.location.href="index.html"); };
         onAuthStateChanged(auth, (user) => { if(!user) window.location.href="index.html"; });
     </script>
 
     <script>
+        // Logika UI (Bukan Firebase)
         function showForm(pageId, element) {
             document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(pageId);
-            if(target) target.classList.add('active');
-
+            document.getElementById(pageId).classList.add('active');
             document.querySelectorAll('.menu-item, .sub-item').forEach(i => {
                 i.classList.remove('active-menu');
                 i.classList.remove('active');
@@ -261,8 +251,7 @@
         function toggleSubMenu(id) {
             const el = document.getElementById(id);
             el.classList.toggle('show-sub');
-            const icon = el.previousElementSibling.querySelector('.chevron');
-            icon.style.transform = el.classList.contains('show-sub') ? "rotate(180deg)" : "rotate(0deg)";
+            el.previousElementSibling.querySelector('.chevron').style.transform = el.classList.contains('show-sub') ? "rotate(180deg)" : "rotate(0deg)";
         }
     </script>
 </body>
