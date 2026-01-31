@@ -1,0 +1,14 @@
+{
+  "materi_siswa": [
+    {
+      "jenjang": "MI",
+      "judul": "Matematika Dasar - Perkalian",
+      "link": "https://raw.githubusercontent.com/username/repo/main/materi/mi_mtk_1.pdf"
+    },
+    {
+      "jenjang": "SMA",
+      "judul": "Fisika - Hukum Newton",
+      "link": "https://raw.githubusercontent.com/username/repo/main/materi/sma_fisika_1.pdf"
+    }
+  ]
+}
