@@ -39,100 +39,56 @@
             pointer-events: none;
         }
 
+        /* NAVBAR & SIDEBAR */
         .top-navbar {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            height: 70px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(20px);
-            z-index: 1001;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 50px 1fr auto;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            z-index: 1001; padding: 0 20px; display: grid;
+            grid-template-columns: 50px 1fr auto; align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; display: flex; align-items: center; }
+        .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; }
         .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
 
         .btn-keluar-top {
-            background: rgba(211, 47, 47, 0.2);
-            color: #ff5252;
-            border: 1px solid #ff5252;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.3s;
+            background: rgba(211, 47, 47, 0.2); color: #ff5252; border: 1px solid #ff5252;
+            padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: 800;
+            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s;
         }
-        .btn-keluar-top:hover { background: #ff5252; color: white; }
 
         .sidebar {
-            width: var(--sidebar-width);
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(25px);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 90px 15px 25px;
-            height: 100vh;
-            position: fixed;
-            left: 0; top: 0;
-            z-index: 1000;
+            width: var(--sidebar-width); background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(25px); border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; padding: 90px 15px 25px;
+            height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-item {
-            padding: 14px 15px;
-            margin-bottom: 5px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255,255,255,0.7);
+            padding: 14px 15px; margin-bottom: 5px; border-radius: 10px;
+            cursor: pointer; transition: 0.2s; font-weight: 600;
+            display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7);
         }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
 
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 100px 40px 40px;
-            transition: 0.3s;
-        }
-
+        /* CONTENT AREA */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 100px 40px 40px; transition: 0.3s; }
         .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
         .content-section { display: none; }
         .content-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        /* Custom Styles for Materi Layout */
-        #materiLayout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; min-height: 500px; }
-        .materi-item { 
-            padding: 15px; 
-            background: rgba(255,255,255,0.05); 
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 10px;
+        /* MATERI LAYOUT */
+        #materiLayout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; min-height: 550px; }
+        .materi-list-box { overflow-y: auto; max-height: 600px; padding-right: 10px; }
+        .materi-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;
         }
-        .materi-item:hover { background: rgba(0, 242, 255, 0.1); border-color: var(--accent-neon); }
-        .preview-box { 
-            background: rgba(0,0,0,0.2); 
-            border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+        .materi-card:hover { background: rgba(0, 242, 255, 0.1); border-color: var(--accent-neon); }
+        .preview-pane { 
+            background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -142,7 +98,7 @@
             .sidebar.open { left: 0; }
             .main-content { margin-left: 0; padding: 100px 15px 15px; }
             #materiLayout { grid-template-columns: 1fr; }
-            .preview-box { height: 450px; }
+            .preview-pane { height: 450px; }
         }
     </style>
 </head>
@@ -168,9 +124,6 @@
         <div class="menu-item" onclick="showSection('materi', this)">
             <i class="fa-solid fa-book"></i> <span>Materi</span>
         </div>
-        <div class="menu-item" onclick="showSection('ujian', this)">
-            <i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span>
-        </div>
     </aside>
 
     <main class="main-content">
@@ -178,28 +131,21 @@
             <h2 id="userName" style="margin-bottom: 20px;">Memuat...</h2>
             <div class="card">
                 <h3 style="color: var(--accent-neon);">Papan Informasi</h3>
-                <p style="margin-top:10px; opacity:0.8;">Selamat datang di KELAS DIGITAL. Silakan pilih menu untuk memulai pembelajaran.</p>
-            </div>
-        </div>
-
-        <div id="biodata" class="content-section">
-            <div class="card">
-                <h3>Biodata Siswa</h3>
-                <div id="bioContent" style="margin-top:15px; line-height: 1.8;">Memuat data...</div>
+                <p style="margin-top:10px; opacity:0.8;">Selamat datang di KELAS DIGITAL. Gunakan menu samping untuk mengakses materi pembelajaran.</p>
             </div>
         </div>
 
         <div id="materi" class="content-section">
             <div class="card">
-                <h3 style="color: var(--accent-neon); margin-bottom: 20px;">Materi Pembelajaran</h3>
+                <h3 style="color: var(--accent-neon); margin-bottom: 20px;">Materi Pembelajaran (GitHub Sync)</h3>
                 <div id="materiLayout">
-                    <div id="materiList" style="overflow-y: auto; max-height: 600px; padding-right: 10px;">
-                        <p style="opacity: 0.5;">Sedang mengambil materi...</p>
+                    <div id="materiList" class="materi-list-box">
+                        <p style="opacity: 0.5;">Sinkronisasi dengan GitHub...</p>
                     </div>
-                    <div id="materiPreview" class="preview-box">
-                        <div style="text-align: center; padding: 20px;">
-                            <i class="fa-solid fa-file-circle-question" style="font-size: 50px; opacity: 0.2; margin-bottom: 15px;"></i>
-                            <p style="opacity: 0.5;">Pilih materi di samping untuk menampilkan isi</p>
+                    <div id="materiPreview" class="preview-pane">
+                        <div style="text-align: center; opacity: 0.4;">
+                            <i class="fa-solid fa-file-import" style="font-size: 40px; margin-bottom: 10px;"></i>
+                            <p>Pilih materi untuk ditampilkan</p>
                         </div>
                     </div>
                 </div>
@@ -210,7 +156,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
@@ -225,7 +171,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- FUNGSI NAVIGASI & SIDEBAR ---
+        // --- GITHUB CONFIG ---
+        // GANTI INI DENGAN LINK RAW MATERI.JSON ANDA
+        const GITHUB_JSON_URL = "https://raw.githubusercontent.com/username/repo/main/materi.json";
+
+        // --- CORE FUNCTIONS ---
         window.showSection = (id, el) => {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
@@ -240,73 +190,64 @@
         };
 
         window.logout = async () => {
-            if (confirm("Apakah Anda yakin ingin keluar?")) {
-                try {
-                    await signOut(auth);
-                    window.location.href = "index.html"; 
-                } catch (err) { alert("Gagal keluar: " + err.message); }
+            if (confirm("Keluar dari aplikasi?")) {
+                await signOut(auth);
+                window.location.href = "index.html"; 
             }
         };
 
-        // --- FUNGSI MATERI ---
+        // --- GITHUB MATERI ENGINE ---
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
-            preview.innerHTML = `<div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat Dokumen...</div>`;
+            preview.innerHTML = `<p><i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan ke GitHub...</p>`;
             
-            // Sedikit delay untuk efek transisi
+            // Gunakan Google Viewer agar PDF GitHub terbuka stabil di Iframe
+            const finalUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
             setTimeout(() => {
-                // Gunakan Google Docs Viewer agar file PDF GitHub/Drive bisa tampil stabil di iframe
-                const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-                preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>`;
-            }, 500);
+                preview.innerHTML = `<iframe src="${finalUrl}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>`;
+            }, 600);
         };
 
-        async function loadMateri() {
-            const listContainer = document.getElementById('materiList');
+        async function fetchGitHubMateri() {
+            const container = document.getElementById('materiList');
             try {
-                const snap = await getDocs(collection(db, "materi"));
-                if (snap.empty) {
-                    listContainer.innerHTML = "<p style='opacity:0.5;'>Belum ada materi.</p>";
+                const response = await fetch(GITHUB_JSON_URL);
+                const data = await response.json();
+                const items = data.materi_siswa;
+
+                if (!items || items.length === 0) {
+                    container.innerHTML = "<p>Materi belum tersedia di repositori.</p>";
                     return;
                 }
 
                 let html = "";
-                snap.forEach((doc) => {
-                    const d = doc.data();
-                    const icon = d.link.includes('.pdf') ? 'fa-file-pdf' : 'fa-link';
+                items.forEach(item => {
                     html += `
-                        <div class="materi-item" onclick="viewMateri('${d.link}')">
+                        <div class="materi-card" onclick="viewMateri('${item.link}')">
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <i class="fa-solid ${icon}" style="color:var(--accent-neon); font-size:1.2rem;"></i>
+                                <i class="fa-solid fa-file-pdf" style="color:var(--accent-neon); font-size:1.4rem;"></i>
                                 <div>
-                                    <div style="font-size:14px; font-weight:700;">${d.judul}</div>
-                                    <div style="font-size:11px; opacity:0.6;">Klik untuk melihat</div>
+                                    <div style="font-size:14px; font-weight:700;">${item.judul}</div>
+                                    <div style="font-size:11px; color:var(--accent-neon); font-weight:bold;">${item.jenjang}</div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-                listContainer.innerHTML = html;
-            } catch (e) {
-                listContainer.innerHTML = "<p>Gagal memuat data.</p>";
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = "<p>Gagal sinkronisasi GitHub. Periksa URL JSON.</p>";
             }
         }
 
-        // --- AUTH MONITOR ---
+        // --- AUTH SESSION ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = "index.html"; 
             } else {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if(userDoc.exists()){
-                    const ud = userDoc.data();
-                    document.getElementById('userName').innerText = "Halo, " + ud.nama;
-                    document.getElementById('bioContent').innerHTML = `
-                        <b>Nama:</b> ${ud.nama}<br>
-                        <b>Email:</b> ${ud.email}<br>
-                        <b>Jenjang:</b> ${ud.jenjang}
-                    `;
-                    loadMateri(); // Muat materi setelah login sukses
+                    document.getElementById('userName').innerText = "Halo, " + userDoc.data().nama;
+                    fetchGitHubMateri(); // Jalankan sinkronisasi materi
                 }
             }
         });
