@@ -1,0 +1,64 @@
+<div class="card" style="background: white; color: #333; border-radius: 15px; padding: 25px;">
+    <h3 style="color: #2d5a27; margin-bottom: 20px;"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Materi ke GitHub</h3>
+    
+    <label>Jenjang Sekolah</label>
+    <select id="jenjangMateri" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        <option value="MI">MI</option>
+        <option value="MTs">MTs</option>
+        <option value="SMA">SMA</option>
+    </select>
+
+    <label>Judul Materi</label>
+    <input type="text" id="judulMateri" placeholder="Masukkan judul..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+
+    <label>Pilih File (PDF/Gambar)</label>
+    <input type="file" id="fileMateri" accept=".pdf,image/*" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px dashed #ccc; border-radius: 8px;">
+
+    <button id="btnProses" onclick="prosesUploadDanSimpan()" style="width: 100%; background: #2d5a27; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+        UNGGAH & KIRIM KE SISWA
+    </button>
+</div>
+
+<script type="module">
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const db = getFirestore();
+
+    const GITHUB_TOKEN = "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"; // Token Anda
+    const GITHUB_USER = "zeens25"; // Username Anda
+    const GITHUB_REPO = "materi-kelas"; // Nama Repo Anda
+
+    window.prosesUploadDanSimpan = async () => {
+        const fileInput = document.getElementById('fileMateri');
+        const judul = document.getElementById('judulMateri').value;
+        const jenjang = document.getElementById('jenjangMateri').value;
+        const btn = document.getElementById('btnProses');
+
+        if (!fileInput.files[0] || !judul) return alert("Pilih file dan isi judul!");
+
+        btn.disabled = true;
+        btn.innerHTML = "Sedang Mengunggah...";
+
+        const file = fileInput.files[0];
+        const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+            const base64Content = reader.result.split(',')[1];
+            // Upload ke GitHub
+            const ghResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
+                method: "PUT",
+                headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
+            });
+
+            if (ghResponse.ok) {
+                const rawLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
+                // Simpan Link ke Firebase
+                await addDoc(collection(db, "materi"), { judul, link: rawLink, jenjang, createdAt: serverTimestamp() });
+                alert("Berhasil Terkirim!");
+                location.reload();
+            } else { alert("Gagal Upload!"); btn.disabled = false; }
+        };
+    };
+</script>
