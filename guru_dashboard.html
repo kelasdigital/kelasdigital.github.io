@@ -1,73 +1,216 @@
-<div class="card" style="background: white; color: #333; border-radius: 15px; padding: 25px;">
-    <h3 style="color: #2d5a27; margin-bottom: 20px;"><i class="fa-solid fa-cloud-upload"></i> Kelola Materi</h3>
-    
-    <label>Jenjang Sekolah</label>
-    <select id="jenjangMateri" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-        <option value="MI">MI</option>
-        <option value="MTs">MTs</option>
-        <option value="SMA">SMA</option>
-    </select>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Panel - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary-green: #2d5a27; 
+            --white: #ffffff; 
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #f4f7f6; display: flex; min-height: 100vh; color: #333; }
 
-    <label>Judul Materi</label>
-    <input type="text" id="judulMateri" placeholder="Masukkan judul..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width); background: var(--white);
+            border-right: 1px solid #ddd; padding: 20px; display: flex; flex-direction: column;
+            position: fixed; height: 100vh;
+        }
+        .nav-logo { text-align: center; margin-bottom: 30px; }
+        .nav-logo img { height: 50px; }
+        .menu-item {
+            padding: 12px 15px; margin-bottom: 8px; border-radius: 8px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px;
+            color: #555; font-weight: 600; text-decoration: none;
+        }
+        .menu-item:hover, .menu-item.active { background: #e8f5e9; color: var(--primary-green); }
 
-    <label>Link RAW GitHub (PDF/Gambar)</label>
-    <input type="text" id="linkMateri" placeholder="https://raw.githubusercontent.com/..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        /* MAIN CONTENT */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; }
+        .card { 
+            background: white; border-radius: 15px; padding: 30px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
 
-    <button class="btn-action" id="btnSimpan" onclick="simpanMateri()" style="width: 100%; background: #2d5a27; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-        SIMPAN MATERI
-    </button>
-</div>
+        /* FORM STYLES */
+        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; }
+        select, input, textarea {
+            width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px;
+            border: 1px solid #ddd; outline: none; transition: 0.3s;
+        }
+        select:focus, input:focus { border-color: var(--primary-green); }
+        .btn-kirim {
+            width: 100%; background: var(--primary-green); color: white;
+            padding: 15px; border: none; border-radius: 8px; font-weight: 800;
+            cursor: pointer; font-size: 16px; transition: 0.3s;
+        }
+        .btn-kirim:hover { opacity: 0.9; transform: translateY(-2px); }
 
-<div class="card" style="background: white; color: #333; margin-top: 20px; border-radius: 15px; padding: 25px;">
-    <h4 style="margin-bottom: 15px;">Daftar Materi Terkirim</h4>
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr style="text-align: left; border-bottom: 2px solid #eee;">
-                <th style="padding: 10px;">Judul</th>
-                <th style="padding: 10px;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="tabelMateriBody"></tbody>
-    </table>
-</div>
+        /* TABLE STYLES */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; background: #f9f9f9; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .btn-delete { background: #ff5252; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-<script type="module">
-    import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    const db = getFirestore();
+    <aside class="sidebar">
+        <div class="nav-logo"><img src="./img/image_12.png" alt="Logo"></div>
+        <a href="#" class="menu-item active"><i class="fa-solid fa-book"></i> Materi</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-users"></i> Absensi Siswa</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-edit"></i> Ulangan</a>
+    </aside>
 
-    // Simpan Data
-    window.simpanMateri = async () => {
-        const judul = document.getElementById('judulMateri').value;
-        const link = document.getElementById('linkMateri').value;
-        const jenjang = document.getElementById('jenjangMateri').value;
+    <main class="main-content">
+        <div class="card">
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Materi
+            </h3>
+            
+            <label>Jenjang Sekolah</label>
+            <select id="jenjangMateri">
+                <option value="MI">MI</option>
+                <option value="MTs">MTs</option>
+                <option value="SMA">SMA</option>
+            </select>
 
-        if(!judul || !link) return alert("Isi semua kolom!");
+            <label>Judul Materi</label>
+            <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
 
-        await addDoc(collection(db, "materi"), {
-            judul, link, jenjang, createdAt: serverTimestamp()
+            <label>Pilih File Materi (PDF/Gambar)</label>
+            <input type="file" id="fileMateri" accept=".pdf,image/*">
+
+            <button id="btnProses" class="btn-kirim" onclick="prosesUploadDanSimpan()">
+                <i class="fa-solid fa-paper-plane"></i> SIMPAN MATERI
+            </button>
+        </div>
+
+        <div class="card">
+            <h4 style="margin-bottom: 15px;">Daftar Materi Terkirim</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jenjang</th>
+                        <th>Judul Materi</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelMateriBody">
+                    <tr><td colspan="3" style="text-align:center;">Memuat data materi...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
+            authDomain: "kelasdigital-b58ce.firebaseapp.com",
+            projectId: "kelasdigital-b58ce",
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
+            messagingSenderId: "814579641877",
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // KONFIGURASI GITHUB ZEENS25
+        const GITHUB_TOKEN = "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";
+        const GITHUB_USER = "zeens25";
+        const GITHUB_REPO = "materi-kelas";
+
+        // FUNGSI UPLOAD & SIMPAN
+        window.prosesUploadDanSimpan = async () => {
+            const fileInput = document.getElementById('fileMateri');
+            const judul = document.getElementById('judulMateri').value;
+            const jenjang = document.getElementById('jenjangMateri').value;
+            const btn = document.getElementById('btnProses');
+
+            if (!fileInput.files[0] || !judul) return alert("Harap isi judul dan pilih file!");
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sedang Mengunggah...`;
+
+            const file = fileInput.files[0];
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+            try {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = async () => {
+                    const base64Content = reader.result.split(',')[1];
+
+                    // 1. Upload ke GitHub
+                    const ghResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `token ${GITHUB_TOKEN}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            message: `Upload materi: ${judul}`,
+                            content: base64Content
+                        })
+                    });
+
+                    if (ghResponse.ok) {
+                        const rawLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
+
+                        // 2. Simpan Catatan Link ke Firebase
+                        await addDoc(collection(db, "materi"), {
+                            judul: judul,
+                            link: rawLink,
+                            jenjang: jenjang,
+                            createdAt: serverTimestamp()
+                        });
+
+                        alert("Materi Berhasil Terbit!");
+                        location.reload(); 
+                    } else {
+                        throw new Error("Gagal mengunggah ke GitHub.");
+                    }
+                };
+            } catch (e) {
+                alert("Kesalahan: " + e.message);
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> SIMPAN MATERI`;
+            }
+        };
+
+        // LOAD DATA TABEL
+        onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snapshot) => {
+            const tbody = document.getElementById('tabelMateriBody');
+            let html = "";
+            snapshot.forEach((res) => {
+                const d = res.data();
+                html += `
+                    <tr>
+                        <td><span style="background:#eee; padding:3px 8px; border-radius:5px; font-size:12px;">${d.jenjang}</span></td>
+                        <td style="font-weight:600;">${d.judul}</td>
+                        <td style="text-align:center;">
+                            <button class="btn-delete" onclick="hapusMateri('${res.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            tbody.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Belum ada materi.</td></tr>';
         });
-        alert("Berhasil!");
-        document.getElementById('judulMateri').value = "";
-        document.getElementById('linkMateri').value = "";
-    };
 
-    // Muat Tabel Real-time
-    onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
-        let html = "";
-        snap.forEach(res => {
-            const d = res.data();
-            html += `<tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px;">${d.judul} <br><small>${d.jenjang}</small></td>
-                <td style="padding: 10px;">
-                    <button onclick="hapusMateri('${res.id}')" style="background:red; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>`;
-        });
-        document.getElementById('tabelMateriBody').innerHTML = html;
-    });
-
-    window.hapusMateri = async (id) => {
-        if(confirm("Hapus materi?")) await deleteDoc(doc(db, "materi", id));
-    };
-</script>
+        window.hapusMateri = async (id) => {
+            if (confirm("Hapus materi ini?")) {
+                await deleteDoc(doc(db, "materi", id));
+            }
+        };
+    </script>
+</body>
+</html>
