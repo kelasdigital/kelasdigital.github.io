@@ -3,194 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guru Dashboard - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Guru - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { 
-            --primary-green: #2d5a27; 
-            --text-dark: #333333;
-            --text-muted: #666666;
-            --bg-light: #f8f9fa;
-            --sidebar-width: 280px;
-            --border-color: #e0e0e0;
-            --danger-red: #d32f2f;
-        }
-
+        :root { --p-green: #2d5a27; --bg: #f8f9fa; --sidebar: 280px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); display: flex; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg); display: flex; }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width); background: white; height: 100vh; position: fixed;
-            border-right: 1px solid var(--border-color); padding: 20px 0; z-index: 1000;
-            display: flex; flex-direction: column;
-        }
-        .sidebar-header { padding: 0 25px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; display: flex; justify-content: center; }
-        .sidebar-logo { height: 60px; width: auto; }
-        .menu-container { flex-grow: 1; overflow-y: auto; padding: 0 10px; }
+        /* Sidebar */
+        .sidebar { width: var(--sidebar); background: white; height: 100vh; position: fixed; border-right: 1px solid #eee; display: flex; flex-direction: column; padding: 20px 0; }
+        .sidebar-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .menu-item { display: flex; align-items: center; padding: 12px 20px; color: #333; cursor: pointer; font-weight: 600; transition: 0.2s; border-radius: 8px; margin: 0 10px 5px; }
+        .menu-item:hover, .menu-item.active { background: #f0f0f0; color: var(--p-green); }
+        .menu-item i { margin-right: 12px; width: 20px; text-align: center; }
 
-        .menu-item {
-            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dark);
-            text-decoration: none; border-radius: 8px; transition: 0.2s; cursor: pointer;
-            margin-bottom: 5px; font-size: 14px; font-weight: 600;
-        }
-        .menu-item:hover, .menu-item.active-menu { background-color: #f5f5f5; color: var(--primary-green); }
-        .menu-item i:first-child { width: 20px; margin-right: 12px; color: var(--text-muted); text-align: center; }
-
-        /* --- MAIN CONTENT --- */
-        .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 40px; }
-        .form-page { display: none; }
-        .form-page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card { 
-            background: white; padding: 35px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border: 1px solid #eee; max-width: 850px; margin: 0 auto;
-        }
-        .section-header { 
-            font-size: 18px; font-weight: 700; color: var(--primary-green); margin-bottom: 25px;
-            display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #f0f0f0; padding-bottom: 12px;
-        }
-
-        /* --- FORMS --- */
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; }
-        textarea.form-control { min-height: 120px; resize: vertical; }
+        /* Content */
+        .main { margin-left: var(--sidebar); flex-grow: 1; padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); max-width: 800px; margin: auto; }
+        .section-header { font-size: 18px; font-weight: 700; color: var(--p-green); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         
-        .btn-save { 
-            background: var(--primary-green); color: white; border: none; padding: 14px; 
-            border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px;
-        }
-        .btn-save:active { transform: scale(0.98); }
-        .menu-logout { margin: 20px 10px; color: var(--danger-red) !important; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        textarea.form-control { min-height: 100px; }
+        .btn-save { background: var(--p-green); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
+        .form-page { display: none; }
+        .form-page.active { display: block; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="./img/image_12.png" alt="Logo" class="sidebar-logo">
-        </div>
-        
-        <nav class="menu-container">
-            <div class="menu-item active-menu" onclick="showForm('pg-absensi', this)">
-                <i class="fa-solid fa-users"></i><span>Absensi Siswa</span>
-            </div>
-            <div class="menu-item" onclick="showForm('pg-materi', this)">
-                <i class="fa-solid fa-book-open"></i><span>Materi</span>
-            </div>
-            <div class="menu-item" onclick="showForm('pg-ulangan', this)">
-                <i class="fa-solid fa-pen-to-square"></i><span>Ulangan</span>
-            </div>
+        <div class="sidebar-header"><img src="./img/image_12.png" style="height:50px;"></div>
+        <nav>
+            <div class="menu-item active" onclick="showForm('pg-materi', this)"><i class="fa-solid fa-book"></i><span>Materi</span></div>
+            <div class="menu-item" onclick="showForm('pg-absensi', this)"><i class="fa-solid fa-users"></i><span>Absensi Siswa</span></div>
+            <div class="menu-item" onclick="showForm('pg-ulangan', this)"><i class="fa-solid fa-pen"></i><span>Ulangan</span></div>
         </nav>
-
-        <div class="menu-item menu-logout" onclick="confirmLogout()">
-            <i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span>
-        </div>
     </aside>
 
-    <main class="main-content">
+    <main class="main">
         <div class="card">
-            
-            <div id="pg-absensi" class="form-page active">
-                <div class="section-header"><i class="fa-solid fa-users"></i> Input Absensi Siswa</div>
+            <div id="pg-materi" class="form-page active">
+                <div class="section-header"><i class="fa-solid fa-upload"></i> Upload Materi</div>
                 <div class="form-group">
-                    <label>Pilih Kelas</label>
-                    <input type="text" id="abs-kelas" class="form-control" placeholder="Contoh: XII IPA 1">
+                    <label>Jenjang Sekolah</label>
+                    <select id="mat-jenjang" class="form-control">
+                        <option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label>Siswa Tidak Hadir (Nama & Keterangan)</label>
-                    <textarea id="abs-keterangan" class="form-control" placeholder="Contoh: Budi (Sakit), Ani (Izin)"></textarea>
-                </div>
-                <button class="btn-save" onclick="simpanAbsensi()">SIMPAN ABSENSI</button>
+                <div class="form-group"><label>Judul Materi</label><input type="text" id="mat-judul" class="form-control"></div>
+                <div class="form-group"><label>Isi Materi / Link</label><textarea id="mat-isi" class="form-control"></textarea></div>
+                <button class="btn-save" onclick="saveData('materi', {judul: $('#mat-judul').val(), isi: $('#mat-isi').val(), jenjang: $('#mat-jenjang').val()})">SIMPAN MATERI</button>
             </div>
 
-            <div id="pg-materi" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-book-open"></i> Uploud Materi</div>
-                <div class="form-group">
-                    <label>Judul Materi</label>
-                    <input type="text" id="mat-judul" class="form-control" placeholder="Masukkan judul materi">
-                </div>
-                <div class="form-group">
-                    <label>Isi atau Ringkasan Materi</label>
-                    <textarea id="mat-isi" class="form-control" placeholder="Tuliskan isi materi atau link modul..."></textarea>
-                </div>
-                <button class="btn-save" onclick="simpanMateri()">SIMPAN MATERI</button>
+            <div id="pg-absensi" class="form-page">
+                <div class="section-header"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
+                <div class="form-group"><label>Kelas</label><input type="text" id="abs-kelas" class="form-control"></div>
+                <div class="form-group"><label>Keterangan Siswa Tidak Hadir</label><textarea id="abs-ket" class="form-control"></textarea></div>
+                <button class="btn-save" onclick="saveData('absensi', {kelas: $('#abs-kelas').val(), ket: $('#abs-ket').val()})">SIMPAN ABSENSI</button>
             </div>
 
             <div id="pg-ulangan" class="form-page">
-                <div class="section-header"><i class="fa-solid fa-pen-to-square"></i> Info Ulangan / Ujian</div>
-                <div class="form-group">
-                    <label>Mata Pelajaran & Jenis Ulangan</label>
-                    <input type="text" id="ul-judul" class="form-control" placeholder="Contoh: Matematika - UH 1">
-                </div>
-                <div class="form-group">
-                    <label>Keterangan / Daftar Soal</label>
-                    <textarea id="ul-keterangan" class="form-control" placeholder="Masukkan detail ulangan..."></textarea>
-                </div>
-                <button class="btn-save" onclick="simpanUlangan()">SIMPAN DATA ULANGAN</button>
+                <div class="section-header"><i class="fa-solid fa-file-pen"></i> Info Ulangan</div>
+                <div class="form-group"><label>Mata Pelajaran</label><input type="text" id="ul-mapel" class="form-control"></div>
+                <div class="form-group"><label>Keterangan / Tanggal</label><textarea id="ul-ket" class="form-control"></textarea></div>
+                <button class="btn-save" onclick="saveData('ulangan', {mapel: $('#ul-mapel').val(), ket: $('#ul-ket').val()})">SIMPAN ULANGAN</button>
             </div>
-
         </div>
     </main>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+        
         const firebaseConfig = { 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
-            authDomain: "kelasdigital-b58ce.firebaseapp.com",
-            projectId: "kelasdigital-b58ce",
-            storageBucket: "kelasdigital-b58ce.firebasestorage.app",
-            messagingSenderId: "814579641877",
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c"
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
+            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            projectId: "kelasdigital-b58ce" 
         };
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fungsi Universal Simpan
-        async function sendData(col, data) {
-            const user = auth.currentUser;
-            if(!user) return alert("Silakan login kembali.");
+        window.saveData = async (col, data) => {
             try {
-                data.uid = user.uid;
                 data.createdAt = serverTimestamp();
                 await addDoc(collection(db, col), data);
-                alert("Berhasil disimpan!");
-            } catch (err) { alert("Gagal: " + err.message); }
-        }
-
-        // Ekspos ke Window agar onclick berfungsi
-        window.simpanAbsensi = () => sendData("absensi", { 
-            kelas: document.getElementById('abs-kelas').value, 
-            keterangan: document.getElementById('abs-keterangan').value 
-        });
-
-        window.simpanMateri = () => sendData("materi", { 
-            judul: document.getElementById('mat-judul').value, 
-            isi: document.getElementById('mat-isi').value 
-        });
-
-        window.simpanUlangan = () => sendData("ulangan", { 
-            judul: document.getElementById('ul-judul').value, 
-            keterangan: document.getElementById('ul-keterangan').value 
-        });
-
-        window.confirmLogout = () => { if(confirm("Keluar?")) signOut(auth).then(() => window.location.href="index.html"); };
-        onAuthStateChanged(auth, (u) => { if(!u) window.location.href="index.html"; });
+                alert("Data Berhasil Terkirim ke Siswa!");
+                location.reload();
+            } catch (e) { alert("Gagal: " + e.message); }
+        };
     </script>
-
     <script>
-        function showForm(pageId, element) {
-            document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active-menu'));
-            element.classList.add('active-menu');
+        function showForm(id, el) {
+            $('.form-page').removeClass('active'); $('#' + id).addClass('active');
+            $('.menu-item').removeClass('active'); $(el).addClass('active');
         }
     </script>
 </body>
