@@ -25,7 +25,6 @@
             position: relative;
         }
 
-        /* --- BACKGROUND CHIPSET TRANSPARAN --- */
         body::before {
             content: "";
             position: fixed;
@@ -40,7 +39,6 @@
             pointer-events: none;
         }
 
-        /* --- TOP NAVBAR (FIXED) --- */
         .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -74,7 +72,6 @@
         }
         .btn-keluar-top:hover { background: #ff5252; color: white; }
 
-        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background: rgba(0, 0, 0, 0.8);
@@ -105,7 +102,6 @@
         .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
 
-        /* --- MAIN CONTENT --- */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -113,28 +109,41 @@
             transition: 0.3s;
         }
 
-        /* RESPONSIVE LAYOUT */
+        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Custom Styles for Materi Layout */
+        #materiLayout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; min-height: 500px; }
+        .materi-item { 
+            padding: 15px; 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+        }
+        .materi-item:hover { background: rgba(0, 242, 255, 0.1); border-color: var(--accent-neon); }
+        .preview-box { 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         @media (max-width: 768px) {
             .sidebar { left: -100%; }
             .sidebar.open { left: 0; }
             .main-content { margin-left: 0; padding: 100px 15px 15px; }
-            .btn-keluar-top span { display: none; } /* Hanya ikon di HP */
-            
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.6);
-                z-index: 999;
-                backdrop-filter: blur(3px);
-            }
-            .sidebar-overlay.active { display: block; }
+            #materiLayout { grid-template-columns: 1fr; }
+            .preview-box { height: 450px; }
         }
-
-        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
-        .content-section { display: none; }
-        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -179,14 +188,30 @@
                 <div id="bioContent" style="margin-top:15px; line-height: 1.8;">Memuat data...</div>
             </div>
         </div>
+
+        <div id="materi" class="content-section">
+            <div class="card">
+                <h3 style="color: var(--accent-neon); margin-bottom: 20px;">Materi Pembelajaran</h3>
+                <div id="materiLayout">
+                    <div id="materiList" style="overflow-y: auto; max-height: 600px; padding-right: 10px;">
+                        <p style="opacity: 0.5;">Sedang mengambil materi...</p>
+                    </div>
+                    <div id="materiPreview" class="preview-box">
+                        <div style="text-align: center; padding: 20px;">
+                            <i class="fa-solid fa-file-circle-question" style="font-size: 50px; opacity: 0.2; margin-bottom: 15px;"></i>
+                            <p style="opacity: 0.5;">Pilih materi di samping untuk menampilkan isi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase Proyek Anda
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4",
             authDomain: "kelasdigital-b58ce.firebaseapp.com",
@@ -200,7 +225,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fungsi Logout (Didaftarkan ke window agar terbaca oleh onclick)
+        // --- FUNGSI NAVIGASI & SIDEBAR ---
+        window.showSection = (id, el) => {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+            if(window.innerWidth <= 768) toggleSidebar();
+        };
+
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        };
+
         window.logout = async () => {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 try {
@@ -210,21 +248,51 @@
             }
         };
 
-        // Fungsi Navigasi
-        window.showSection = (id, el) => {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-            if(window.innerWidth <= 768) window.toggleSidebar();
+        // --- FUNGSI MATERI ---
+        window.viewMateri = (url) => {
+            const preview = document.getElementById('materiPreview');
+            preview.innerHTML = `<div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat Dokumen...</div>`;
+            
+            // Sedikit delay untuk efek transisi
+            setTimeout(() => {
+                // Gunakan Google Docs Viewer agar file PDF GitHub/Drive bisa tampil stabil di iframe
+                const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+                preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>`;
+            }, 500);
         };
 
-        window.toggleSidebar = () => {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        };
+        async function loadMateri() {
+            const listContainer = document.getElementById('materiList');
+            try {
+                const snap = await getDocs(collection(db, "materi"));
+                if (snap.empty) {
+                    listContainer.innerHTML = "<p style='opacity:0.5;'>Belum ada materi.</p>";
+                    return;
+                }
 
-        // Memantau Sesi Pengguna
+                let html = "";
+                snap.forEach((doc) => {
+                    const d = doc.data();
+                    const icon = d.link.includes('.pdf') ? 'fa-file-pdf' : 'fa-link';
+                    html += `
+                        <div class="materi-item" onclick="viewMateri('${d.link}')">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <i class="fa-solid ${icon}" style="color:var(--accent-neon); font-size:1.2rem;"></i>
+                                <div>
+                                    <div style="font-size:14px; font-weight:700;">${d.judul}</div>
+                                    <div style="font-size:11px; opacity:0.6;">Klik untuk melihat</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = html;
+            } catch (e) {
+                listContainer.innerHTML = "<p>Gagal memuat data.</p>";
+            }
+        }
+
+        // --- AUTH MONITOR ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = "index.html"; 
@@ -238,10 +306,10 @@
                         <b>Email:</b> ${ud.email}<br>
                         <b>Jenjang:</b> ${ud.jenjang}
                     `;
+                    loadMateri(); // Muat materi setelah login sukses
                 }
             }
         });
     </script>
 </body>
 </html>
-
