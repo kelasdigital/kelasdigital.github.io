@@ -1,26 +1,50 @@
-// Ganti fungsi load materi lama Anda dengan ini agar terhubung ke Firebase materi
-async function fetchMateriSiswa() {
-    const container = document.getElementById('materiList');
+// --- BAGIAN LOAD MATERI DI SISWA.HTML ---
+async function loadMateriSiswa() {
+    const listContainer = document.getElementById('materiList');
     try {
         const q = query(collection(db, "materi"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
+        const querySnapshot = await getDocs(q);
         
         let html = "";
-        snap.forEach(doc => {
-            const d = doc.data();
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            // Pilih Ikon berdasarkan format
+            const icon = (data.format === "video") 
+                ? '<i class="fa-brands fa-youtube" style="color:#ff0000; font-size:1.4rem;"></i>' 
+                : '<i class="fa-solid fa-file-pdf" style="color:var(--accent-neon); font-size:1.4rem;"></i>';
+
             html += `
-                <div class="materi-card" onclick="viewMateri('${d.link}')" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer;">
-                    <div style="font-weight:bold;">${d.judul}</div>
-                    <div style="font-size:11px; color:var(--accent-neon);">${d.jenjang}</div>
+                <div class="materi-card" onclick="viewMateri('${data.link}', '${data.format}')">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        ${icon}
+                        <div>
+                            <div style="font-size:14px; font-weight:700;">${data.judul}</div>
+                            <div style="font-size:11px; color:var(--accent-neon); font-weight:bold; opacity:0.8;">${data.jenjang}</div>
+                        </div>
+                    </div>
                 </div>`;
         });
-        container.innerHTML = html || "<p>Belum ada materi.</p>";
-    } catch (e) { container.innerHTML = "<p>Gagal memuat materi.</p>"; }
+        listContainer.innerHTML = html || "<p>Belum ada materi.</p>";
+    } catch (e) {
+        listContainer.innerHTML = "<p>Gagal memuat materi.</p>";
+    }
 }
 
-// Fungsi Preview Iframe Siswa
-window.viewMateri = (url) => {
+// --- FUNGSI PREVIEW SISWA ---
+window.viewMateri = (url, format) => {
     const preview = document.getElementById('materiPreview');
-    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-    preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none; background:white;"></iframe>`;
+    preview.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+    
+    let embedUrl = "";
+    if (format === "video") {
+        // Jika video, langsung tampilkan link embed youtube
+        embedUrl = url;
+    } else {
+        // Jika file, gunakan Google Docs Viewer
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+    }
+
+    setTimeout(() => {
+        preview.innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:100%; border:none; background:white;" allowfullscreen></iframe>`;
+    }, 500);
 };
