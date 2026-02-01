@@ -22,6 +22,11 @@
         .btn-simpan:disabled { background: #ccc; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        
+        /* Style tambahan untuk tombol aksi */
+        .btn-aksi { border: none; background: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-edit { color: #0ea5e9; margin-right: 15px; }
+        .btn-hapus { color: #ef4444; }
     </style>
 </head>
 <body>
@@ -34,8 +39,8 @@
 
     <main class="main-content">
         <div class="card">
-            <h3>Upload Materi Baru</h3>
-            <label>Jenjang Sekolah</label>
+            <h3 id="formTitle">Upload Materi Baru</h3>
+            <input type="hidden" id="editId"> <label>Jenjang Sekolah</label>
             <select id="jenjangMateri"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
             
             <label>Judul Materi</label>
@@ -44,10 +49,11 @@
             <label>Link Video (YouTube)</label>
             <input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
 
-            <label>Pilih File (PDF/Gambar) - *Opsional jika ada link</label>
+            <label>Pilih File (PDF/Gambar) - *Kosongkan jika tidak ingin merubah file</label>
             <input type="file" id="fileMateri" accept=".pdf,image/*">
             
             <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
+            <button id="btnBatal" style="display:none; width:100%; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;" onclick="resetForm()">Batal Edit</button>
         </div>
 
         <div class="card">
@@ -61,7 +67,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
         const app = initializeApp(firebaseConfig);
@@ -72,24 +78,22 @@
         const GITHUB_REPO = "materi-kelas"; 
 
         window.prosesUpload = async () => {
+            const editId = document.getElementById('editId').value;
             const fileInput = document.getElementById('fileMateri');
             const judul = document.getElementById('judulMateri').value;
             const jenjang = document.getElementById('jenjangMateri').value;
             const linkVideo = document.getElementById('linkVideo').value;
             const btn = document.getElementById('btnProses');
 
-            // Validasi: Harus ada Judul DAN (File atau Link)
-            if(!judul || (!fileInput.files[0] && !linkVideo)) {
-                return alert("Lengkapi judul dan isi salah satu: File atau Link YouTube!");
+            if(!judul || (!fileInput.files[0] && !linkVideo && !editId)) {
+                return alert("Lengkapi data!");
             }
 
-            btn.disabled = true; 
-            btn.innerHTML = "Sedang Memproses...";
-
-            let finalFileLink = "";
+            btn.disabled = true; btn.innerHTML = "Sedang Memproses...";
 
             try {
-                // Jika ada file, unggah ke GitHub
+                let finalFileLink = "";
+                // Jika ada file baru diupload
                 if(fileInput.files[0]) {
                     const file = fileInput.files[0];
                     const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
@@ -100,37 +104,58 @@
                         headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
                     });
-
                     if(res.ok) {
                         finalFileLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
-                    } else {
-                        throw new Error("Gagal mengunggah file ke GitHub");
                     }
                 }
 
-                // Simpan ke Firestore (Menyimpan Link Video dan Link File)
-                await addDoc(collection(db, "materi"), { 
-                    judul, 
-                    linkFile: finalFileLink, 
-                    linkVideo: linkVideo,
-                    jenjang, 
-                    createdAt: serverTimestamp() 
-                });
+                const dataMateri = { judul, linkVideo, jenjang, updatedAt: serverTimestamp() };
+                if(finalFileLink) dataMateri.linkFile = finalFileLink;
 
-                alert("Materi Berhasil Disimpan!");
-                document.getElementById('judulMateri').value = "";
-                document.getElementById('linkVideo').value = "";
-                document.getElementById('fileMateri').value = "";
-                
+                if(editId) {
+                    // Update data
+                    await updateDoc(doc(db, "materi", editId), dataMateri);
+                    alert("Materi berhasil diupdate!");
+                } else {
+                    // Simpan data baru
+                    dataMateri.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "materi"), dataMateri);
+                    alert("Materi berhasil disimpan!");
+                }
+                resetForm();
             } catch (e) {
                 alert("Error: " + e.message);
             } finally {
-                btn.disabled = false; 
-                btn.innerHTML = "SIMPAN MATERI";
+                btn.disabled = false; btn.innerHTML = "SIMPAN MATERI";
             }
         };
 
-        // Helper untuk convert file ke Base64
+        window.editData = async (id) => {
+            const docRef = doc(db, "materi", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('editId').value = id;
+                document.getElementById('judulMateri').value = data.judul;
+                document.getElementById('jenjangMateri').value = data.jenjang;
+                document.getElementById('linkVideo').value = data.linkVideo || "";
+                document.getElementById('formTitle').innerText = "Edit Materi";
+                document.getElementById('btnProses').innerHTML = "UPDATE MATERI";
+                document.getElementById('btnBatal').style.display = "block";
+                window.scrollTo(0,0);
+            }
+        };
+
+        window.resetForm = () => {
+            document.getElementById('editId').value = "";
+            document.getElementById('judulMateri').value = "";
+            document.getElementById('linkVideo').value = "";
+            document.getElementById('fileMateri').value = "";
+            document.getElementById('formTitle').innerText = "Upload Materi Baru";
+            document.getElementById('btnProses').innerHTML = "SIMPAN MATERI";
+            document.getElementById('btnBatal').style.display = "none";
+        };
+
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -138,7 +163,6 @@
             reader.onerror = error => reject(error);
         });
 
-        // Realtime Data dari Firestore
         onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
             const tbody = document.getElementById('tabelMateriBody');
             tbody.innerHTML = "";
@@ -154,7 +178,8 @@
                             <small>${d.linkVideo ? '<i class="fa-brands fa-youtube text-danger"></i> Link Ada' : ''} ${d.linkFile ? '<i class="fa-solid fa-file-pdf text-primary"></i> File Ada' : ''}</small>
                         </td>
                         <td>
-                            <button onclick="hapusData('${res.id}')" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash"></i> Hapus</button>
+                            <button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button onclick="hapusData('${res.id}')" class="btn-aksi btn-hapus"><i class="fa-solid fa-trash"></i> Hapus</button>
                         </td>
                     </tr>`;
             });
