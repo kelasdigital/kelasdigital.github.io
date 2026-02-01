@@ -7,14 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary-green: #2d5a27; --accent-neon: #00f2ff; --white: #ffffff; --sidebar-width: 260px; }
+        :root { 
+            --primary-green: #2d5a27; 
+            --accent-neon: #00f2ff;
+            --white: #ffffff; 
+            --sidebar-width: 260px;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); min-height: 100vh; color: var(--white); display: flex; overflow-x: hidden; position: relative; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('./img/image_7cfeb8.png'); background-position: center; background-repeat: no-repeat; background-size: cover; mix-blend-mode: screen; opacity: 0.3; pointer-events: none; }
         .top-navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); z-index: 1001; padding: 0 20px; display: grid; grid-template-columns: 50px 1fr auto; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; display: flex; align-items: center; }
         .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
-        .btn-keluar-top { background: rgba(211, 47, 47, 0.2); color: #ff5252; border: 1px solid #ff5252; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .btn-keluar-top { background: rgba(211, 47, 47, 0.2); color: #ff5252; border: 1px solid #ff5252; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
         .sidebar { width: var(--sidebar-width); background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 90px 15px 25px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: 0.3s; }
         .menu-item { padding: 14px 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
@@ -24,9 +29,9 @@
         .content-section.active { display: block; }
         .materi-grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 550px; }
         #materiList { overflow-y: auto; padding-right: 10px; }
-        .materi-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+        .materi-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; transition: 0.3s; }
         #materiPreview { background: white; border-radius: 15px; overflow: hidden; position: relative; }
-        .btn-view { padding: 8px 15px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-view { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-pdf { background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); border-color: var(--accent-neon); }
         .btn-video { background: rgba(255, 82, 82, 0.1); color: #ff5252; border-color: #ff5252; }
     </style>
@@ -43,12 +48,17 @@
         <div class="menu-item active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-house"></i> <span>Dashboard</span></div>
         <div class="menu-item" onclick="showSection('biodata', this)"><i class="fa-solid fa-user"></i> <span>Biodata</span></div>
         <div class="menu-item" onclick="showSection('materi', this)"><i class="fa-solid fa-book"></i> <span>Materi</span></div>
+        <div class="menu-item" onclick="showSection('ujian', this)"><i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span></div>
     </aside>
 
     <main class="main-content">
         <div id="dashboard" class="content-section active">
-            <h2 id="userName">Halo...</h2>
-            <div class="card"><h3 style="color: var(--accent-neon);">Informasi</h3><p>Pilih materi untuk memulai belajar.</p></div>
+            <h2 id="userName">Memuat...</h2>
+            <div class="card"><h3 style="color: var(--accent-neon);">Papan Informasi</h3><p>Selamat datang di KELAS DIGITAL.</p></div>
+        </div>
+
+        <div id="biodata" class="content-section">
+            <div class="card"><h3>Biodata Siswa</h3><div id="bioContent">Memuat data...</div></div>
         </div>
 
         <div id="materi" class="content-section">
@@ -57,9 +67,8 @@
                 <div class="materi-grid">
                     <div id="materiList">Memuat materi...</div>
                     <div id="materiPreview">
-                        <div style="color: #333; display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; text-align: center; padding: 20px;">
-                            <i class="fa-solid fa-book-open" style="font-size: 50px; opacity: 0.1; margin-bottom: 10px;"></i>
-                            <p style="opacity: 0.5;">Klik tombol materi untuk melihat isi</p>
+                        <div style="color: #333; display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column;">
+                            <i class="fa-solid fa-play-circle" style="font-size: 50px; opacity: 0.1;"></i><p style="opacity: 0.5;">Pilih materi</p>
                         </div>
                     </div>
                 </div>
@@ -78,36 +87,39 @@
         const db = getFirestore(app);
 
         window.logout = async () => { if (confirm("Keluar?")) { await signOut(auth); window.location.href = "index.html"; } };
+        
         window.showSection = (id, el) => {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); el.classList.add('active');
+            document.getElementById(id).classList.add('active'); 
+            el.classList.add('active');
         };
 
-        // PERBAIKAN: Gunakan penampil PDF yang lebih andal
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        };
+
+        // PERBAIKAN: Fungsi penampil PDF lebih stabil
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
-            preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Membuka PDF...</div>`;
+            preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Memuat PDF...</div>`;
             
-            // Bypass CORS dengan Google Viewer yang lebih paksa
-            const pdfViewer = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+            // Gunakan viewer alternatif jika Google Docs Viewer gagal memuat raw github
+            const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
             
-            preview.innerHTML = `
-                <div style="height:100%; display:flex; flex-direction:column;">
-                    <div style="background:#eee; padding:5px; text-align:right;">
-                        <a href="${url}" target="_blank" style="font-size:12px; color:blue; font-weight:bold;">Buka di Tab Baru <i class="fa-solid fa-external-link"></i></a>
-                    </div>
-                    <iframe src="${pdfViewer}" style="width:100%; flex:1; border:none;"></iframe>
-                </div>`;
+            preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none;" title="PDF Viewer"></iframe>`;
         };
 
         window.viewVideo = (url) => {
             const preview = document.getElementById('materiPreview');
             let vId = "";
-            if(url.includes('v=')) vId = url.split('v=')[1].split('&')[0];
-            else if(url.includes('youtu.be/')) vId = url.split('youtu.be/')[1];
-            
-            preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1" style="width:100%; height:100%; border:none;" allowfullscreen allow="autoplay"></iframe>`;
+            if (url.includes('v=')) {
+                vId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                vId = url.split('youtu.be/')[1];
+            }
+            preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>`;
         };
 
         function fetchMateri(jenjangSiswa) {
@@ -119,8 +131,8 @@
                     if (d.jenjang === jenjangSiswa) {
                         html += `
                             <div class="materi-item">
-                                <div style="font-weight:bold; font-size:14px; color:#fff;">${d.judul}</div>
-                                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:5px;">Diterbitkan: ${d.createdAt?.toDate().toLocaleDateString('id-ID') || ''}</div>
+                                <div style="font-weight:bold; font-size:14px;">${d.judul}</div>
+                                <div style="font-size:11px; opacity:0.6;">${d.createdAt?.toDate().toLocaleDateString('id-ID') || ''}</div>
                                 <div style="display:flex; gap:8px;">
                                     ${d.linkVideo ? `<button class="btn-view btn-video" onclick="viewVideo('${d.linkVideo}')"><i class="fa-brands fa-youtube"></i> Video</button>` : ''}
                                     ${d.linkFile ? `<button class="btn-view btn-pdf" onclick="viewMateri('${d.linkFile}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ''}
@@ -128,16 +140,17 @@
                             </div>`;
                     }
                 });
-                list.innerHTML = html || "<p style='opacity:0.5; padding:20px;'>Belum ada materi.</p>";
+                list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang ${jenjangSiswa}</p>`;
             });
         }
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) return;
+            if (!user) return window.location.href = "index.html";
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if(uDoc.exists()){
                 const ud = uDoc.data();
                 document.getElementById('userName').innerText = "Halo, " + ud.nama;
+                document.getElementById('bioContent').innerHTML = `<b>Nama:</b> ${ud.nama}<br><b>Jenjang:</b> ${ud.jenjang}`;
                 fetchMateri(ud.jenjang);
             }
         });
