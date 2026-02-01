@@ -1,94 +1,29 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelas Digital - Upload Materi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f0f4f8; font-family: sans-serif; }
-        .sidebar { width: 250px; height: 100vh; background: white; border-right: 1px solid #dee2e6; position: fixed; }
-        .main-content { margin-left: 250px; padding: 30px; }
-        .nav-link { color: #6c757d; padding: 10px 20px; border-radius: 5px; margin: 5px 15px; }
-        .nav-link.active { background-color: #e3f2fd; color: #0d6efd; font-weight: bold; }
-        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn-simpan { background-color: #1a5c31; color: white; font-weight: bold; width: 100%; border: none; padding: 12px; }
-        .btn-simpan:hover { background-color: #144626; color: white; }
-        .logo-box { padding: 20px; text-align: center; }
-        label { font-weight: 500; margin-bottom: 8px; }
-    </style>
-</head>
-<body>
-
-<div class="sidebar d-none d-md-block">
-    <div class="logo-box">
-        <img src="https://via.placeholder.com/120x50?text=KELAS+DIGITAL" alt="Logo">
+<form action="proses_simpan.php" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Jenjang Sekolah</label>
+        <select name="jenjang" class="form-select">
+            <option value="SMA" selected>SMA</option>
+            <option value="SMP">SMP</option>
+            <option value="SD">SD</option>
+        </select>
     </div>
-    <nav class="nav flex-column mt-3">
-        <a class="nav-link active" href="#"><i class="bi bi-journal-text me-2"></i> Materi</a>
-        <a class="nav-link" href="#"><i class="bi bi-person-check me-2"></i> Absensi Siswa</a>
-        <a class="nav-link" href="#"><i class="bi bi-pencil-square me-2"></i> Ujian</a>
-    </nav>
-</div>
 
-<div class="main-content">
-    <div class="container-fluid">
-        
-        <div class="card">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-3">Upload Materi Baru</h5>
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Jenjang Sekolah</label>
-                        <select class="form-select">
-                            <option selected>SMA</option>
-                            <option>SMP</option>
-                            <option>SD</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Judul Materi</label>
-                        <input type="text" class="form-control" placeholder="Masukkan judul materi...">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Link Video (YouTube/Video Link)</label>
-                        <input type="url" class="form-control" placeholder="Masukkan link video (contoh: https://youtube.com/...)">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Pilih File (PDF/Gambar)</label>
-                        <input type="file" class="form-control">
-                    </div>
-
-                    <button type="submit" class="btn btn-simpan mt-2">SIMPAN MATERI</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-4">Riwayat Upload Berkas</h5>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr class="text-secondary">
-                                <th width="20%">Tanggal</th>
-                                <th width="20%">Jenjang</th>
-                                <th width="40%">Judul</th>
-                                <th width="20%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
+    <div class="mb-3">
+        <label class="form-label">Judul Materi</label>
+        <input type="text" name="judul" class="form-control" placeholder="Masukkan judul materi...">
     </div>
-</div>
 
-</body>
-</html>
+    <div class="mb-3">
+        <label class="form-label">Link Video (YouTube)</label>
+        <input type="text" name="link_video" class="form-control" placeholder="Tempel link YouTube di sini...">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Pilih File (PDF/Gambar)</label>
+        <input type="file" name="berkas_materi" class="form-control">
+    </div>
+
+    <button type="submit" class="btn-simpan" style="background-color: #1a5c31; color: white; width: 100%; border: none; padding: 12px; border-radius: 5px; font-weight: bold;">
+        SIMPAN MATERI
+    </button>
+</form>
