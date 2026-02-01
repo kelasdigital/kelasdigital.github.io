@@ -3,109 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Guru - KELAS DIGITAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Kelas Digital - Upload Materi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --primary-bg: #f0f7ff; --sidebar-bg: #ffffff; --active-blue: #e0f2fe; --accent-blue: #0ea5e9; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--primary-bg); display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; position: fixed; height: 100vh; display: flex; flex-direction: column; padding: 20px 0; }
-        .nav-logo { padding: 0 20px 30px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; text-align: center; }
-        .nav-logo img { height: 45px; }
-        .menu-item { padding: 12px 20px; margin: 2px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #64748b; font-size: 14px; transition: 0.2s; }
-        .menu-item.active { background: var(--active-blue); color: var(--accent-blue); font-weight: 600; }
-        .main-content { flex: 1; margin-left: 260px; padding: 30px; }
-        .card { background: white; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; }
-        .btn-simpan { width: 100%; background: #166534; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .section { display: none; } .section.active { display: block; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        body { background-color: #f0f4f8; font-family: sans-serif; }
+        .sidebar { width: 250px; height: 100vh; background: white; border-right: 1px solid #dee2e6; position: fixed; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .nav-link { color: #6c757d; padding: 10px 20px; border-radius: 5px; margin: 5px 15px; }
+        .nav-link.active { background-color: #e3f2fd; color: #0d6efd; font-weight: bold; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .btn-simpan { background-color: #1a5c31; color: white; font-weight: bold; width: 100%; border: none; padding: 12px; }
+        .btn-simpan:hover { background-color: #144626; color: white; }
+        .logo-box { padding: 20px; text-align: center; }
+        label { font-weight: 500; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="nav-logo"><img src="./img/image_12.png" alt="Logo"></div>
-        <div class="menu-item active" onclick="showTab('materi', this)"><i class="fa-solid fa-book"></i> Materi</div>
-        <div class="menu-item" onclick="showTab('absensi', this)"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
-        <div class="menu-item" onclick="showTab('ujian', this)"><i class="fa-solid fa-edit"></i> Ujian</div>
-    </aside>
 
-    <main class="main-content">
-        <div class="card" id="materi">
-            <h3>Upload Materi Baru</h3>
-            <label>Jenjang Sekolah</label>
-            <select id="jenjangMateri"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
-            <label>Judul Materi</label>
-            <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
-            <label>Pilih File (PDF/Gambar)</label>
-            <input type="file" id="fileMateri" accept=".pdf,image/*">
-            <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
+<div class="sidebar d-none d-md-block">
+    <div class="logo-box">
+        <img src="https://via.placeholder.com/120x50?text=KELAS+DIGITAL" alt="Logo">
+    </div>
+    <nav class="nav flex-column mt-3">
+        <a class="nav-link active" href="#"><i class="bi bi-journal-text me-2"></i> Materi</a>
+        <a class="nav-link" href="#"><i class="bi bi-person-check me-2"></i> Absensi Siswa</a>
+        <a class="nav-link" href="#"><i class="bi bi-pencil-square me-2"></i> Ujian</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="container-fluid">
+        
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Upload Materi Baru</h5>
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Jenjang Sekolah</label>
+                        <select class="form-select">
+                            <option selected>SMA</option>
+                            <option>SMP</option>
+                            <option>SD</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Judul Materi</label>
+                        <input type="text" class="form-control" placeholder="Masukkan judul materi...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Link Video (YouTube/Video Link)</label>
+                        <input type="url" class="form-control" placeholder="Masukkan link video (contoh: https://youtube.com/...)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Pilih File (PDF/Gambar)</label>
+                        <input type="file" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-simpan mt-2">SIMPAN MATERI</button>
+                </form>
+            </div>
         </div>
 
         <div class="card">
-            <h3>Riwayat Upload Berkas</h3>
-            <table>
-                <thead><tr><th>Tanggal</th><th>Jenjang</th><th>Judul</th><th>Aksi</th></tr></thead>
-                <tbody id="tabelMateriBody"></tbody>
-            </table>
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Riwayat Upload Berkas</h5>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr class="text-secondary">
+                                <th width="20%">Tanggal</th>
+                                <th width="20%">Jenjang</th>
+                                <th width="40%">Judul</th>
+                                <th width="20%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    </div>
+</div>
 
-        const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const GITHUB_TOKEN = "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"; //
-        const GITHUB_USER = "zeens25"; //
-        const GITHUB_REPO = "materi-kelas"; //
-
-        window.prosesUpload = async () => {
-            const fileInput = document.getElementById('fileMateri');
-            const judul = document.getElementById('judulMateri').value;
-            const jenjang = document.getElementById('jenjangMateri').value;
-            const btn = document.getElementById('btnProses');
-
-            if(!fileInput.files[0] || !judul) return alert("Lengkapi data!");
-            btn.disabled = true; btn.innerHTML = "Sedang Mengunggah...";
-
-            const file = fileInput.files[0];
-            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64Content = reader.result.split(',')[1];
-                try {
-                    const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
-                        method: "PUT",
-                        headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
-                    });
-                    if(res.ok) {
-                        const rawLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
-                        await addDoc(collection(db, "materi"), { judul, link: rawLink, jenjang, createdAt: serverTimestamp() });
-                        alert("Berhasil!"); location.reload();
-                    } else { throw new Error("Gagal GitHub"); }
-                } catch (e) { alert("Error: " + e.message); btn.disabled = false; btn.innerHTML = "SIMPAN MATERI"; }
-            };
-        };
-
-        onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
-            const tbody = document.getElementById('tabelMateriBody');
-            tbody.innerHTML = "";
-            snap.forEach(res => {
-                const d = res.data();
-                const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString() : "...";
-                tbody.innerHTML += `<tr><td>${date}</td><td>${d.jenjang}</td><td>${d.judul}</td><td><button onclick="hapusData('${res.id}')" style="color:red; border:none; background:none; cursor:pointer;">Hapus</button></td></tr>`;
-            });
-        });
-
-        window.hapusData = async (id) => { if(confirm("Hapus?")) await deleteDoc(doc(db, "materi", id)); };
-    </script>
 </body>
 </html>
