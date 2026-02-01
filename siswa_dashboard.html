@@ -30,7 +30,7 @@
         .materi-grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 550px; }
         #materiList { overflow-y: auto; padding-right: 10px; }
         .materi-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; transition: 0.3s; }
-        #materiPreview { background: white; border-radius: 15px; overflow: hidden; }
+        #materiPreview { background: white; border-radius: 15px; overflow: hidden; position: relative; }
         .btn-view { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-pdf { background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); border-color: var(--accent-neon); }
         .btn-video { background: rgba(255, 82, 82, 0.1); color: #ff5252; border-color: #ff5252; }
@@ -87,24 +87,41 @@
         const db = getFirestore(app);
 
         window.logout = async () => { if (confirm("Keluar?")) { await signOut(auth); window.location.href = "index.html"; } };
+        
         window.showSection = (id, el) => {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); el.classList.add('active');
+            document.getElementById(id).classList.add('active'); 
+            el.classList.add('active');
         };
 
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        };
+
+        // PERBAIKAN: Fungsi penampil PDF lebih stabil
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
-            preview.innerHTML = `<iframe src="https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true" style="width:100%; height:100%; border:none;"></iframe>`;
+            preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Memuat PDF...</div>`;
+            
+            // Gunakan viewer alternatif jika Google Docs Viewer gagal memuat raw github
+            const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+            
+            preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none;" title="PDF Viewer"></iframe>`;
         };
 
         window.viewVideo = (url) => {
             const preview = document.getElementById('materiPreview');
-            let vId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('youtu.be/')[1];
+            let vId = "";
+            if (url.includes('v=')) {
+                vId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                vId = url.split('youtu.be/')[1];
+            }
             preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>`;
         };
 
-        // PERBAIKAN UTAMA: Sesuai dengan field linkFile dan linkVideo
         function fetchMateri(jenjangSiswa) {
             onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
                 const list = document.getElementById('materiList');
@@ -123,7 +140,7 @@
                             </div>`;
                     }
                 });
-                list.innerHTML = html || "<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang " + jenjangSiswa + "</p>";
+                list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang ${jenjangSiswa}</p>`;
             });
         }
 
@@ -134,7 +151,7 @@
                 const ud = uDoc.data();
                 document.getElementById('userName').innerText = "Halo, " + ud.nama;
                 document.getElementById('bioContent').innerHTML = `<b>Nama:</b> ${ud.nama}<br><b>Jenjang:</b> ${ud.jenjang}`;
-                fetchMateri(ud.jenjang); // Memanggil materi berdasarkan jenjang siswa
+                fetchMateri(ud.jenjang);
             }
         });
     </script>
