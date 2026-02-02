@@ -42,7 +42,7 @@
 
         /* --- NAVBAR --- */
         .navbar { 
-            height: 80px; /* Diperkecil dari 100px */
+            height: 80px; 
             display: flex; 
             align-items: center; 
             padding: 0 5%; 
@@ -76,7 +76,7 @@
         .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.2); border-radius: 50%; cursor: pointer; transition: 0.4s; }
         .dot.active { background: var(--accent-neon); width: 30px; border-radius: 10px; }
 
-        /* --- MODALS (OPTIMIZED SIZE) --- */
+        /* --- MODALS --- */
         .modal-overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 2000; 
@@ -85,10 +85,10 @@
         
         .modal-box { 
             background: var(--white); 
-            padding: 30px; /* Diperkecil dari 40px */
+            padding: 30px; 
             border-radius: 12px; 
             width: 90%; 
-            max-width: 380px; /* Diperkecil dari 440px */
+            max-width: 380px; 
             color: var(--text-dark); 
             box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             animation: fadeIn 0.4s ease-out;
@@ -98,7 +98,7 @@
 
         .modal-box h2 { 
             font-weight: 800; 
-            font-size: 22px; /* Diperkecil dari 26px */
+            font-size: 22px; 
             margin-bottom: 20px; 
             text-align: center; 
             color: var(--primary-green);
@@ -106,12 +106,12 @@
             text-transform: uppercase;
         }
 
-        .input-group { margin-bottom: 12px; position: relative; } /* Jarak dipersempit */
+        .input-group { margin-bottom: 12px; position: relative; }
         .input-label { display: block; font-size: 10px; font-weight: 700; margin-bottom: 5px; color: #888; }
         
         input, select { 
             width: 100%; 
-            padding: 10px 14px; /* Diperkecil agar lebih compact */
+            padding: 10px 14px; 
             border: 1px solid var(--border-color); 
             border-radius: 6px; 
             outline: none; 
@@ -129,7 +129,7 @@
             width: 100%; 
             background: var(--primary-green); 
             color: white; 
-            padding: 12px; /* Diperkecil */
+            padding: 12px; 
             border-radius: 6px; 
             font-size: 14px; 
             font-weight: 700; 
@@ -141,6 +141,20 @@
         
         .btn-submit:hover { background: #1e3d1a; }
         .btn-close-text { display: block; width: 100%; text-align: center; margin-top: 15px; color: #aaa; cursor: pointer; font-size: 12px; font-weight: 500; }
+
+        /* --- STYLE LUPA PASSWORD --- */
+        .forgot-password {
+            display: block;
+            text-align: right;
+            font-size: 11px;
+            color: #777;
+            text-decoration: none;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .forgot-password:hover { color: var(--primary-green); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -179,7 +193,6 @@
                         <option value="guru">Guru</option>
                     </select>
                 </div>
-                
                 <div class="grid-2">
                     <div class="input-group">
                         <label class="input-label">Jenjang</label>
@@ -194,22 +207,18 @@
                         <select id="regKelas"></select>
                     </div>
                 </div>
-
                 <div class="input-group">
                     <label class="input-label">Nama Lengkap</label>
                     <input type="text" id="regNama" placeholder="Nama lengkap Anda" required>
                 </div>
-                
                 <div class="input-group">
                     <label class="input-label">Email</label>
                     <input type="email" id="regEmail" placeholder="nama@email.com" required>
                 </div>
-                
                 <div class="input-group">
                     <label class="input-label">Password</label>
                     <input type="password" id="regPass" placeholder="Minimal 6 karakter" required>
                 </div>
-                
                 <button type="submit" class="btn-submit" id="btnRegBtn">Buat Akun Sekarang</button>
                 <span class="btn-close-text" onclick="closeModal()">Kembali ke Beranda</span>
             </form>
@@ -222,6 +231,9 @@
             <form id="loginForm">
                 <div class="input-group"><label class="input-label">Email</label><input type="email" id="logEmail" placeholder="nama@email.com" required></div>
                 <div class="input-group"><label class="input-label">Password</label><input type="password" id="logPass" placeholder="••••••••" required></div>
+                
+                <a href="#" class="forgot-password" id="forgotPassBtn">Lupa Password?</a>
+
                 <button type="submit" class="btn-submit" id="btnLoginBtn">Masuk Sekarang</button>
                 <span class="btn-close-text" onclick="closeModal()">Tutup</span>
             </form>
@@ -230,7 +242,12 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            sendPasswordResetEmail 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -246,6 +263,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Update Pilihan Kelas Berdasarkan Jenjang
         window.updateRegKelas = () => {
             const jenjang = document.getElementById('regJenjang').value;
             const kelasSelect = document.getElementById('regKelas');
@@ -262,6 +280,7 @@
         };
         updateRegKelas();
 
+        // Slider Logic
         let currentSlide = 0;
         window.goToSlide = (n) => { 
             currentSlide = n; 
@@ -270,9 +289,11 @@
         };
         setInterval(() => { currentSlide = (currentSlide + 1) % 3; goToSlide(currentSlide); }, 7000);
 
+        // Modal Control
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
+        // Logic Daftar
         document.getElementById('daftarForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnRegBtn');
@@ -291,6 +312,7 @@
             } catch (err) { alert(err.message); } finally { btn.innerText = "Buat Akun Sekarang"; btn.disabled = false; }
         };
 
+        // Logic Login
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnLoginBtn');
@@ -302,6 +324,24 @@
                     window.location.href = userDoc.data().role === "guru" ? "guru_dashboard.html" : "siswa_dashboard.html";
                 }
             } catch (err) { alert(err.message); } finally { btn.innerText = "Masuk Sekarang"; btn.disabled = false; }
+        };
+
+        // Logic Reset Password
+        document.getElementById('forgotPassBtn').onclick = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('logEmail').value;
+            if (!email) {
+                alert("Silakan masukkan email Anda pada kolom login terlebih dahulu.");
+                return;
+            }
+            if (confirm(`Kirim link reset password ke email: ${email}?`)) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert("Instruksi reset password telah dikirim ke email Anda!");
+                } catch (err) {
+                    alert("Kesalahan: " + err.message);
+                }
+            }
         };
     </script>
 </body>
