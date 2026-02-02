@@ -100,15 +100,30 @@
             document.getElementById('overlay').classList.toggle('active');
         };
 
-        // PERBAIKAN: Fungsi penampil PDF lebih stabil
+        // PERBAIKAN: Fungsi penampil file mendukung berbagai ekstensi (PDF, DOCX, XLSX, TXT)
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
-            preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Memuat PDF...</div>`;
+            preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Memuat Dokumen...</div>`;
             
-            // Gunakan viewer alternatif jika Google Docs Viewer gagal memuat raw github
-            const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+            // Mendapatkan ekstensi file dari URL
+            const extension = url.split('.').pop().toLowerCase().split(/\?|#/)[0];
             
-            preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none;" title="PDF Viewer"></iframe>`;
+            // Daftar ekstensi yang didukung oleh Google Docs Viewer
+            const docsExtensions = ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt', 'txt'];
+            
+            if (docsExtensions.includes(extension)) {
+                // Menggunakan Google Docs Viewer sebagai wrapper untuk berbagai jenis dokumen
+                const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+                preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none;" title="Document Viewer"></iframe>`;
+            } else {
+                // Tampilan jika format file tidak didukung untuk pratinjau langsung
+                preview.innerHTML = `
+                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; color:#333; padding:20px; text-align:center;">
+                        <i class="fa-solid fa-file-circle-exclamation" style="font-size:40px; margin-bottom:10px; color:#ff5252;"></i>
+                        <p>Format file (.${extension}) tidak mendukung pratinjau langsung.</p>
+                        <a href="${url}" target="_blank" style="margin-top:10px; color:#2d5a27; font-weight:bold; text-decoration:none; border:1px solid #2d5a27; padding:5px 15px; border-radius:5px;">Unduh File</a>
+                    </div>`;
+            }
         };
 
         window.viewVideo = (url) => {
@@ -157,3 +172,4 @@
     </script>
 </body>
 </html>
+
