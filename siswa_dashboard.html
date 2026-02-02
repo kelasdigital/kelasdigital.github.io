@@ -150,10 +150,14 @@
                                 <div style="font-size:11px; opacity:0.6;">${d.createdAt?.toDate().toLocaleDateString('id-ID') || ''}</div>
                                 <div style="display:flex; gap:8px;">
                                     ${d.linkVideo ? `<button class="btn-view btn-video" onclick="viewVideo('${d.linkVideo}')"><i class="fa-brands fa-youtube"></i> Video</button>` : ''}
-                                    ${d.linkFile ? `<button class="btn-view btn-pdf" onclick="viewMateri('${d.linkFile}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ''}
+                                    ${d.linkFile ? `<button class="btn-view btn-pdf" onclick="viewMateri('${d.linkFile}')"><i class="fa-solid fa-file-lines"></i> Lihat Dokumen</button>` : ''}
                                 </div>
                             </div>`;
                     }
+                });
+                list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang ${jenjangSiswa}</p>`;
+            });
+        }
                 });
                 list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang ${jenjangSiswa}</p>`;
             });
@@ -172,4 +176,5 @@
     </script>
 </body>
 </html>
+
 
