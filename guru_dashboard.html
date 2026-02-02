@@ -22,8 +22,6 @@
         .btn-simpan:disabled { background: #ccc; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-        
-        /* Style tambahan untuk tombol aksi */
         .btn-aksi { border: none; background: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-edit { color: #0ea5e9; margin-right: 15px; }
         .btn-hapus { color: #ef4444; }
@@ -40,8 +38,13 @@
     <main class="main-content">
         <div class="card">
             <h3 id="formTitle">Upload Materi Baru</h3>
-            <input type="hidden" id="editId"> <label>Jenjang Sekolah</label>
-            <select id="jenjangMateri"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
+            <input type="hidden" id="editId"> 
+            <label>Jenjang Sekolah</label>
+            <select id="jenjangMateri">
+                <option value="MI">MI</option>
+                <option value="MTs">MTs</option>
+                <option value="SMA">SMA</option>
+            </select>
             
             <label>Judul Materi</label>
             <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
@@ -59,7 +62,9 @@
         <div class="card">
             <h3>Riwayat Upload Berkas</h3>
             <table>
-                <thead><tr><th>Tanggal</th><th>Jenjang</th><th>Judul</th><th>Aksi</th></tr></thead>
+                <thead>
+                    <tr><th>Tanggal</th><th>Jenjang</th><th>Judul</th><th>Aksi</th></tr>
+                </thead>
                 <tbody id="tabelMateriBody"></tbody>
             </table>
         </div>
@@ -69,13 +74,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
+            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            projectId: "kelasdigital-b58ce", 
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app", 
+            messagingSenderId: "814579641877", 
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        const GITHUB_TOKEN = "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"; 
-        const GITHUB_USER = "zeens25"; 
-        const GITHUB_REPO = "materi-kelas"; 
 
         window.prosesUpload = async () => {
             const editId = document.getElementById('editId').value;
@@ -89,35 +97,53 @@
                 return alert("Lengkapi data!");
             }
 
-            btn.disabled = true; btn.innerHTML = "Sedang Memproses...";
+            btn.disabled = true; 
+            btn.innerHTML = "Menghubungkan ke Firebase...";
 
             try {
+                // --- BAGIAN BARU: AMBIL TOKEN DARI FIREBASE ---
+                const configRef = doc(db, "settings", "github_config");
+                const configSnap = await getDoc(configRef);
+
+                if (!configSnap.exists()) {
+                    throw new Error("Konfigurasi GitHub tidak ditemukan di Firebase (settings/github_config)");
+                }
+
+                const { token, user, repo } = configSnap.data();
+                // ----------------------------------------------
+
                 let finalFileLink = "";
-                // Jika ada file baru diupload
                 if(fileInput.files[0]) {
+                    btn.innerHTML = "Mengunggah File ke GitHub...";
                     const file = fileInput.files[0];
                     const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                     const base64Content = await toBase64(file);
                     
-                    const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materi/${fileName}`, {
+                    const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/materi/${fileName}`, {
                         method: "PUT",
-                        headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+                        headers: { 
+                            "Authorization": `token ${token}`, 
+                            "Content-Type": "application/json" 
+                        },
                         body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
                     });
+
                     if(res.ok) {
-                        finalFileLink = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/materi/${fileName}`;
+                        finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
+                    } else {
+                        const errRes = await res.json();
+                        throw new Error("Gagal ke GitHub: " + errRes.message);
                     }
                 }
 
+                btn.innerHTML = "Menyimpan Data Materi...";
                 const dataMateri = { judul, linkVideo, jenjang, updatedAt: serverTimestamp() };
                 if(finalFileLink) dataMateri.linkFile = finalFileLink;
 
                 if(editId) {
-                    // Update data
                     await updateDoc(doc(db, "materi", editId), dataMateri);
                     alert("Materi berhasil diupdate!");
                 } else {
-                    // Simpan data baru
                     dataMateri.createdAt = serverTimestamp();
                     await addDoc(collection(db, "materi"), dataMateri);
                     alert("Materi berhasil disimpan!");
@@ -168,14 +194,14 @@
             tbody.innerHTML = "";
             snap.forEach(res => {
                 const d = res.data();
-                const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString() : "...";
+                const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString('id-ID') : "...";
                 tbody.innerHTML += `
                     <tr>
                         <td>${date}</td>
                         <td>${d.jenjang}</td>
                         <td>
                             ${d.judul}<br>
-                            <small>${d.linkVideo ? '<i class="fa-brands fa-youtube text-danger"></i> Link Ada' : ''} ${d.linkFile ? '<i class="fa-solid fa-file-pdf text-primary"></i> File Ada' : ''}</small>
+                            <small>${d.linkVideo ? '<i class="fa-brands fa-youtube" style="color:red"></i> Video' : ''} ${d.linkFile ? '<i class="fa-solid fa-file-pdf" style="color:blue"></i> Dokumen' : ''}</small>
                         </td>
                         <td>
                             <button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i> Edit</button>
@@ -189,5 +215,3 @@
     </script>
 </body>
 </html>
-
-
