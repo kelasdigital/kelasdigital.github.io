@@ -16,22 +16,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: linear-gradient(135deg, #3a6351 0%, #1b3022 100%); min-height: 100vh; color: var(--white); display: flex; overflow-x: hidden; position: relative; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('./img/image_7cfeb8.png'); background-position: center; background-repeat: no-repeat; background-size: cover; mix-blend-mode: screen; opacity: 0.3; pointer-events: none; }
+        
         .top-navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); z-index: 1001; padding: 0 20px; display: grid; grid-template-columns: 50px 1fr auto; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .menu-btn { font-size: 22px; color: var(--accent-neon); cursor: pointer; display: flex; align-items: center; }
         .nav-logo-img { height: 40px; justify-self: center; filter: drop-shadow(0 0 8px var(--accent-neon)); }
         .btn-keluar-top { background: rgba(211, 47, 47, 0.2); color: #ff5252; border: 1px solid #ff5252; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+        
         .sidebar { width: var(--sidebar-width); background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 90px 15px 25px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: 0.3s; }
         .menu-item { padding: 14px 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); }
         .menu-item.active { border-left: 4px solid var(--accent-neon); color: var(--accent-neon); background: rgba(0, 242, 255, 0.1); }
+        
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 100px 40px 40px; }
         .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
         .content-section { display: none; }
         .content-section.active { display: block; }
+        
         .materi-grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 550px; }
         #materiList { overflow-y: auto; padding-right: 10px; }
         .materi-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; transition: 0.3s; }
         #materiPreview { background: white; border-radius: 15px; overflow: hidden; position: relative; }
-        .btn-view { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
+        
+        .btn-view { padding: 8px 15px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-pdf { background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); border-color: var(--accent-neon); }
         .btn-video { background: rgba(255, 82, 82, 0.1); color: #ff5252; border-color: #ff5252; }
     </style>
@@ -81,7 +86,15 @@
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
+            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            projectId: "kelasdigital-b58ce", 
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app", 
+            messagingSenderId: "814579641877", 
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" 
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -100,17 +113,13 @@
             document.getElementById('overlay').classList.toggle('active');
         };
 
-        // PERBAIKAN: Fungsi penampil file dengan Proxy jsDelivr agar file GitHub bisa terbaca
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
             preview.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#333;"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Memuat Dokumen...</div>`;
             
-            // Konversi link raw.github menjadi link jsDelivr agar bisa dibaca Google Docs Viewer
-            // Contoh: https://raw.githubusercontent.com/user/repo/main/file.pdf 
-            // Menjadi: https://cdn.jsdelivr.net/gh/user/repo@main/file.pdf
             let proxyUrl = url;
             if (url.includes('raw.githubusercontent.com')) {
-                proxyUrl = url.replace('raw.githubusercontent.com', 'cdn.jsdelivr.net/gh')
+                proxyUrl = url.replace('raw.githubusercontent.com', 'cdn.jsdelivr.net)gh')
                               .replace('/main/', '@main/');
             }
 
@@ -118,49 +127,42 @@
             const docsExtensions = ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt', 'txt'];
             
             if (docsExtensions.includes(extension)) {
-                // Menggunakan Google Docs Viewer melalui link proxy jsDelivr
                 const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(proxyUrl)}&embedded=true`;
                 preview.innerHTML = `<iframe src="${viewerUrl}" style="width:100%; height:100%; border:none;" title="Document Viewer"></iframe>`;
             } else {
-                preview.innerHTML = `
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; color:#333; padding:20px; text-align:center;">
-                        <i class="fa-solid fa-file-circle-exclamation" style="font-size:40px; margin-bottom:10px; color:#ff5252;"></i>
-                        <p>Format file (.${extension}) tidak mendukung pratinjau langsung.</p>
-                        <a href="${url}" target="_blank" style="margin-top:10px; color:#2d5a27; font-weight:bold; text-decoration:none; border:1px solid #2d5a27; padding:5px 15px; border-radius:5px;">Unduh File</a>
-                    </div>`;
+                preview.innerHTML = `<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; color:#333; padding:20px; text-align:center;"><i class="fa-solid fa-file-circle-exclamation" style="font-size:40px; margin-bottom:10px; color:#ff5252;"></i><p>Format (.${extension}) tidak mendukung pratinjau.</p><a href="${url}" target="_blank" style="margin-top:10px; color:#2d5a27; font-weight:bold; text-decoration:none; border:1px solid #2d5a27; padding:5px 15px; border-radius:5px;">Unduh File</a></div>`;
             }
         };
 
         window.viewVideo = (url) => {
             const preview = document.getElementById('materiPreview');
             let vId = "";
-            if (url.includes('v=')) {
-                vId = url.split('v=')[1].split('&')[0];
-            } else if (url.includes('youtu.be/')) {
-                vId = url.split('youtu.be/')[1];
-            }
+            if (url.includes('v=')) vId = url.split('v=')[1].split('&')[0];
+            else if (url.includes('youtu.be/')) vId = url.split('youtu.be/')[1];
             preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>`;
         };
 
-        function fetchMateri(jenjangSiswa) {
+        // --- PERBAIKAN: FETCH MATERI BERDASARKAN JENJANG DAN KELAS ---
+        function fetchMateri(jenjangSiswa, kelasSiswa) {
             onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
                 const list = document.getElementById('materiList');
                 let html = "";
                 snap.forEach((res) => {
                     const d = res.data();
-                    if (d.jenjang === jenjangSiswa) {
+                    // Filter: Harus Jenjang yang sama DAN Kelas yang sama
+                    if (d.jenjang === jenjangSiswa && d.kelas == kelasSiswa) {
                         html += `
                             <div class="materi-item">
-                                <div style="font-weight:bold; font-size:14px;">${d.judul}</div>
-                                <div style="font-size:11px; opacity:0.6;">${d.createdAt?.toDate().toLocaleDateString('id-ID') || ''}</div>
+                                <div style="font-weight:bold; font-size:14px; color: var(--accent-neon);">${d.judul}</div>
+                                <div style="font-size:11px; opacity:0.6; margin-bottom:8px;">Terbit: ${d.createdAt?.toDate().toLocaleDateString('id-ID') || ''}</div>
                                 <div style="display:flex; gap:8px;">
                                     ${d.linkVideo ? `<button class="btn-view btn-video" onclick="viewVideo('${d.linkVideo}')"><i class="fa-brands fa-youtube"></i> Video</button>` : ''}
-                                    ${d.linkFile ? `<button class="btn-view btn-pdf" onclick="viewMateri('${d.linkFile}')"><i class="fa-solid fa-file-lines"></i> Lihat Dokumen</button>` : ''}
+                                    ${d.linkFile ? `<button class="btn-view btn-pdf" onclick="viewMateri('${d.linkFile}')"><i class="fa-solid fa-file-lines"></i> Dokumen</button>` : ''}
                                 </div>
                             </div>`;
                     }
                 });
-                list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk jenjang ${jenjangSiswa}</p>`;
+                list.innerHTML = html || `<p style='opacity:0.5; padding:20px;'>Belum ada materi untuk Jenjang ${jenjangSiswa} - Kelas ${kelasSiswa}</p>`;
             });
         }
 
@@ -170,14 +172,17 @@
             if(uDoc.exists()){
                 const ud = uDoc.data();
                 document.getElementById('userName').innerText = "Halo, " + ud.nama;
-                document.getElementById('bioContent').innerHTML = `<b>Nama:</b> ${ud.nama}<br><b>Jenjang:</b> ${ud.jenjang}`;
-                fetchMateri(ud.jenjang);
+                document.getElementById('bioContent').innerHTML = `
+                    <div style="line-height: 1.8;">
+                        <b>Nama Lengkap:</b> ${ud.nama}<br>
+                        <b>Email:</b> ${ud.email}<br>
+                        <b>Jenjang:</b> ${ud.jenjang}<br>
+                        <b>Kelas:</b> ${ud.kelas}
+                    </div>`;
+                // Panggil fungsi fetch dengan menyertakan parameter kelas
+                fetchMateri(ud.jenjang, ud.kelas);
             }
         });
     </script>
 </body>
 </html>
-
-
-
-
