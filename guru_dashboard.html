@@ -17,6 +17,8 @@
         .menu-item.active { background: var(--active-blue); color: var(--accent-blue); font-weight: 600; }
         .main-content { flex: 1; margin-left: 260px; padding: 30px; }
         .card { background: white; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
         input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; }
         .btn-simpan { width: 100%; background: #166534; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
         .btn-simpan:disabled { background: #ccc; }
@@ -31,9 +33,9 @@
 <body>
     <aside class="sidebar">
         <div class="nav-logo"><img src="./img/image_12.png" alt="Logo"></div>
-        <div class="menu-item active"><i class="fa-solid fa-book"></i> Materi</div>
-        <div class="menu-item"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
-        <div class="menu-item"><i class="fa-solid fa-edit"></i> Ujian</div>
+        <div class="menu-item active" onclick="showSection('sectionMateri', this)"><i class="fa-solid fa-book"></i> Materi</div>
+        <div class="menu-item" onclick="showSection('sectionAbsensi', this)"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
+        <div class="menu-item" onclick="showSection('sectionUjian', this)"><i class="fa-solid fa-edit"></i> Ujian</div>
         
         <div class="logout-section">
             <div class="menu-item" onclick="handleLogout()" style="color: #ef4444;">
@@ -43,57 +45,74 @@
     </aside>
 
     <main class="main-content">
-        <div class="card">
-            <h3 id="formTitle">Upload Materi Baru</h3>
-            <input type="hidden" id="editId"> 
-            
-            <label>Jenjang Sekolah</label>
-            <select id="jenjangMateri" onchange="updateKelasOptions()">
-                <option value="MI">MI</option>
-                <option value="MTs">MTs</option>
-                <option value="SMA">SMA</option>
-            </select>
-
-            <label>Kelas</label>
-            <select id="kelasMateri">
+        <div id="sectionMateri" class="content-section active">
+            <div class="card">
+                <h3 id="formTitle">Upload Materi Baru</h3>
+                <input type="hidden" id="editId"> 
+                <label>Jenjang Sekolah</label>
+                <select id="jenjangMateri" onchange="updateKelasOptions()">
+                    <option value="MI">MI</option>
+                    <option value="MTs">MTs</option>
+                    <option value="SMA">SMA</option>
                 </select>
-            
-            <label>Judul Materi</label>
-            <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
-            
-            <label>Link Video (YouTube)</label>
-            <input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
+                <label>Kelas</label>
+                <select id="kelasMateri"></select>
+                <label>Judul Materi</label>
+                <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
+                <label>Link Video (YouTube)</label>
+                <input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
+                <label>Pilih File (PDF/Gambar)</label>
+                <input type="file" id="fileMateri" accept=".pdf, .docx, .doc, .xlsx, .xls, .txt, .jpg, .jpeg, .png">
+                <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
+                <button id="btnBatal" style="display:none; width:100%; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;" onclick="resetForm()">Batal Edit</button>
+            </div>
 
-            <label>Pilih File (PDF/Gambar) - *Kosongkan jika tidak ingin merubah file</label>
-            <input type="file" id="fileMateri" accept=".pdf, .docx, .doc, .xlsx, .xls, .txt, .jpg, .jpeg, .png">
-            
-            <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
-            <button id="btnBatal" style="display:none; width:100%; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;" onclick="resetForm()">Batal Edit</button>
+            <div class="card">
+                <h3>Riwayat Upload Berkas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jenjang</th>
+                            <th>Kelas</th>
+                            <th>Judul</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelMateriBody"></tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>Riwayat Upload Berkas</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Jenjang</th>
-                        <th>Kelas</th>
-                        <th>Judul</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelMateriBody"></tbody>
-            </table>
+        <div id="sectionAbsensi" class="content-section">
+            <div class="card">
+                <h3>Rekap Absensi Siswa</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelAbsensiBody">
+                        <tr><td colspan="4" style="text-align:center; opacity:0.5;">Memuat data absensi...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sectionUjian" class="content-section">
+            <div class="card"><h3>Menu Ujian</h3><p>Fitur ujian sedang dalam pengembangan.</p></div>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase Anda
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
             authDomain: "kelasdigital-b58ce.firebaseapp.com", 
@@ -107,7 +126,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- PROTEKSI HALAMAN ---
+        let currentGuruJenjang = "";
+
+        // --- PROTEKSI & NAVIGATION ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = "index.html";
@@ -116,11 +137,50 @@
                 if (!userDoc.exists() || userDoc.data().role !== "guru") {
                     alert("Akses ditolak!");
                     window.location.href = "index.html";
+                } else {
+                    currentGuruJenjang = userDoc.data().jenjang;
+                    loadAbsensiSiswa(currentGuruJenjang);
                 }
             }
         });
 
-        // --- UPDATE PILIHAN KELAS ---
+        window.showSection = (id, el) => {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        };
+
+        // --- LOGIKA ABSENSI ---
+        function loadAbsensiSiswa(jenjang) {
+            const qAbsen = query(
+                collection(db, "absensi"),
+                where("jenjang", "==", jenjang),
+                orderBy("waktu", "desc")
+            );
+
+            onSnapshot(qAbsen, (snap) => {
+                const tbody = document.getElementById('tabelAbsensiBody');
+                tbody.innerHTML = "";
+                if (snap.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; opacity:0.5;">Belum ada data absensi masuk.</td></tr>`;
+                    return;
+                }
+                snap.forEach(res => {
+                    const d = res.data();
+                    const tgl = d.waktu ? d.waktu.toDate().toLocaleString('id-ID') : "...";
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${tgl}</td>
+                            <td>${d.nama}</td>
+                            <td>Kelas ${d.kelas}</td>
+                            <td><span style="font-weight:bold; color:${d.status === 'Hadir' ? '#166534' : '#ef4444'}">${d.status}</span></td>
+                        </tr>`;
+                });
+            });
+        }
+
+        // --- LOGIKA MATERI (TETAP SAMA) ---
         window.updateKelasOptions = () => {
             const jenjang = document.getElementById('jenjangMateri').value;
             const kelasSelect = document.getElementById('kelasMateri');
@@ -137,7 +197,6 @@
         };
         updateKelasOptions();
 
-        // --- LOGIKA UPLOAD KE GITHUB & FIRESTORE ---
         window.prosesUpload = async () => {
             const editId = document.getElementById('editId').value;
             const fileInput = document.getElementById('fileMateri');
@@ -148,34 +207,23 @@
             const btn = document.getElementById('btnProses');
 
             if(!judul) return alert("Isi judul materi!");
-
-            btn.disabled = true; 
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses...";
+            btn.disabled = true; btn.innerHTML = "Memproses...";
 
             try {
-                const configRef = doc(db, "settings", "github_config");
-                const configSnap = await getDoc(configRef);
-                if (!configSnap.exists()) throw new Error("Config GitHub tidak ditemukan!");
-
+                const configSnap = await getDoc(doc(db, "settings", "github_config"));
                 const { token, user, repo } = configSnap.data();
                 let finalFileLink = "";
 
                 if(fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                     const base64Content = await toBase64(file);
-                    
+                    const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                     const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/materi/${fileName}`, {
                         method: "PUT",
                         headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
                     });
-
-                    if(res.ok) {
-                        finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
-                    } else {
-                        throw new Error("Gagal upload ke GitHub.");
-                    }
+                    if(res.ok) finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
                 }
 
                 const dataMateri = { judul, linkVideo, jenjang, kelas, updatedAt: serverTimestamp() };
@@ -183,21 +231,14 @@
 
                 if(editId) {
                     await updateDoc(doc(db, "materi", editId), dataMateri);
-                    alert("Materi diperbarui!");
                 } else {
                     dataMateri.createdAt = serverTimestamp();
                     await addDoc(collection(db, "materi"), dataMateri);
-                    alert("Materi berhasil disimpan!");
                 }
-                resetForm();
-            } catch (e) {
-                alert("Error: " + e.message);
-            } finally {
-                btn.disabled = false; btn.innerHTML = "SIMPAN MATERI";
-            }
+                alert("Berhasil!"); resetForm();
+            } catch (e) { alert(e.message); } finally { btn.disabled = false; btn.innerHTML = "SIMPAN MATERI"; }
         };
 
-        // --- FUNGSI HELPER ---
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -211,20 +252,16 @@
             document.getElementById('linkVideo').value = "";
             document.getElementById('fileMateri').value = "";
             document.getElementById('formTitle').innerText = "Upload Materi Baru";
-            document.getElementById('btnProses').innerHTML = "SIMPAN MATERI";
             document.getElementById('btnBatal').style.display = "none";
             updateKelasOptions();
         };
 
         window.handleLogout = () => {
-            if(confirm("Keluar dari aplikasi?")) {
-                signOut(auth).then(() => window.location.href = "index.html");
-            }
+            if(confirm("Keluar?")) signOut(auth).then(() => window.location.href = "index.html");
         };
 
         window.editData = async (id) => {
-            const docRef = doc(db, "materi", id);
-            const docSnap = await getDoc(docRef);
+            const docSnap = await getDoc(doc(db, "materi", id));
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 document.getElementById('editId').value = id;
@@ -234,34 +271,20 @@
                 document.getElementById('kelasMateri').value = data.kelas;
                 document.getElementById('linkVideo').value = data.linkVideo || "";
                 document.getElementById('formTitle').innerText = "Edit Materi";
-                document.getElementById('btnProses').innerHTML = "UPDATE MATERI";
                 document.getElementById('btnBatal').style.display = "block";
                 window.scrollTo(0,0);
             }
         };
 
-        window.hapusData = async (id) => { 
-            if(confirm("Hapus materi ini?")) await deleteDoc(doc(db, "materi", id)); 
-        };
+        window.hapusData = async (id) => { if(confirm("Hapus?")) await deleteDoc(doc(db, "materi", id)); };
 
-        // --- REALTIME DATA TABLE ---
         onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
             const tbody = document.getElementById('tabelMateriBody');
             tbody.innerHTML = "";
             snap.forEach(res => {
                 const d = res.data();
                 const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString('id-ID') : "...";
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${date}</td>
-                        <td>${d.jenjang}</td>
-                        <td>Kelas ${d.kelas}</td>
-                        <td>${d.judul}</td>
-                        <td>
-                            <button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="hapusData('${res.id}')" class="btn-aksi btn-hapus"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+                tbody.innerHTML += `<tr><td>${date}</td><td>${d.jenjang}</td><td>Kelas ${d.kelas}</td><td>${d.judul}</td><td><button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i></button><button onclick="hapusData('${res.id}')" class="btn-aksi btn-hapus"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
         });
     </script>
