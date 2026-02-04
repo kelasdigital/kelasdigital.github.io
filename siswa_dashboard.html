@@ -40,7 +40,6 @@
         .btn-pdf { background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); border-color: var(--accent-neon); }
         .btn-video { background: rgba(255, 82, 82, 0.1); color: #ff5252; border-color: #ff5252; }
         
-        /* Style Tambahan untuk Select Absen agar kontras */
         #statusAbsen option { color: #333; }
     </style>
 </head>
@@ -108,7 +107,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
@@ -123,7 +122,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let ud = {}; // Variabel global untuk menampung data user
+        let ud = {}; 
 
         window.logout = async () => { if (confirm("Keluar?")) { await signOut(auth); window.location.href = "index.html"; } };
         
@@ -138,6 +137,26 @@
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
         };
+
+        // --- FUNGSI CEK APAKAH SUDAH ABSEN HARI INI ---
+        async function cekSudahAbsen(namaSiswa) {
+            const hariIni = new Date().toLocaleDateString('id-ID'); 
+            const q = query(
+                collection(db, "absensi"),
+                where("nama", "==", namaSiswa),
+                where("tanggalString", "==", hariIni)
+            );
+
+            const snapshot = await getDocs(q);
+            const btn = document.getElementById('btnAbsen');
+            if (!snapshot.empty) {
+                btn.disabled = true;
+                btn.innerText = "ANDA SUDAH ABSEN HARI INI";
+                btn.style.background = "#64748b"; 
+                return true;
+            }
+            return false;
+        }
 
         window.viewMateri = (url) => {
             const preview = document.getElementById('materiPreview');
@@ -190,11 +209,14 @@
             });
         }
 
-        // --- LOGIKA KIRIM ABSENSI ---
         window.kirimAbsensi = async () => {
             const status = document.getElementById('statusAbsen').value;
             const btn = document.getElementById('btnAbsen');
+            const hariIni = new Date().toLocaleDateString('id-ID');
             
+            const sudah = await cekSudahAbsen(ud.nama);
+            if (sudah) return;
+
             btn.disabled = true;
             btn.innerText = "Mengirim...";
             
@@ -204,12 +226,13 @@
                     jenjang: ud.jenjang,
                     kelas: ud.kelas,
                     status: status,
+                    tanggalString: hariIni, 
                     waktu: serverTimestamp()
                 });
                 alert("Absensi berhasil dikirim!");
+                cekSudahAbsen(ud.nama); 
             } catch (e) {
                 alert("Gagal mengirim absensi: " + e.message);
-            } finally {
                 btn.disabled = false;
                 btn.innerText = "KIRIM ABSENSI";
             }
@@ -230,6 +253,7 @@
                         <b>Kelas:</b> ${ud.kelas}
                     </div>`;
                 fetchMateri(ud.jenjang, ud.kelas);
+                cekSudahAbsen(ud.nama); 
             }
         });
     </script>
