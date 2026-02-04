@@ -1,154 +1,269 @@
-<label>Jenjang Sekolah</label>
-<select id="jenjangMateri" onchange="updateKelasOptions()">
-    <option value="MI">MI</option>
-    <option value="MTs">MTs</option>
-    <option value="SMA">SMA</option>
-</select>
-
-<label>Kelas</label>
-<select id="kelasMateri">
-    </select>
-
-<label>Judul Materi</label>
-<input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
-<div class="card">
-    <h3>Riwayat Upload Berkas</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Jenjang</th>
-                <th>Kelas</th> <th>Judul</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="tabelMateriBody"></tbody>
-    </table>
-</div>
-
-<script type="module">
-    // ... (Simpan bagian import dan config Firebase Anda di sini) ...
-
-    // --- FUNGSI BARU: UPDATE PILIHAN KELAS SECARA DINAMIS ---
-    window.updateKelasOptions = () => {
-        const jenjang = document.getElementById('jenjangMateri').value;
-        const kelasSelect = document.getElementById('kelasMateri');
-        kelasSelect.innerHTML = "";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - KELAS DIGITAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-bg: #f0f7ff; --sidebar-bg: #ffffff; --active-blue: #e0f2fe; --accent-blue: #0ea5e9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--primary-bg); display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; position: fixed; height: 100vh; display: flex; flex-direction: column; padding: 20px 0; }
+        .nav-logo { padding: 0 20px 30px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; text-align: center; }
+        .nav-logo img { height: 45px; }
+        .menu-item { padding: 12px 20px; margin: 2px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #64748b; font-size: 14px; transition: 0.2s; }
+        .menu-item.active { background: var(--active-blue); color: var(--accent-blue); font-weight: 600; }
+        .main-content { flex: 1; margin-left: 260px; padding: 30px; }
+        .card { background: white; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; }
+        .btn-simpan { width: 100%; background: #166534; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .btn-simpan:disabled { background: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        .btn-aksi { border: none; background: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-edit { color: #0ea5e9; margin-right: 15px; }
+        .btn-hapus { color: #ef4444; }
+        .logout-section { margin-top: auto; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="nav-logo"><img src="./img/image_12.png" alt="Logo"></div>
+        <div class="menu-item active"><i class="fa-solid fa-book"></i> Materi</div>
+        <div class="menu-item"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
+        <div class="menu-item"><i class="fa-solid fa-edit"></i> Ujian</div>
         
-        let start, end;
-        if (jenjang === "MI") { start = 1; end = 6; }
-        else if (jenjang === "MTs") { start = 7; end = 9; }
-        else { start = 10; end = 12; }
+        <div class="logout-section">
+            <div class="menu-item" onclick="handleLogout()" style="color: #ef4444;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </div>
+        </div>
+    </aside>
 
-        for (let i = start; i <= end; i++) {
-            const opt = document.createElement('option');
-            opt.value = i;
-            opt.innerText = "Kelas " + i;
-            kelasSelect.appendChild(opt);
-        }
-    };
-    // Jalankan sekali saat halaman dimuat
-    updateKelasOptions();
+    <main class="main-content">
+        <div class="card">
+            <h3 id="formTitle">Upload Materi Baru</h3>
+            <input type="hidden" id="editId"> 
+            
+            <label>Jenjang Sekolah</label>
+            <select id="jenjangMateri" onchange="updateKelasOptions()">
+                <option value="MI">MI</option>
+                <option value="MTs">MTs</option>
+                <option value="SMA">SMA</option>
+            </select>
 
-    // --- UPDATE LOGIKA PROSES UPLOAD ---
-    window.prosesUpload = async () => {
-        const editId = document.getElementById('editId').value;
-        const fileInput = document.getElementById('fileMateri');
-        const judul = document.getElementById('judulMateri').value;
-        const jenjang = document.getElementById('jenjangMateri').value;
-        const kelas = document.getElementById('kelasMateri').value; // AMBIL DATA KELAS
-        const linkVideo = document.getElementById('linkVideo').value;
-        const btn = document.getElementById('btnProses');
+            <label>Kelas</label>
+            <select id="kelasMateri">
+                </select>
+            
+            <label>Judul Materi</label>
+            <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
+            
+            <label>Link Video (YouTube)</label>
+            <input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
 
-        if(!judul) return alert("Isi judul materi!");
+            <label>Pilih File (PDF/Gambar) - *Kosongkan jika tidak ingin merubah file</label>
+            <input type="file" id="fileMateri" accept=".pdf, .docx, .doc, .xlsx, .xls, .txt, .jpg, .jpeg, .png">
+            
+            <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
+            <button id="btnBatal" style="display:none; width:100%; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;" onclick="resetForm()">Batal Edit</button>
+        </div>
 
-        btn.disabled = true; 
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses...";
+        <div class="card">
+            <h3>Riwayat Upload Berkas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jenjang</th>
+                        <th>Kelas</th>
+                        <th>Judul</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelMateriBody"></tbody>
+            </table>
+        </div>
+    </main>
 
-        try {
-            const configRef = doc(db, "settings", "github_config");
-            const configSnap = await getDoc(configRef);
-            if (!configSnap.exists()) throw new Error("GitHub Config belum diatur!");
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            const { token, user, repo } = configSnap.data();
-            let finalFileLink = "";
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
+            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            projectId: "kelasdigital-b58ce", 
+            storageBucket: "kelasdigital-b58ce.firebasestorage.app", 
+            messagingSenderId: "814579641877", 
+            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" 
+        };
 
-            if(fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-                const base64Content = await toBase64(file);
-                
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/materi/${fileName}`, {
-                    method: "PUT",
-                    headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
-                });
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-                if(res.ok) finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
-                else throw new Error("Gagal upload ke GitHub.");
-            }
-
-            // SIMPAN DATA TERMASUK KELAS
-            const dataMateri = { judul, linkVideo, jenjang, kelas, updatedAt: serverTimestamp() };
-            if(finalFileLink) dataMateri.linkFile = finalFileLink;
-
-            if(editId) {
-                await updateDoc(doc(db, "materi", editId), dataMateri);
-                alert("Materi diperbarui!");
+        // --- PROTEKSI HALAMAN ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
             } else {
-                dataMateri.createdAt = serverTimestamp();
-                await addDoc(collection(db, "materi"), dataMateri);
-                alert("Materi berhasil disimpan!");
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (!userDoc.exists() || userDoc.data().role !== "guru") {
+                    alert("Akses ditolak!");
+                    window.location.href = "index.html";
+                }
             }
-            resetForm();
-        } catch (e) {
-            alert("Error: " + e.message);
-        } finally {
-            btn.disabled = false; btn.innerHTML = "SIMPAN MATERI";
-        }
-    };
-
-    // --- UPDATE LOGIKA EDIT DATA ---
-    window.editData = async (id) => {
-        const docRef = doc(db, "materi", id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            document.getElementById('editId').value = id;
-            document.getElementById('judulMateri').value = data.judul;
-            document.getElementById('jenjangMateri').value = data.jenjang;
-            
-            // Update pilihan kelas dulu sebelum set value kelas
-            updateKelasOptions(); 
-            document.getElementById('kelasMateri').value = data.kelas;
-            
-            document.getElementById('linkVideo').value = data.linkVideo || "";
-            document.getElementById('formTitle').innerText = "Edit Materi";
-            document.getElementById('btnProses').innerHTML = "UPDATE MATERI";
-            document.getElementById('btnBatal').style.display = "block";
-            window.scrollTo(0,0);
-        }
-    };
-
-    // --- UPDATE TAMPILAN TABEL RIWAYAT ---
-    onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
-        const tbody = document.getElementById('tabelMateriBody');
-        tbody.innerHTML = "";
-        snap.forEach(res => {
-            const d = res.data();
-            const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString('id-ID') : "...";
-            tbody.innerHTML += `
-                <tr>
-                    <td>${date}</td>
-                    <td>${d.jenjang}</td>
-                    <td>Kelas ${d.kelas}</td> <td>${d.judul}</td>
-                    <td>
-                        <button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="hapusData('${res.id}')" class="btn-aksi btn-hapus"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
         });
-    });
 
-    // ... sisa fungsi lainnya (toBase64, resetForm, dsb) tetap sama ...
-</script>
+        // --- UPDATE PILIHAN KELAS ---
+        window.updateKelasOptions = () => {
+            const jenjang = document.getElementById('jenjangMateri').value;
+            const kelasSelect = document.getElementById('kelasMateri');
+            kelasSelect.innerHTML = "";
+            let start, end;
+            if (jenjang === "MI") { start = 1; end = 6; }
+            else if (jenjang === "MTs") { start = 7; end = 9; }
+            else { start = 10; end = 12; }
+            for (let i = start; i <= end; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.innerText = "Kelas " + i;
+                kelasSelect.appendChild(opt);
+            }
+        };
+        updateKelasOptions();
+
+        // --- LOGIKA UPLOAD KE GITHUB & FIRESTORE ---
+        window.prosesUpload = async () => {
+            const editId = document.getElementById('editId').value;
+            const fileInput = document.getElementById('fileMateri');
+            const judul = document.getElementById('judulMateri').value;
+            const jenjang = document.getElementById('jenjangMateri').value;
+            const kelas = document.getElementById('kelasMateri').value;
+            const linkVideo = document.getElementById('linkVideo').value;
+            const btn = document.getElementById('btnProses');
+
+            if(!judul) return alert("Isi judul materi!");
+
+            btn.disabled = true; 
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses...";
+
+            try {
+                const configRef = doc(db, "settings", "github_config");
+                const configSnap = await getDoc(configRef);
+                if (!configSnap.exists()) throw new Error("Config GitHub tidak ditemukan!");
+
+                const { token, user, repo } = configSnap.data();
+                let finalFileLink = "";
+
+                if(fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+                    const base64Content = await toBase64(file);
+                    
+                    const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/materi/${fileName}`, {
+                        method: "PUT",
+                        headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
+                    });
+
+                    if(res.ok) {
+                        finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
+                    } else {
+                        throw new Error("Gagal upload ke GitHub.");
+                    }
+                }
+
+                const dataMateri = { judul, linkVideo, jenjang, kelas, updatedAt: serverTimestamp() };
+                if(finalFileLink) dataMateri.linkFile = finalFileLink;
+
+                if(editId) {
+                    await updateDoc(doc(db, "materi", editId), dataMateri);
+                    alert("Materi diperbarui!");
+                } else {
+                    dataMateri.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "materi"), dataMateri);
+                    alert("Materi berhasil disimpan!");
+                }
+                resetForm();
+            } catch (e) {
+                alert("Error: " + e.message);
+            } finally {
+                btn.disabled = false; btn.innerHTML = "SIMPAN MATERI";
+            }
+        };
+
+        // --- FUNGSI HELPER ---
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+        });
+
+        window.resetForm = () => {
+            document.getElementById('editId').value = "";
+            document.getElementById('judulMateri').value = "";
+            document.getElementById('linkVideo').value = "";
+            document.getElementById('fileMateri').value = "";
+            document.getElementById('formTitle').innerText = "Upload Materi Baru";
+            document.getElementById('btnProses').innerHTML = "SIMPAN MATERI";
+            document.getElementById('btnBatal').style.display = "none";
+            updateKelasOptions();
+        };
+
+        window.handleLogout = () => {
+            if(confirm("Keluar dari aplikasi?")) {
+                signOut(auth).then(() => window.location.href = "index.html");
+            }
+        };
+
+        window.editData = async (id) => {
+            const docRef = doc(db, "materi", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('editId').value = id;
+                document.getElementById('judulMateri').value = data.judul;
+                document.getElementById('jenjangMateri').value = data.jenjang;
+                updateKelasOptions();
+                document.getElementById('kelasMateri').value = data.kelas;
+                document.getElementById('linkVideo').value = data.linkVideo || "";
+                document.getElementById('formTitle').innerText = "Edit Materi";
+                document.getElementById('btnProses').innerHTML = "UPDATE MATERI";
+                document.getElementById('btnBatal').style.display = "block";
+                window.scrollTo(0,0);
+            }
+        };
+
+        window.hapusData = async (id) => { 
+            if(confirm("Hapus materi ini?")) await deleteDoc(doc(db, "materi", id)); 
+        };
+
+        // --- REALTIME DATA TABLE ---
+        onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
+            const tbody = document.getElementById('tabelMateriBody');
+            tbody.innerHTML = "";
+            snap.forEach(res => {
+                const d = res.data();
+                const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString('id-ID') : "...";
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${d.jenjang}</td>
+                        <td>Kelas ${d.kelas}</td>
+                        <td>${d.judul}</td>
+                        <td>
+                            <button onclick="editData('${res.id}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="hapusData('${res.id}')" class="btn-aksi btn-hapus"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        });
+    </script>
+</body>
+</html>
