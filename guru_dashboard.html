@@ -6,6 +6,7 @@
     <title>Dashboard Guru - KELAS DIGITAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --primary-bg: #f0f7ff; --sidebar-bg: #ffffff; --active-blue: #e0f2fe; --accent-blue: #0ea5e9; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -28,6 +29,12 @@
         .btn-edit { color: #0ea5e9; margin-right: 15px; }
         .btn-hapus { color: #ef4444; }
         .logout-section { margin-top: auto; padding-bottom: 20px; }
+        
+        /* Style Tambahan untuk Rekap & Tombol */
+        .rekap-container { display: flex; gap: 15px; margin-bottom: 15px; }
+        .rekap-box { flex: 1; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; border: 1px solid #e2e8f0; }
+        .btn-absen-opsi { padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #cbd5e1; background: white; font-weight: 600; margin-right: 5px; }
+        .btn-excel { background: #166534; color: white; border: none; }
     </style>
 </head>
 <body>
@@ -36,12 +43,7 @@
         <div class="menu-item active" onclick="showSection('sectionMateri', this)"><i class="fa-solid fa-book"></i> Materi</div>
         <div class="menu-item" onclick="showSection('sectionAbsensi', this)"><i class="fa-solid fa-user-check"></i> Absensi Siswa</div>
         <div class="menu-item" onclick="showSection('sectionUjian', this)"><i class="fa-solid fa-edit"></i> Ujian</div>
-        
-        <div class="logout-section">
-            <div class="menu-item" onclick="handleLogout()" style="color: #ef4444;">
-                <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </div>
-        </div>
+        <div class="logout-section"><div class="menu-item" onclick="handleLogout()" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Logout</div></div>
     </aside>
 
     <main class="main-content">
@@ -50,37 +52,17 @@
                 <h3 id="formTitle">Upload Materi Baru</h3>
                 <input type="hidden" id="editId"> 
                 <label>Jenjang Sekolah</label>
-                <select id="jenjangMateri" onchange="updateKelasOptions()">
-                    <option value="MI">MI</option>
-                    <option value="MTs">MTs</option>
-                    <option value="SMA">SMA</option>
-                </select>
-                <label>Kelas</label>
-                <select id="kelasMateri"></select>
-                <label>Judul Materi</label>
-                <input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
-                <label>Link Video (YouTube)</label>
-                <input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
-                <label>Pilih File (PDF/Gambar)</label>
-                <input type="file" id="fileMateri" accept=".pdf, .docx, .doc, .xlsx, .xls, .txt, .jpg, .jpeg, .png">
+                <select id="jenjangMateri" onchange="updateKelasOptions()"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
+                <label>Kelas</label><select id="kelasMateri"></select>
+                <label>Judul Materi</label><input type="text" id="judulMateri" placeholder="Masukkan judul materi...">
+                <label>Link Video (YouTube)</label><input type="text" id="linkVideo" placeholder="https://youtube.com/watch?v=...">
+                <label>Pilih File (PDF/Gambar)</label><input type="file" id="fileMateri" accept=".pdf, .docx, .doc, .xlsx, .xls, .txt, .jpg, .jpeg, .png">
                 <button class="btn-simpan" id="btnProses" onclick="prosesUpload()">SIMPAN MATERI</button>
                 <button id="btnBatal" style="display:none; width:100%; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;" onclick="resetForm()">Batal Edit</button>
             </div>
-
             <div class="card">
                 <h3>Riwayat Upload Berkas</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Jenjang</th>
-                            <th>Kelas</th>
-                            <th>Judul</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelMateriBody"></tbody>
-                </table>
+                <table><thead><tr><th>Tanggal</th><th>Jenjang</th><th>Kelas</th><th>Judul</th><th>Aksi</th></tr></thead><tbody id="tabelMateriBody"></tbody></table>
             </div>
         </div>
 
@@ -89,40 +71,30 @@
                 <h3>Rekap Absensi Siswa</h3>
                 
                 <div style="margin: 15px 0; display: flex; gap: 15px; align-items: center;">
-                    <div>
-                        <label style="font-size: 14px; color: #64748b;">Jenjang:</label>
-                        <select id="filterJenjangAbsen" onchange="filterAbsen()" style="width: auto; padding: 5px 10px; margin-left: 5px;">
-                            <option value="MI">MI</option>
-                            <option value="MTs">MTs</option>
-                            <option value="SMA">SMA</option>
-                        </select>
+                    <div><label style="font-size: 14px;">Jenjang:</label>
+                        <select id="filterJenjangAbsen" onchange="filterAbsen()" style="width: auto; padding: 5px; margin-left: 5px;"><option value="MI">MI</option><option value="MTs">MTs</option><option value="SMA">SMA</option></select>
                     </div>
-                    <div>
-                        <label style="font-size: 14px; color: #64748b;">Kelas:</label>
-                        <select id="filterKelasAbsen" onchange="filterAbsen()" style="width: auto; padding: 5px 10px; margin-left: 5px;">
-                            <option value="Semua">Semua Kelas</option>
-                        </select>
+                    <div><label style="font-size: 14px;">Kelas:</label>
+                        <select id="filterKelasAbsen" onchange="filterAbsen()" style="width: auto; padding: 5px; margin-left: 5px;"><option value="Semua">Semua Kelas</option></select>
                     </div>
                 </div>
 
+                <div style="margin-bottom: 20px;">
+                    <button class="btn-absen-opsi" onclick="hapusTerpilih()"><i class="fa-solid fa-trash"></i> Hapus Terpilih</button>
+                    <button class="btn-absen-opsi btn-excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Unduh Excel</button>
+                </div>
+
+                <div class="rekap-container">
+                    <div class="rekap-box" style="color: #166534;">Hadir: <span id="countHadir">0</span></div>
+                    <div class="rekap-box" style="color: #0ea5e9;">Izin: <span id="countIzin">0</span></div>
+                    <div class="rekap-box" style="color: #f59e0b;">Sakit: <span id="countSakit">0</span></div>
+                </div>
+
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Waktu</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelAbsensiBody">
-                        <tr><td colspan="4" style="text-align:center; opacity:0.5;">Memuat data absensi...</td></tr>
-                    </tbody>
+                    <thead><tr><th><input type="checkbox" id="selectAll" onclick="toggleAllCheck(this)"></th><th>Waktu</th><th>Nama Siswa</th><th>Kelas</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <tbody id="tabelAbsensiBody"></tbody>
                 </table>
             </div>
-        </div>
-
-        <div id="sectionUjian" class="content-section">
-            <div class="card"><h3>Menu Ujian</h3><p>Fitur ujian sedang dalam pengembangan.</p></div>
         </div>
     </main>
 
@@ -132,12 +104,9 @@
         import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, getDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
-            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
-            authDomain: "kelasdigital-b58ce.firebaseapp.com", 
-            projectId: "kelasdigital-b58ce", 
-            storageBucket: "kelasdigital-b58ce.firebasestorage.app", 
-            messagingSenderId: "814579641877", 
-            appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" 
+            apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", authDomain: "kelasdigital-b58ce.firebaseapp.com", 
+            projectId: "kelasdigital-b58ce", storageBucket: "kelasdigital-b58ce.firebasestorage.app", 
+            messagingSenderId: "814579641877", appId: "1:814579641877:web:2a45e17c1cb333ffb6281c" 
         };
 
         const app = initializeApp(firebaseConfig);
@@ -146,16 +115,12 @@
 
         let currentGuruJenjang = "";
 
-        // --- PROTEKSI & NAVIGATION ---
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
+            if (!user) window.location.href = "index.html";
+            else {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (!userDoc.exists() || userDoc.data().role !== "guru") {
-                    alert("Akses ditolak!");
-                    window.location.href = "index.html";
-                } else {
+                if (!userDoc.exists() || userDoc.data().role !== "guru") window.location.href = "index.html";
+                else {
                     currentGuruJenjang = userDoc.data().jenjang;
                     document.getElementById('filterJenjangAbsen').value = currentGuruJenjang;
                     updateFilterKelas(currentGuruJenjang);
@@ -171,7 +136,7 @@
             el.classList.add('active');
         };
 
-        // --- LOGIKA FILTER ABSENSI ---
+        // --- ABSENSI LOGIC ---
         window.filterAbsen = () => {
             const jenjang = document.getElementById('filterJenjangAbsen').value;
             const kelas = document.getElementById('filterKelasAbsen').value;
@@ -183,12 +148,8 @@
             const selectKelas = document.getElementById('filterKelasAbsen');
             const valSebelumnya = selectKelas.value;
             selectKelas.innerHTML = '<option value="Semua">Semua Kelas</option>';
-            
             let start, end;
-            if (jenjang === "MI") { start = 1; end = 6; }
-            else if (jenjang === "MTs") { start = 7; end = 9; }
-            else { start = 10; end = 12; }
-
+            if (jenjang === "MI") { start = 1; end = 6; } else if (jenjang === "MTs") { start = 7; end = 9; } else { start = 10; end = 12; }
             for (let i = start; i <= end; i++) {
                 const opt = document.createElement('option');
                 opt.value = i; opt.innerText = "Kelas " + i;
@@ -198,46 +159,67 @@
         }
 
         function loadAbsensiSiswa(jenjang, kelasFilter = "Semua") {
-            let qAbsen;
-            if (kelasFilter === "Semua") {
-                qAbsen = query(collection(db, "absensi"), where("jenjang", "==", jenjang), orderBy("waktu", "desc"));
-            } else {
-                qAbsen = query(collection(db, "absensi"), where("jenjang", "==", jenjang), where("kelas", "==", kelasFilter), orderBy("waktu", "desc"));
-            }
+            let qAbsen = query(collection(db, "absensi"), where("jenjang", "==", jenjang), orderBy("waktu", "desc"));
+            if (kelasFilter !== "Semua") qAbsen = query(collection(db, "absensi"), where("jenjang", "==", jenjang), where("kelas", "==", kelasFilter), orderBy("waktu", "desc"));
 
             onSnapshot(qAbsen, (snap) => {
                 const tbody = document.getElementById('tabelAbsensiBody');
                 tbody.innerHTML = "";
-                if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; opacity:0.5;">Tidak ada data absensi ditemukan.</td></tr>`;
-                    return;
-                }
+                let h = 0, i = 0, s = 0;
                 snap.forEach(res => {
                     const d = res.data();
+                    if(d.status === "Hadir") h++; else if(d.status === "Izin") i++; else if(d.status === "Sakit") s++;
                     const tgl = d.waktu ? d.waktu.toDate().toLocaleString('id-ID') : "...";
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${tgl}</td>
-                            <td>${d.nama}</td>
-                            <td>Kelas ${d.kelas}</td>
-                            <td><span style="font-weight:bold; color:${d.status === 'Hadir' ? '#166534' : '#ef4444'}">${d.status}</span></td>
-                        </tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><input type="checkbox" class="absen-check" value="${res.id}"></td>
+                        <td>${tgl}</td><td>${d.nama}</td><td>Kelas ${d.kelas}</td>
+                        <td><span style="font-weight:bold; color:${d.status === 'Hadir' ? '#166534' : '#ef4444'}">${d.status}</span></td>
+                        <td><button onclick="editAbsen('${res.id}', '${d.status}')" class="btn-aksi btn-edit"><i class="fa-solid fa-pen"></i></button></td>
+                    </tr>`;
                 });
-            }, (err) => {
-                console.error(err);
-                document.getElementById('tabelAbsensiBody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat: ${err.message}</td></tr>`;
+                document.getElementById('countHadir').innerText = h;
+                document.getElementById('countIzin').innerText = i;
+                document.getElementById('countSakit').innerText = s;
             });
         }
 
-        // --- LOGIKA MATERI ---
+        window.toggleAllCheck = (source) => {
+            document.querySelectorAll('.absen-check').forEach(cb => cb.checked = source.checked);
+        };
+
+        window.hapusTerpilih = async () => {
+            const terpilih = Array.from(document.querySelectorAll('.absen-check:checked')).map(cb => cb.value);
+            if (terpilih.length === 0) return alert("Pilih data yang ingin dihapus!");
+            if (confirm(`Hapus ${terpilih.length} data absensi terpilih?`)) {
+                for (const id of terpilih) await deleteDoc(doc(db, "absensi", id));
+                alert("Data berhasil dihapus!");
+            }
+        };
+
+        window.editAbsen = async (id, statusLama) => {
+            const statusBaru = prompt("Masukkan Status Baru (Hadir/Izin/Sakit):", statusLama);
+            if (statusBaru && ["Hadir", "Izin", "Sakit"].includes(statusBaru)) {
+                await updateDoc(doc(db, "absensi", id), { status: statusBaru });
+                alert("Status diperbarui!");
+            }
+        };
+
+        window.exportToExcel = () => {
+            const table = document.querySelector("#sectionAbsensi table");
+            // Clone table untuk menghapus kolom checkbox & aksi di file Excel
+            const clone = table.cloneNode(true);
+            clone.querySelectorAll("tr").forEach(tr => { tr.deleteCell(0); tr.deleteCell(-1); });
+            const wb = XLSX.utils.table_to_book(clone);
+            XLSX.writeFile(wb, `Rekap_Absensi_${new Date().toLocaleDateString()}.xlsx`);
+        };
+
+        // --- MATERI LOGIC (FUNGSI ASLI ANDA) ---
         window.updateKelasOptions = () => {
             const jenjang = document.getElementById('jenjangMateri').value;
             const kelasSelect = document.getElementById('kelasMateri');
             kelasSelect.innerHTML = "";
             let start, end;
-            if (jenjang === "MI") { start = 1; end = 6; }
-            else if (jenjang === "MTs") { start = 7; end = 9; }
-            else { start = 10; end = 12; }
+            if (jenjang === "MI") { start = 1; end = 6; } else if (jenjang === "MTs") { start = 7; end = 9; } else { start = 10; end = 12; }
             for (let i = start; i <= end; i++) {
                 const opt = document.createElement('option');
                 opt.value = i; opt.innerText = "Kelas " + i;
@@ -254,60 +236,44 @@
             const kelas = document.getElementById('kelasMateri').value;
             const linkVideo = document.getElementById('linkVideo').value;
             const btn = document.getElementById('btnProses');
-
             if(!judul) return alert("Isi judul materi!");
             btn.disabled = true; btn.innerHTML = "Memproses...";
-
             try {
                 const configSnap = await getDoc(doc(db, "settings", "github_config"));
                 const { token, user, repo } = configSnap.data();
                 let finalFileLink = "";
-
                 if(fileInput.files[0]) {
                     const file = fileInput.files[0];
                     const base64Content = await toBase64(file);
                     const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                     const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/materi/${fileName}`, {
-                        method: "PUT",
-                        headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                        method: "PUT", headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ message: `Upload: ${judul}`, content: base64Content })
                     });
                     if(res.ok) finalFileLink = `https://raw.githubusercontent.com/${user}/${repo}/main/materi/${fileName}`;
                 }
-
                 const dataMateri = { judul, linkVideo, jenjang, kelas, updatedAt: serverTimestamp() };
                 if(finalFileLink) dataMateri.linkFile = finalFileLink;
-
-                if(editId) {
-                    await updateDoc(doc(db, "materi", editId), dataMateri);
-                } else {
-                    dataMateri.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "materi"), dataMateri);
-                }
+                if(editId) await updateDoc(doc(db, "materi", editId), dataMateri);
+                else { dataMateri.createdAt = serverTimestamp(); await addDoc(collection(db, "materi"), dataMateri); }
                 alert("Berhasil!"); resetForm();
             } catch (e) { alert(e.message); } finally { btn.disabled = false; btn.innerHTML = "SIMPAN MATERI"; }
         };
 
         const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+            const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result.split(',')[1]);
             reader.onerror = error => reject(error);
         });
 
         window.resetForm = () => {
-            document.getElementById('editId').value = "";
-            document.getElementById('judulMateri').value = "";
-            document.getElementById('linkVideo').value = "";
-            document.getElementById('fileMateri').value = "";
+            document.getElementById('editId').value = ""; document.getElementById('judulMateri').value = "";
+            document.getElementById('linkVideo').value = ""; document.getElementById('fileMateri').value = "";
             document.getElementById('formTitle').innerText = "Upload Materi Baru";
-            document.getElementById('btnBatal').style.display = "none";
-            updateKelasOptions();
+            document.getElementById('btnBatal').style.display = "none"; updateKelasOptions();
         };
 
-        window.handleLogout = () => {
-            if(confirm("Keluar?")) signOut(auth).then(() => window.location.href = "index.html");
-        };
+        window.handleLogout = () => { if(confirm("Keluar?")) signOut(auth).then(() => window.location.href = "index.html"); };
 
         window.editData = async (id) => {
             const docSnap = await getDoc(doc(db, "materi", id));
@@ -316,8 +282,7 @@
                 document.getElementById('editId').value = id;
                 document.getElementById('judulMateri').value = data.judul;
                 document.getElementById('jenjangMateri').value = data.jenjang;
-                updateKelasOptions();
-                document.getElementById('kelasMateri').value = data.kelas;
+                updateKelasOptions(); document.getElementById('kelasMateri').value = data.kelas;
                 document.getElementById('linkVideo').value = data.linkVideo || "";
                 document.getElementById('formTitle').innerText = "Edit Materi";
                 document.getElementById('btnBatal').style.display = "block";
