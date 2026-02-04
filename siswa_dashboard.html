@@ -39,6 +39,9 @@
         .btn-view { padding: 8px 15px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-pdf { background: rgba(0, 242, 255, 0.1); color: var(--accent-neon); border-color: var(--accent-neon); }
         .btn-video { background: rgba(255, 82, 82, 0.1); color: #ff5252; border-color: #ff5252; }
+        
+        /* Style Tambahan untuk Select Absen agar kontras */
+        #statusAbsen option { color: #333; }
     </style>
 </head>
 <body>
@@ -53,6 +56,7 @@
         <div class="menu-item active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-house"></i> <span>Dashboard</span></div>
         <div class="menu-item" onclick="showSection('biodata', this)"><i class="fa-solid fa-user"></i> <span>Biodata</span></div>
         <div class="menu-item" onclick="showSection('materi', this)"><i class="fa-solid fa-book"></i> <span>Materi</span></div>
+        <div class="menu-item" onclick="showSection('absen', this)"><i class="fa-solid fa-user-check"></i> <span>Absensi</span></div>
         <div class="menu-item" onclick="showSection('ujian', this)"><i class="fa-solid fa-pen-to-square"></i> <span>Ujian</span></div>
     </aside>
 
@@ -79,12 +83,32 @@
                 </div>
             </div>
         </div>
+
+        <div id="absen" class="content-section">
+            <div class="card">
+                <h3 style="color: var(--accent-neon); margin-bottom: 15px;">Absensi Harian</h3>
+                <p id="absensiInfo" style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;"></p>
+                
+                <label style="display:block; margin-bottom:8px; font-size:14px;">Status Kehadiran:</label>
+                <select id="statusAbsen" style="width:100%; padding:12px; border-radius:8px; background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); outline:none;">
+                    <option value="Hadir">Hadir</option>
+                    <option value="Izin">Izin</option>
+                    <option value="Sakit">Sakit</option>
+                </select>
+                
+                <button onclick="kirimAbsensi()" id="btnAbsen" style="width:100%; margin-top:20px; padding:15px; border-radius:10px; border:none; background:var(--accent-neon); color:#000; font-weight:800; cursor:pointer; transition: 0.3s;">KIRIM ABSENSI</button>
+            </div>
+        </div>
+
+        <div id="ujian" class="content-section">
+            <div class="card"><h3>Ujian Online</h3><p style="opacity:0.6;">Belum ada ujian yang aktif saat ini.</p></div>
+        </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCMTyiaRfzZ0eNi49M5u6C4QnfHIqVT7G4", 
@@ -98,6 +122,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        let ud = {}; // Variabel global untuk menampung data user
 
         window.logout = async () => { if (confirm("Keluar?")) { await signOut(auth); window.location.href = "index.html"; } };
         
@@ -119,7 +145,7 @@
             
             let proxyUrl = url;
             if (url.includes('raw.githubusercontent.com')) {
-                proxyUrl = url.replace('raw.githubusercontent.com', 'cdn.jsdelivr.net)gh')
+                proxyUrl = url.replace('raw.githubusercontent.com', 'cdn.jsdelivr.net/gh')
                               .replace('/main/', '@main/');
             }
 
@@ -142,14 +168,12 @@
             preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>`;
         };
 
-        // --- PERBAIKAN: FETCH MATERI BERDASARKAN JENJANG DAN KELAS ---
         function fetchMateri(jenjangSiswa, kelasSiswa) {
             onSnapshot(query(collection(db, "materi"), orderBy("createdAt", "desc")), (snap) => {
                 const list = document.getElementById('materiList');
                 let html = "";
                 snap.forEach((res) => {
                     const d = res.data();
-                    // Filter: Harus Jenjang yang sama DAN Kelas yang sama
                     if (d.jenjang === jenjangSiswa && d.kelas == kelasSiswa) {
                         html += `
                             <div class="materi-item">
@@ -166,12 +190,38 @@
             });
         }
 
+        // --- LOGIKA KIRIM ABSENSI ---
+        window.kirimAbsensi = async () => {
+            const status = document.getElementById('statusAbsen').value;
+            const btn = document.getElementById('btnAbsen');
+            
+            btn.disabled = true;
+            btn.innerText = "Mengirim...";
+            
+            try {
+                await addDoc(collection(db, "absensi"), {
+                    nama: ud.nama,
+                    jenjang: ud.jenjang,
+                    kelas: ud.kelas,
+                    status: status,
+                    waktu: serverTimestamp()
+                });
+                alert("Absensi berhasil dikirim!");
+            } catch (e) {
+                alert("Gagal mengirim absensi: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "KIRIM ABSENSI";
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (!user) return window.location.href = "index.html";
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if(uDoc.exists()){
-                const ud = uDoc.data();
+                ud = uDoc.data();
                 document.getElementById('userName').innerText = "Halo, " + ud.nama;
+                document.getElementById('absensiInfo').innerText = `Mengisi absen untuk: Kelas ${ud.kelas} (${ud.jenjang})`;
                 document.getElementById('bioContent').innerHTML = `
                     <div style="line-height: 1.8;">
                         <b>Nama Lengkap:</b> ${ud.nama}<br>
@@ -179,7 +229,6 @@
                         <b>Jenjang:</b> ${ud.jenjang}<br>
                         <b>Kelas:</b> ${ud.kelas}
                     </div>`;
-                // Panggil fungsi fetch dengan menyertakan parameter kelas
                 fetchMateri(ud.jenjang, ud.kelas);
             }
         });
